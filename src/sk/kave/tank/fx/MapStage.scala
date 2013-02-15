@@ -8,6 +8,10 @@ import shape.Rectangle
 import javafx.scene.paint.Color
 import sk.kave.tank.beans._
 import sk.kave.tank._
+import javafx.event.EventHandler
+import javafx.scene.input.{KeyCode, KeyEvent}
+import javafx.stage.WindowEvent
+
 /**
  * User: wilo
  * Date: 2/13/13
@@ -19,31 +23,56 @@ class MapStage extends Stage {
 
   val map = Map()
 
-  val boardGroup = new Group() {
+  val mapGroup = new Group() {
     children =
       for (
-        iCol  <- 0 until map.items.length;
-        iRow <-  0 until map.items(iCol).length)
+        iCol <- 0 until map.items.length;
+        iRow <- 0 until map.items(iCol).length)
       yield
         new Rectangle() {
           width = ItemSize
-          height =ItemSize
+          height = ItemSize
           x = iCol * ItemSize
           y = iRow * ItemSize
 
           fill = map.items(iCol)(iRow) match {
-            case Grass => Color.GREEN
-            case Stone => Color.GRAY
+            case Grass  => Color.GREEN
+            case Stone  => Color.GRAY
             case Ground => Color.BROWN
           }
         }
   }
 
-  scene = new Scene(200 , 200) {
+  val controlerActor = (new GameControlerActor(mapGroup)).start()
+
+  scene = new Scene(200, 200) {
     fill = Color.BLACK
     content = List(
-      boardGroup
+      mapGroup
     )
+
+    onKeyPressed = new EventHandler[KeyEvent] {
+      def handle(e: KeyEvent) {
+        e.code match {
+          case (KeyCode.UP)    => controlerActor ! Action.UP
+          case (KeyCode.LEFT)  => controlerActor ! Action.LEFT
+          case (KeyCode.RIGHT) => controlerActor ! Action.RIGHT
+          case (KeyCode.DOWN)  => controlerActor ! Action.DOWN
+          case _ => ()
+        }
+      }
+    }
+
+    onKeyReleased = new EventHandler[KeyEvent] {
+      def handle(e: KeyEvent) {
+        //if (e.getCode() == KeyCode.DOWN) controlerActor ! Action.STOP_SPEED
+      }
+    }
   }
 
+  onHiding = new EventHandler[WindowEvent] {
+    def handle( e: WindowEvent) {
+      controlerActor ! Action.EXIT
+    }
+  }
 }

@@ -10,11 +10,10 @@
     <version>1.0-SNAPSHOT</version>
 
     <name>tanky</name>
-    <url>http://maven.apache.org</url>
 
     <properties>
         <scala.version>2.9.2</scala.version>
-        <jfx-sdk>C:\Program Files\Java\jdk1.7.0_11\jre\lib</jfx-sdk>
+        <jfx-sdk>c:\Program Files\Oracle\JavaFX 2.1 SDK\</jfx-sdk>
     </properties>
 
     <dependencies>
@@ -55,7 +54,7 @@
             <artifactId>javafx</artifactId>
             <version>2.1</version>
             <scope>system</scope>
-            <systemPath>${jfx-sdk}\jfxrt.jar</systemPath>
+            <systemPath>${jfx-sdk}/rt/lib/jfxrt.jar</systemPath>
         </dependency>
 
     </dependencies>

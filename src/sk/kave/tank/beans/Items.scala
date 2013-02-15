@@ -23,3 +23,5 @@ case object Grass extends Items
 case object Stone extends Items
 
 
+case object A extends Stone
+
