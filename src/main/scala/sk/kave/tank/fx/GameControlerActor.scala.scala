@@ -39,11 +39,15 @@ object Action extends Enumeration {
 sealed trait Direction
 
 trait Vertical extends Direction
+
 case object DOWN extends Vertical
+
 case object UP extends Vertical
 
 trait Horizontal extends Direction
+
 case object LEFT extends Horizontal
+
 case object RIGHT extends Horizontal
 
 case object NoneDir extends Direction with Horizontal with Vertical
@@ -57,14 +61,15 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
 
   def act() {
     react {
-      case (Action.EXIT) => ()
-      case a: Action.Value =>
-        runInJFXthred(move(a))
+      case (Action.EXIT, KeyPressEvent.RELEASED) =>
+        logg.info("actor says 'Good bye'")
+      case (a: Action.Value, kpe: KeyPressEvent.Value) =>
+        runInJFXthred(move(a, kpe))
         act()
     }
   }
 
-  private def isMoving: Boolean = horizontal != NoneDir && vertical != NoneDir
+  private def isMoving: Boolean = horizontal != NoneDir || vertical != NoneDir
 
 
   private def getDirectionHorizontal =
@@ -86,67 +91,74 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
   private def translateY = mapGroup.translateY
 
 
-  private def setAction(oldDirection: Direction, newDirection: Direction): Direction = if (oldDirection == newDirection) {
-    NoneDir
-  } else {
-    newDirection
+  private def setAction(newDirection: Direction, kpe: KeyPressEvent.Value): Direction = {
+    val v = if (kpe == KeyPressEvent.RELEASED) {
+      NoneDir
+    } else {
+      newDirection
+    }
+    logg.debug("setAction = " + v)
+    v
   }
 
-  private implicit def convertDirection2Vertical(dir: Direction): Vertical = if (dir != null) {
-    dir.asInstanceOf[Vertical]
-  } else {
-    null
-  }
+  private implicit def convertDirection2Vertical(dir: Direction): Vertical =
+    if (dir != null) {
+      dir.asInstanceOf[Vertical]
+    } else {
+      null
+    }
 
-  private implicit def convertDirection2Horizontal(dir: Direction): Horizontal = if (dir != null) {
-    dir.asInstanceOf[Horizontal]
-  } else {
-    null
-  }
+  private implicit def convertDirection2Horizontal(dir: Direction): Horizontal =
+    if (dir != null) {
+      dir.asInstanceOf[Horizontal]
+    } else {
+      null
+    }
 
-  private def move(action: Action.Value) {
-
+  private def move(action: Action.Value, kpe: KeyPressEvent.Value) {
+    logg.debug(action)
 
     action match {
       case Action.UP =>
-        vertical = setAction(vertical, UP)
+        vertical = setAction(UP, kpe)
 
       case Action.DOWN =>
-        vertical = setAction(vertical, DOWN)
+        vertical = setAction(DOWN, kpe)
 
       case Action.LEFT =>
-        horizontal = setAction(horizontal, LEFT)
+        horizontal = setAction(LEFT, kpe)
 
       case Action.RIGHT =>
-        horizontal = setAction(horizontal, RIGHT)
+        horizontal = setAction(RIGHT, kpe)
     }
 
-    if (!isMoving) {
-      //isMoving = true
+    //    if (isMoving) {
+    //isMoving = true
 
-      logg.debug("pohyb: horizontal = " + getDirectionHorizontal + "; vertical = " + getDirectionVertical)
+    logg.debug(action + " pohyb: horizontal = " + getDirectionHorizontal + "; vertical = " + getDirectionVertical)
 
-      new Timeline() {
-        onFinished = new EventHandler[ActionEvent] {
-          def handle(e: ActionEvent) {
-            //isMoving = false
-          }
+    new Timeline() {
+      onFinished = new EventHandler[ActionEvent] {
+        def handle(e: ActionEvent) {
+          //isMoving = false
         }
+      }
 
 
-        keyFrames = Seq(
-          at(0 ms) {
-            Set(translateX -> translateX(),
-              translateY -> translateY())
-          },
-          at(10 ms) {
-            Set(translateX -> (translateX() + getDirectionHorizontal),
-              translateY -> (translateY() + getDirectionVertical))
-          }
-        )
-      }.play
-    }
+      keyFrames = Seq(
+        at(0 ms) {
+          Set(translateX -> translateX(),
+            translateY -> translateY())
+        },
+        at(10 ms) {
+          Set(translateX -> (translateX() + getDirectionHorizontal),
+            translateY -> (translateY() + getDirectionVertical))
+        }
+      )
+    }.play
   }
+
+  //  }
 
   private def runInJFXthred(runThis: => Unit) {
     javafx.application.Platform.runLater(new Runnable() {

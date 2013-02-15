@@ -12,8 +12,8 @@ import org.apache.log4j.Logger
  */
 package object tank {
 
-  val ItemSize = 5
-  val logg = Logger.getLogger("tank")
+  val ItemSize = 10
+  val logg = Logger.getLogger(Main.getClass)
 
   def readMapFromFile( fileName : String ) : Map = {
       val fileReader: FileReader = new FileReader(new File( fileName))

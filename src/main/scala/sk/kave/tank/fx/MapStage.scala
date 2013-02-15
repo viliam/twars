@@ -30,12 +30,18 @@ class MapStage extends Stage {
         iRow <- 0 until map.items(iCol).length)
       yield {
         new Rectangle() {
-          width = ItemSize
-          height = ItemSize
+          width = ItemSize + 2 //magic constant 2 - dont ask me why :P
+          height = ItemSize + 2
           x = iCol * ItemSize
           y = iRow * ItemSize
 
+          strokeWidth = 0
           fill = map.items(iCol)(iRow) match {
+            case Grass => Color.GREEN
+            case Stone => Color.GRAY
+            case Ground => Color.BROWN
+          }
+          stroke = map.items(iCol)(iRow) match {
             case Grass => Color.GREEN
             case Stone => Color.GRAY
             case Ground => Color.BROWN
@@ -46,7 +52,7 @@ class MapStage extends Stage {
 
   val controlerActor = (new GameControlerActor(mapGroup)).start()
 
-  scene = new Scene(200, 200) {
+  scene = new Scene(400, 400) {
     fill = Color.BLACK
     content = List(
       mapGroup
@@ -54,11 +60,12 @@ class MapStage extends Stage {
 
     onKeyPressed = new EventHandler[KeyEvent] {
       def handle(e: KeyEvent) {
+        logg.debug(e.getCharacter)
         e.code match {
-          case (KeyCode.UP) => controlerActor ! Action.UP
-          case (KeyCode.LEFT) => controlerActor ! Action.LEFT
-          case (KeyCode.RIGHT) => controlerActor ! Action.RIGHT
-          case (KeyCode.DOWN) => controlerActor ! Action.DOWN
+          case (KeyCode.W) => controlerActor !(Action.UP, KeyPressEvent.PRESSED)
+          case (KeyCode.A) => controlerActor !(Action.LEFT, KeyPressEvent.PRESSED)
+          case (KeyCode.D) => controlerActor !(Action.RIGHT, KeyPressEvent.PRESSED)
+          case (KeyCode.S) => controlerActor !(Action.DOWN, KeyPressEvent.PRESSED)
           case _ => ()
         }
       }
@@ -66,12 +73,13 @@ class MapStage extends Stage {
 
     onKeyReleased = new EventHandler[KeyEvent] {
       def handle(e: KeyEvent) {
+        logg.debug(e.getCharacter+" rel")
         e.code match {
-          case (KeyCode.UP) => controlerActor ! Action.UP
-          case (KeyCode.LEFT) => controlerActor ! Action.LEFT
-          case (KeyCode.RIGHT) => controlerActor ! Action.RIGHT
-          case (KeyCode.DOWN) => controlerActor ! Action.DOWN
-          case (KeyCode.ESCAPE) => controlerActor ! Action.EXIT
+          case (KeyCode.W) => controlerActor !(Action.UP, KeyPressEvent.RELEASED)
+          case (KeyCode.A) => controlerActor !(Action.LEFT, KeyPressEvent.RELEASED)
+          case (KeyCode.D) => controlerActor !(Action.RIGHT, KeyPressEvent.RELEASED)
+          case (KeyCode.S) => controlerActor !(Action.DOWN, KeyPressEvent.RELEASED)
+          case (KeyCode.ESCAPE) => controlerActor !(Action.EXIT, KeyPressEvent.RELEASED)
           case _ => ()
         }
       }
@@ -80,7 +88,11 @@ class MapStage extends Stage {
 
   onHiding = new EventHandler[WindowEvent] {
     def handle(e: WindowEvent) {
-      controlerActor ! Action.EXIT
+      controlerActor !(Action.EXIT, KeyPressEvent.PRESSED)
     }
   }
+}
+
+object KeyPressEvent extends Enumeration {
+  val PRESSED, RELEASED = Value
 }
