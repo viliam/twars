@@ -3,6 +3,7 @@ package sk.kave
 import tank.beans.{Items, Map}
 import java.io.{BufferedReader, File, FileReader}
 import collection.mutable.ArrayBuffer
+import org.apache.log4j.Logger
 
 /**
  * User: wilo
@@ -12,6 +13,7 @@ import collection.mutable.ArrayBuffer
 package object tank {
 
   val ItemSize = 5
+  val logg = Logger.getLogger("tank")
 
   def readMapFromFile( fileName : String ) : Map = {
       val fileReader: FileReader = new FileReader(new File( fileName))
