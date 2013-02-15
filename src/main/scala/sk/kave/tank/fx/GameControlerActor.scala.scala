@@ -24,7 +24,6 @@ import scalafx.scene.Group
 import sk.kave.tank._
 import sun.awt.VerticalBagLayout
 
-
 /*
 
 This actor will be responsible for handling events. This asynchronized processing of events make processing events
@@ -36,23 +35,6 @@ object Action extends Enumeration {
   val DOWN, LEFT, RIGHT, UP, EXIT = Value
 }
 
-sealed trait Direction
-
-trait Vertical extends Direction
-
-case object DOWN extends Vertical
-
-case object UP extends Vertical
-
-trait Horizontal extends Direction
-
-case object LEFT extends Horizontal
-
-case object RIGHT extends Horizontal
-
-case object NoneDir extends Direction with Horizontal with Vertical
-
-
 class GameControlerActor(val mapGroup: Group) extends Actor {
   self =>
 
@@ -61,7 +43,7 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
 
   def act() {
     react {
-      case (Action.EXIT, KeyPressEvent.RELEASED) =>
+      case (Action.EXIT, _) =>
         logg.info("actor says 'Good bye'")
       case (a: Action.Value, kpe: KeyPressEvent.Value) =>
         runInJFXthred(move(a, kpe))

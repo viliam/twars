@@ -5,9 +5,9 @@ import scalafx.Includes._
 import scalafx.scene._
 import shape.Rectangle
 
+import sk.kave.tank._
 import javafx.scene.paint.Color
 import sk.kave.tank.beans._
-import sk.kave.tank._
 import javafx.event.EventHandler
 import javafx.scene.input.{KeyCode, KeyEvent}
 import javafx.stage.WindowEvent
@@ -17,42 +17,17 @@ import javafx.stage.WindowEvent
  * Date: 2/13/13
  * Time: 1:11 PM
  */
-class MapStage extends Stage {
+object MapStage extends Stage {
 
   title = "ScalaFX Tetris"
 
   val map = Map()
 
-  val mapGroup = new Group() {
-    children =
-      for (
-        iCol <- 0 until map.items.length;
-        iRow <- 0 until map.items(iCol).length)
-      yield {
-        new Rectangle() {
-          width = ItemSize + 2 //magic constant 2 - dont ask me why :P
-          height = ItemSize + 2
-          x = iCol * ItemSize
-          y = iRow * ItemSize
-
-          strokeWidth = 0
-          fill = map.items(iCol)(iRow) match {
-            case Grass => Color.GREEN
-            case Stone => Color.GRAY
-            case Ground => Color.BROWN
-          }
-          stroke = map.items(iCol)(iRow) match {
-            case Grass => Color.GREEN
-            case Stone => Color.GRAY
-            case Ground => Color.BROWN
-          }
-        }
-      }
-  }
+  val mapGroup = MapGroup
 
   val controlerActor = (new GameControlerActor(mapGroup)).start()
 
-  scene = new Scene(400, 400) {
+  scene = new Scene(Width , Height ) {
     fill = Color.BLACK
     content = List(
       mapGroup

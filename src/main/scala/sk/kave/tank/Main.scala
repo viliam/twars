@@ -1,6 +1,6 @@
 package sk.kave.tank
 
-import fx.MapStage
+import fx.{MapGroup, MapStage}
 import scalafx.application.JFXApp
 
 /**
@@ -10,7 +10,8 @@ import scalafx.application.JFXApp
  */
 object Main extends JFXApp {
 
-  stage = new MapStage
+  stage = MapStage
 
+  MapGroup.init
 
 }

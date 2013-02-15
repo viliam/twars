@@ -12,7 +12,11 @@ import org.apache.log4j.Logger
  */
 package object tank {
 
+  val Width = 400
+  val Height = 400
+
   val ItemSize = 10
+
   val logg = Logger.getLogger(Main.getClass)
 
   def readMapFromFile( fileName : String ) : Map = {

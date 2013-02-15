@@ -11,7 +11,7 @@ import sk.kave.tank._
 
 object Map {
 
-  lazy val m: Map = readMapFromFile("mapa2.mapa")
+  lazy val m: Map = readMapFromFile("mapa.mapa")
 
   def apply() = m
 }
