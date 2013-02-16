@@ -1,7 +1,11 @@
 package sk.kave.tank
 
-import fx.{MapGroup, MapStage}
+import fx.{Action, GameControlerActor, MapGroup, MapStage}
 import scalafx.application.JFXApp
+import scalafx.animation.{KeyFrame, Animation, Timeline}
+import javafx.event.{ActionEvent, EventHandler}
+import scalafx.Includes._
+import scalafx.util.Duration
 
 /**
  * User: wilo
@@ -10,8 +14,24 @@ import scalafx.application.JFXApp
  */
 object Main extends JFXApp {
 
+  val GAME_LOOP_DELAY = 50.ms
+
   stage = MapStage
 
-  MapGroup.init
+  val controlerActor = (new GameControlerActor(MapStage.mapGroup)).start()
 
+
+  //this is a main game loop that takes care of periodical updating of player's position
+  val gameLoop = new Timeline() {
+    keyFrames = Seq(
+
+      KeyFrame(
+        GAME_LOOP_DELAY,
+        "GameLoop KeyFrame",
+        controlerActor ! Action.GAME_LOOP_UPDATE
+      )
+
+    )
+    cycleCount = Animation.INDEFINITE
+  }.play
 }

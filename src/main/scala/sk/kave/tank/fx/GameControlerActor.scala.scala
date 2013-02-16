@@ -32,7 +32,7 @@ synchronized.
  */
 
 object Action extends Enumeration {
-  val DOWN, LEFT, RIGHT, UP, EXIT = Value
+  val DOWN, LEFT, RIGHT, UP, EXIT, GAME_LOOP_UPDATE = Value
 }
 
 class GameControlerActor(val mapGroup: Group) extends Actor {
@@ -43,10 +43,14 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
 
   def act() {
     react {
+      case Action.GAME_LOOP_UPDATE =>
+        runInJFXthread(move())
+        act()
       case (Action.EXIT, _) =>
         logg.info("actor says 'Good bye'")
       case (a: Action.Value, kpe: KeyPressEvent.Value) =>
-        runInJFXthred(move(a, kpe))
+        updateDirection(a, kpe)
+        runInJFXthread(move())
         act()
     }
   }
@@ -74,13 +78,11 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
 
 
   private def setAction(newDirection: Direction, kpe: KeyPressEvent.Value): Direction = {
-    val v = if (kpe == KeyPressEvent.RELEASED) {
+    if (kpe == KeyPressEvent.RELEASED) {
       NoneDir
     } else {
       newDirection
     }
-    logg.debug("setAction = " + v)
-    v
   }
 
   private implicit def convertDirection2Vertical(dir: Direction): Vertical =
@@ -97,8 +99,7 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
       null
     }
 
-  private def move(action: Action.Value, kpe: KeyPressEvent.Value) {
-    logg.debug(action)
+  private def updateDirection(action: Action.Value, kpe: KeyPressEvent.Value) {
 
     action match {
       case Action.UP =>
@@ -113,11 +114,12 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
       case Action.RIGHT =>
         horizontal = setAction(RIGHT, kpe)
     }
+  }
 
-    //    if (isMoving) {
-    //isMoving = true
-
-    logg.debug(action + " pohyb: horizontal = " + getDirectionHorizontal + "; vertical = " + getDirectionVertical)
+  private def move() {
+    if (!isMoving) {
+      return
+    }
 
     new Timeline() {
       onFinished = new EventHandler[ActionEvent] {
@@ -140,11 +142,11 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
     }.play
   }
 
-  //  }
-
-  private def runInJFXthred(runThis: => Unit) {
+  private def runInJFXthread(runThis: => Unit) {
     javafx.application.Platform.runLater(new Runnable() {
-      def run() = runThis
+      def run() {
+        runThis
+      }
     })
   }
 }

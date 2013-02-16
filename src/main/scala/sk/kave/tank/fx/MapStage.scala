@@ -24,10 +24,11 @@ object MapStage extends Stage {
   val map = Map()
 
   val mapGroup = MapGroup
+  mapGroup.init()
 
-  val controlerActor = (new GameControlerActor(mapGroup)).start()
 
-  scene = new Scene(Width , Height ) {
+
+  scene = new Scene(Width, Height) {
     fill = Color.BLACK
     content = List(
       mapGroup
@@ -35,12 +36,11 @@ object MapStage extends Stage {
 
     onKeyPressed = new EventHandler[KeyEvent] {
       def handle(e: KeyEvent) {
-        logg.debug(e.getCharacter)
         e.code match {
-          case (KeyCode.W) => controlerActor !(Action.UP, KeyPressEvent.PRESSED)
-          case (KeyCode.A) => controlerActor !(Action.LEFT, KeyPressEvent.PRESSED)
-          case (KeyCode.D) => controlerActor !(Action.RIGHT, KeyPressEvent.PRESSED)
-          case (KeyCode.S) => controlerActor !(Action.DOWN, KeyPressEvent.PRESSED)
+          case (KeyCode.W) => Main.controlerActor !(Action.UP, KeyPressEvent.PRESSED)
+          case (KeyCode.A) => Main.controlerActor !(Action.LEFT, KeyPressEvent.PRESSED)
+          case (KeyCode.D) => Main.controlerActor !(Action.RIGHT, KeyPressEvent.PRESSED)
+          case (KeyCode.S) => Main.controlerActor !(Action.DOWN, KeyPressEvent.PRESSED)
           case _ => ()
         }
       }
@@ -48,13 +48,12 @@ object MapStage extends Stage {
 
     onKeyReleased = new EventHandler[KeyEvent] {
       def handle(e: KeyEvent) {
-        logg.debug(e.getCharacter+" rel")
         e.code match {
-          case (KeyCode.W) => controlerActor !(Action.UP, KeyPressEvent.RELEASED)
-          case (KeyCode.A) => controlerActor !(Action.LEFT, KeyPressEvent.RELEASED)
-          case (KeyCode.D) => controlerActor !(Action.RIGHT, KeyPressEvent.RELEASED)
-          case (KeyCode.S) => controlerActor !(Action.DOWN, KeyPressEvent.RELEASED)
-          case (KeyCode.ESCAPE) => controlerActor !(Action.EXIT, KeyPressEvent.RELEASED)
+          case (KeyCode.W) => Main.controlerActor !(Action.UP, KeyPressEvent.RELEASED)
+          case (KeyCode.A) => Main.controlerActor !(Action.LEFT, KeyPressEvent.RELEASED)
+          case (KeyCode.D) => Main.controlerActor !(Action.RIGHT, KeyPressEvent.RELEASED)
+          case (KeyCode.S) => Main.controlerActor !(Action.DOWN, KeyPressEvent.RELEASED)
+          case (KeyCode.ESCAPE) => Main.controlerActor !(Action.EXIT, KeyPressEvent.RELEASED)
           case _ => ()
         }
       }
@@ -63,7 +62,7 @@ object MapStage extends Stage {
 
   onHiding = new EventHandler[WindowEvent] {
     def handle(e: WindowEvent) {
-      controlerActor !(Action.EXIT, KeyPressEvent.PRESSED)
+      Main.controlerActor !(Action.EXIT, KeyPressEvent.PRESSED)
     }
   }
 }

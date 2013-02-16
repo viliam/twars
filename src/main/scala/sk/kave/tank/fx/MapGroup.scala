@@ -23,7 +23,7 @@ object MapGroup extends Group {
 
   println (" col = " + col + "   row = " + row +  "   colM = " + colMax + "   rowM = " + rowMax)
 
-  def init {
+  def init() {
     children =
       for (
         iCol <- col until colMax;
@@ -40,6 +40,9 @@ object MapGroup extends Group {
       }
   }
 
+  /**
+   * inits x,y and fill color
+   */
   private def initRec( rec : Rectangle, iCol : Int, iRow : Int) = {
     rec.x = iCol * ItemSize
     rec.y = iRow * ItemSize
@@ -52,20 +55,21 @@ object MapGroup extends Group {
     rec
   }
 
-  def move( d : Direction) =
+  def move( d : Direction) {
     d match {
       case UP => {
-        val li = cols.remove(row)       //move bottom line to upper
-        cols(rowMax +1)= li.get
+        val li = cols.remove(row) //move bottom line to upper
+        cols(rowMax + 1) = li.get
 
-        for (i <- col until colMax) {    //in map of rows move every first rect. to the last position
+        for (i <- col until colMax) {
+          //in map of rows move every first rect. to the last position
           //val r = cols(i).next.remove()   //TODO : )
-
         }
       }
       case DOWN =>
       case LEFT =>
       case RIGHT =>
     }
+  }
 
 }
