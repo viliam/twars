@@ -32,7 +32,7 @@ synchronized.
  */
 
 object Action extends Enumeration {
-  val DOWN, LEFT, RIGHT, UP, EXIT, GAME_LOOP_UPDATE = Value
+  val DOWN, LEFT, RIGHT, UP, EXIT = Value
 }
 
 class GameControlerActor(val mapGroup: Group) extends Actor {
@@ -43,9 +43,6 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
 
   def act() {
     react {
-      case Action.GAME_LOOP_UPDATE =>
-        runInJFXthread(move())
-        act()
       case (Action.EXIT, _) =>
         logg.info("actor says 'Good bye'")
       case (a: Action.Value, kpe: KeyPressEvent.Value) =>
@@ -100,7 +97,6 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
     }
 
   private def updateDirection(action: Action.Value, kpe: KeyPressEvent.Value) {
-
     action match {
       case Action.UP =>
         vertical = setAction(UP, kpe)
@@ -116,18 +112,20 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
     }
   }
 
+  var isTimelineAlive = false
   private def move() {
-    if (!isMoving) {
+    if (!isMoving && !isTimelineAlive) {
       return
     }
 
+    isTimelineAlive = true
     new Timeline() {
       onFinished = new EventHandler[ActionEvent] {
         def handle(e: ActionEvent) {
-          //isMoving = false
+          if (isMoving) move()
+          else isTimelineAlive = false
         }
       }
-
 
       keyFrames = Seq(
         at(0 ms) {

@@ -14,24 +14,8 @@ import scalafx.util.Duration
  */
 object Main extends JFXApp {
 
-  val GAME_LOOP_DELAY = 50.ms
-
   stage = MapStage
 
   val controlerActor = (new GameControlerActor(MapStage.mapGroup)).start()
 
-
-  //this is a main game loop that takes care of periodical updating of player's position
-  val gameLoop = new Timeline() {
-    keyFrames = Seq(
-
-      KeyFrame(
-        GAME_LOOP_DELAY,
-        "GameLoop KeyFrame",
-        controlerActor ! Action.GAME_LOOP_UPDATE
-      )
-
-    )
-    cycleCount = Animation.INDEFINITE
-  }.play
 }
