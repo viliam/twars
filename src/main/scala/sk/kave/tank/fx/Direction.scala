@@ -11,5 +11,3 @@ trait Horizontal extends Direction
 
 case object LEFT extends Horizontal
 case object RIGHT extends Horizontal
-
-case object NoneDir extends Direction with Horizontal with Vertical

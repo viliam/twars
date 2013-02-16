@@ -38,7 +38,7 @@ object Action extends Enumeration {
 class GameControlerActor(val mapGroup: Group) extends Actor {
   self =>
 
-  var direction: (Horizontal, Vertical) = (NoneDir, NoneDir)
+  var direction: (Option[Horizontal], Option[Vertical]) = (None, None)
   var (horizontal, vertical) = direction
 
   def act() {
@@ -52,54 +52,38 @@ class GameControlerActor(val mapGroup: Group) extends Actor {
     }
   }
 
-  private def isMoving: Boolean = horizontal != NoneDir || vertical != NoneDir
+  private def isMoving: Boolean = !horizontal.isEmpty || !vertical.isEmpty
 
 
   private def getDirectionHorizontal =
     horizontal match {
-      case LEFT => +ItemSize
-      case RIGHT => -ItemSize
-      case NoneDir => 0
+      case Some(LEFT) => +ItemSize
+      case Some(RIGHT) => -ItemSize
+      case None => 0
     }
 
   private def getDirectionVertical =
     vertical match {
-      case UP => +ItemSize
-      case DOWN => -ItemSize
-      case NoneDir => 0
+      case Some(UP) => +ItemSize
+      case Some(DOWN) => -ItemSize
+      case None => 0
     }
 
   private def translateX = mapGroup.translateX
-
   private def translateY = mapGroup.translateY
 
-
-  private def setAction(newDirection: Direction, kpe: KeyPressEvent.Value): Direction = {
+  private def setAction[T <: Direction](newDirection: T, kpe: KeyPressEvent.Value): Option[T] = {
     if (kpe == KeyPressEvent.RELEASED) {
-      NoneDir
+      None
     } else {
-      newDirection
+      Some(newDirection)
     }
   }
-
-  private implicit def convertDirection2Vertical(dir: Direction): Vertical =
-    if (dir != null) {
-      dir.asInstanceOf[Vertical]
-    } else {
-      null
-    }
-
-  private implicit def convertDirection2Horizontal(dir: Direction): Horizontal =
-    if (dir != null) {
-      dir.asInstanceOf[Horizontal]
-    } else {
-      null
-    }
 
   private def updateDirection(action: Action.Value, kpe: KeyPressEvent.Value) {
     action match {
       case Action.UP =>
-        vertical = setAction(UP, kpe)
+        vertical = setAction( UP, kpe)
 
       case Action.DOWN =>
         vertical = setAction(DOWN, kpe)
