@@ -47,7 +47,6 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
       case (a: Action.Value, kpe: KeyPressEvent.Value) =>
         updateDirection(a, kpe)
         runInJFXthread(move())
-//uncomment for a new movement (and comment line above)        MapGroup.move(vertical)
         act()
     }
   }
@@ -103,6 +102,9 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
     }
 
     isTimelineAlive = true
+    MapGroup.move(vertical)
+    MapGroup.move(horizontal)
+
     new Timeline() {
       onFinished = new EventHandler[ActionEvent] {
         def handle(e: ActionEvent) {

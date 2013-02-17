@@ -84,16 +84,12 @@ object MapGroup extends Group {
           cols(i) += firstRect
         }
 
-        //------------update javaFX
-        javafx.application.Platform.runLater(new Runnable() {
-          def run() {
-            var colTemp = col
-            li.get.foreach(rec => {
-              initRec(rec, colTemp, rowMax - 1)
-              colTemp = colTemp + 1
-            })
-          }
+        var colTemp = col
+        li.get.foreach(rec => {
+          initRec(rec, colTemp, rowMax - 1)
+          colTemp = colTemp + 1
         })
+
 
         row = row + 1
       }
