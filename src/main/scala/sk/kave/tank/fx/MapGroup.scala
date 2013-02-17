@@ -3,25 +3,40 @@ package sk.kave.tank.fx
 import scalafx.scene.Group
 import scalafx.scene.shape.Rectangle
 import sk.kave.tank._
-import beans.{Ground, Stone, Grass}
+import beans._
 import scalafx.scene.paint.Color
 import sk.kave.tank.beans.Map
-import collection.mutable.ListBuffer
-import collection._
+import scala.collection.mutable.ListBuffer
+import scalafx.animation.{KeyFrame, Timeline}
+import javafx.event.{ActionEvent, EventHandler}
+import scala._
+import collection.mutable
+import collection.Set
+import scala.Some
+import scalafx.Includes._
+import scala.Some
+import scala.Some
 
 object MapGroup extends Group {
 
   val map = Map()
 
-  def col  = MapStage.x().toInt / ItemSize
-  def row  = MapStage.y().toInt / ItemSize
+  //current position of the map group; coordinates are indices in map data model
+  var col = 0
+  var row = 0
+
   def colMax = Width / ItemSize + col
+
   def rowMax = Height / ItemSize + row
 
-  val rows = mutable.Map() ++ (for ( i <- col until colMax)  yield (i, ListBuffer[ Rectangle]() ))
-  val cols = mutable.Map() ++ (for ( i <- row until rowMax)  yield (i, ListBuffer[ Rectangle]() ))
+  val rows = mutable.Map() ++ (for (i <- col until colMax) yield {
+    (i, ListBuffer[Rectangle]())
+  })
+  val cols = mutable.Map() ++ (for (i <- row until rowMax) yield {
+    (i, ListBuffer[Rectangle]())
+  })
 
-  println (" col = " + col + "   row = " + row +  "   colM = " + colMax + "   rowM = " + rowMax)
+  println(" col = " + col + "   row = " + row + "   colM = " + colMax + "   rowM = " + rowMax)
 
   def init() {
     children =
@@ -29,13 +44,13 @@ object MapGroup extends Group {
         iCol <- col until colMax;
         iRow <- row until rowMax)
       yield {
-        val r = initRec (new Rectangle() {
+        val r = initRec(new Rectangle() {
           width = ItemSize + 2
           height = ItemSize + 2
         }, iCol, iRow)
 
-//        rows(iRow)(iCol) = r       //TODO: fix add element to position
-//        cols(iCol)(iRow) = r
+        rows(iRow) += r
+        cols(iCol) += r
         r
       }
   }
@@ -43,33 +58,49 @@ object MapGroup extends Group {
   /**
    * inits x,y and fill color
    */
-  private def initRec( rec : Rectangle, iCol : Int, iRow : Int) = {
+  private def initRec(rec: Rectangle, iCol: Int, iRow: Int) = {
     rec.x = iCol * ItemSize
     rec.y = iRow * ItemSize
 
-    rec.fill = map(iCol,iRow) match {
-      case Grass  => Color.GREEN
-      case Stone  => Color.GRAY
-      case Ground => Color.BROWN
-    }
+    rec.fill = map(iCol, iRow).fillColor
     rec
   }
 
-  def move( d : Direction) {
+  def move(d: Option[Direction]) {
     d match {
-      case UP => {
-        val li = cols.remove(row) //move bottom line to upper
-        cols(rowMax + 1) = li.get
-
-        for (i <- col until colMax) {
-          //in map of rows move every first rect. to the last position
-          //val r = cols(i).next.remove()   //TODO : )
+      case Some(UP) => {
+        //------------update data model
+        //move upper line to bottom
+        val li = rows.remove(row)
+        if (li.isEmpty) {
+          //I am at the top - can't go higher than that
+          return
         }
+        rows(rowMax + 1) = li.get
+
+        //in map of rows move every first rect. to the last position
+        for (i <- col until colMax) {
+          val firstRect = cols(i).remove(0) //TODO because of this consider using some kind of deque as optimalization; however I dont think current implementation (using ListBuffer) is "inefficient"
+          cols(i) += firstRect
+        }
+
+        //------------update javaFX
+        javafx.application.Platform.runLater(new Runnable() {
+          def run() {
+            var colTemp = col
+            li.get.foreach(rec => {
+              initRec(rec, colTemp, rowMax - 1)
+              colTemp = colTemp + 1
+            })
+          }
+        })
+
+        row = row + 1
       }
-      case DOWN =>
-      case LEFT =>
-      case RIGHT =>
+      case Some(DOWN) =>
+      case Some(LEFT) =>
+      case Some(RIGHT) =>
+      case None =>
     }
   }
-
 }

@@ -19,6 +19,9 @@ object Map {
 class Map(val items: ROWS) {
 
   def apply(r: Int, c: Int): Items = {
+    if (r >= items.size || c >= items(r).size) {
+      return NoMap
+    }
     items(r)(c)
   }
 }

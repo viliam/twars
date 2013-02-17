@@ -1,5 +1,7 @@
 package sk.kave.tank.beans
 
+import scalafx.scene.paint.Color
+
 /**
  * User: wilo
  * Date: 2/13/13
@@ -17,8 +19,12 @@ object Items {
   }
 }
 
-sealed abstract class Items
-case object Ground extends Items
-case object Grass extends Items
-case object Stone extends Items
+sealed abstract class Items(val fillColor:Color)
+
+
+
+case object Ground extends Items(Color.BROWN)
+case object Grass extends Items(Color.GREEN)
+case object Stone extends Items(Color.GREY)
+case object NoMap extends Items(Color.WHITE)
 
