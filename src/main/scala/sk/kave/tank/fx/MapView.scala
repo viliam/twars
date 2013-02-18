@@ -13,13 +13,15 @@ import collection.immutable.IndexedSeq
  * Time: 11:55
  */
 class MapView {
+  val BORDER_SIZE = 1 //width of border (in rectangles) around user's view
+
   //current position of the map group; coordinates are indices in map data model
   var col = 0
   var row = 0
 
-  def colMax = Width / ItemSize + col - 1
+  def colMax = Width / ItemSize + col - 1 + BORDER_SIZE * 2
 
-  def rowMax = Height / ItemSize + row - 1
+  def rowMax = Height / ItemSize + row - 1 + BORDER_SIZE * 2
 
   val rows = mutable.Map() ++ (for (i <- col to colMax) yield {
     (i, ListBuffer[Rectangle]())
@@ -48,14 +50,14 @@ class MapView {
   def canMove(dir: (Option[Horizontal], Option[Vertical])): Boolean = {
 
     (dir._1 match {
-      case Some(LEFT) if (col == 0) =>
+      case Some(LEFT) if (col <= 0) =>
         false
       case Some(RIGHT) if (col == MapGroup.map.maxCols - 1) =>
         false
       case _ => true
     }) &&
       (dir._2 match {
-        case Some(UP) if (row == 0) =>
+        case Some(UP) if (row <= 0) =>
           false
         case Some(DOWN) if (row == MapGroup.map.maxRows - 1) =>
           false
@@ -68,20 +70,10 @@ class MapView {
 
     d match {
       case Some(DOWN) => {
-
         require(row >= 0 && row < MapGroup.map.maxRows - 1)
         require(col >= 0 && col < MapGroup.map.maxCols)
 
-        val li = moveEdgeFromTo(rows, row, rowMax + 1)
-        require(!li.isEmpty)
-
-        moveEveryEdgeFromTo(cols, col, colMax)
-        //-----------JFX
-        var colTemp = col
-        li.get.foreach(rec => {
-          MapGroup.initRec(rec, colTemp, rowMax + 1)
-          colTemp = colTemp + 1
-        })
+        moveVertical(row, rowMax + 1)
 
         row = row + 1
       }
@@ -89,15 +81,7 @@ class MapView {
         require(row >= 1 && row < MapGroup.map.maxRows)
         require(col >= 0 && col < MapGroup.map.maxCols)
 
-        val li = moveEdgeFromTo(rows, rowMax, row - 1)
-        require(!li.isEmpty)
-        moveEveryEdgeFromTo(cols, col, colMax)
-
-        var colTemp = col
-        li.get.foreach(rec => {
-          MapGroup.initRec(rec, colTemp, row - 1)
-          colTemp = colTemp + 1
-        })
+        moveVertical(rowMax, row - 1)
 
         row = row - 1
       }
@@ -105,34 +89,42 @@ class MapView {
         require(row >= 0 && row < MapGroup.map.maxRows)
         require(col >= 0 && col < MapGroup.map.maxCols - 1)
 
-        val li = moveEdgeFromTo(cols, col, colMax + 1)
-        require(!li.isEmpty)
-        moveEveryEdgeFromTo(rows, row, rowMax)
-
-        var rowTemp = row
-        li.get.foreach(rec => {
-          MapGroup.initRec(rec, colMax + 1, rowTemp)
-          rowTemp = rowTemp + 1
-        })
+        moveHorizontal(col, colMax + 1)
 
         col = col + 1
       case Some(LEFT) =>
         require(row >= 0 && row < MapGroup.map.maxRows)
         require(col >= 1 && col < MapGroup.map.maxCols)
 
-        val li = moveEdgeFromTo(cols, colMax, col - 1)
-        require(!li.isEmpty)
-        moveEveryEdgeFromTo(rows, row, rowMax)
-
-        var rowTemp = row
-        li.get.foreach(rec => {
-          MapGroup.initRec(rec, col - 1, rowTemp)
-          rowTemp = rowTemp + 1
-        })
+        moveHorizontal(colMax, col - 1)
 
         col = col - 1
       case None =>
     }
+  }
+
+  private def moveVertical(from: Int, to: Int) {
+    val li = moveEdgeFromTo(rows, from, to)
+    require(!li.isEmpty)
+    moveEveryEdgeFromTo(cols, col, colMax)
+
+    var colTemp = col
+    li.get.foreach(rec => {
+      MapGroup.initRec(rec, colTemp, to)
+      colTemp = colTemp + 1
+    })
+  }
+
+  private def moveHorizontal(from: Int, to: Int) {
+    val li = moveEdgeFromTo(cols, from, to)
+    require(!li.isEmpty)
+    moveEveryEdgeFromTo(rows, row, rowMax)
+
+    var rowTemp = row
+    li.get.foreach(rec => {
+      MapGroup.initRec(rec, to, rowTemp)
+      rowTemp = rowTemp + 1
+    })
   }
 
   private def moveEdgeFromTo(map: mutable.Map[Int, ListBuffer[Rectangle]], oldPosition: Int, newPosition: Int): Option[ListBuffer[Rectangle]] = {
