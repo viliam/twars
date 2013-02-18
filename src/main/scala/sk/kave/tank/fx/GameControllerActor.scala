@@ -23,6 +23,7 @@ import scalafx.Includes._
 import scalafx.scene.Group
 import sk.kave.tank._
 import sun.awt.VerticalBagLayout
+import java.util.concurrent.CountDownLatch
 
 /*
 
@@ -40,18 +41,22 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
 
   var (horizontal, vertical): (Option[Horizontal], Option[Vertical]) = (None, None)
 
+  private var isTimelineAlive = false  //private lock used for waiting for finish timeline moving
+
   def act() {
     react {
       case (Action.EXIT, _) =>
         logg.info("actor says 'Good bye'")
       case (a: Action.Value, kpe: KeyPressEvent.Value) =>
-        updateDirection(a, kpe)
-        runInJFXthread(move())
+        if (!isTimelineAlive) {
+          updateDirection(a, kpe)
+          runInJFXthread(move())
+        }
         act()
     }
   }
 
-  private def isMoving: Boolean = !horizontal.isEmpty || !vertical.isEmpty
+  private def isMoving: Boolean = !horizontal.isEmpty && !vertical.isEmpty
 
 
   private def getDirectionHorizontal =
@@ -69,6 +74,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
     }
 
   private def translateX = mapGroup.translateX
+
   private def translateY = mapGroup.translateY
 
   private def setAction[T <: Direction](newDirection: T, kpe: KeyPressEvent.Value): Option[T] = {
@@ -82,7 +88,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
   private def updateDirection(action: Action.Value, kpe: KeyPressEvent.Value) {
     action match {
       case Action.UP =>
-        vertical = setAction( UP, kpe)
+        vertical = setAction(UP, kpe)
 
       case Action.DOWN =>
         vertical = setAction(DOWN, kpe)
@@ -95,21 +101,28 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
     }
   }
 
-  var isTimelineAlive = false
   private def move() {
-    if (!isMoving && !isTimelineAlive) {
+    if (!isMoving  && !MapGroup.canMove((horizontal, vertical))) {
       return
     }
 
     isTimelineAlive = true
-    MapGroup.move(vertical)
-    MapGroup.move(horizontal)
+    val v = vertical
+    val h = horizontal
+
 
     new Timeline() {
       onFinished = new EventHandler[ActionEvent] {
         def handle(e: ActionEvent) {
-          if (isMoving) move()
-          else isTimelineAlive = false
+          MapGroup.move(v)
+          MapGroup.move(h)
+
+          if (isMoving) {
+            move()
+          }
+          else {
+            isTimelineAlive = false
+          }
         }
       }
 
@@ -127,11 +140,14 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
   }
 
   private def runInJFXthread(runThis: => Unit) {
+    val latch = new CountDownLatch(1)
     javafx.application.Platform.runLater(new Runnable() {
       def run() {
         runThis
+        latch.countDown()
       }
     })
+    latch.await()
   }
 }
 

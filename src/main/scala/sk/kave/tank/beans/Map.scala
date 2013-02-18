@@ -19,9 +19,10 @@ object Map {
 class Map(val items: ROWS) {
 
   def apply(r: Int, c: Int): Items = {
-    if (r >= items.size || c >= items(r).size) {
-      return NoMap
-    }
+   require(r < items.size || r >= 0 || c < items(r).size || c >= 0)
     items(r)(c)
   }
+
+  val maxRows:Int = items.size
+  val maxCols:Int = items(0).size
 }
