@@ -11,9 +11,23 @@
 
     <name>tanky</name>
 
+    <profiles>
+        <profile>
+            <id>igor</id>
+            <properties>
+                <jfx-rt>/etc/java-config-2/current-system-vm/jre/lib/jfxrt.jar</jfx-rt>
+            </properties>
+        </profile>
+        <profile>
+            <id>vilo</id>
+            <properties>
+                <jfx-rt>c:\Program Files\Oracle\JavaFX 2.1 SDK\rt\lib\jfxrt.jar</jfx-rt>
+            </properties>
+        </profile>
+    </profiles>
+
     <properties>
         <scala.version>2.9.2</scala.version>
-        <jfx-sdk>c:\Program Files\Oracle\JavaFX 2.1 SDK\</jfx-sdk>
     </properties>
 
     <dependencies>
@@ -54,7 +68,7 @@
             <artifactId>javafx</artifactId>
             <version>2.1</version>
             <scope>system</scope>
-            <systemPath>${jfx-sdk}/rt/lib/jfxrt.jar</systemPath>
+            <systemPath>${jfx-rt}</systemPath>
         </dependency>
 
         <dependency>
