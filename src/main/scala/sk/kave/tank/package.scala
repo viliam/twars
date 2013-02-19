@@ -4,6 +4,7 @@ import tank.beans.{Items, Map}
 import java.io.{BufferedReader, File, FileReader}
 import collection.mutable.ArrayBuffer
 import org.apache.log4j.Logger
+import scalafx.beans.property.DoubleProperty
 
 /**
  * User: wilo
@@ -12,10 +13,20 @@ import org.apache.log4j.Logger
  */
 package object tank {
 
-  val Width = 900
-  val Height = 900
+  trait Config {
+      def width  : Int
+      def height : Int
+      def itemSize : Int
+  }
 
-  val ItemSize = 10
+  implicit object ConfigImpl extends Config {
+    val width = 900
+    val height = 900
+
+    val itemSize = 10
+
+  }
+
 
   val logg = Logger.getLogger(Main.getClass)
 

@@ -17,6 +17,8 @@ import java.util.concurrent.CountDownLatch
 class MovingActor(val gameControllerActor: GameControllerActor) extends Actor {
   self =>
 
+  val config = implicitly[Config]
+
   def act() {
     react {
       case (Action.EXIT, _) =>
@@ -29,15 +31,15 @@ class MovingActor(val gameControllerActor: GameControllerActor) extends Actor {
 
   private def getDirectionHorizontal(horizontal: Option[Horizontal]) =
     horizontal match {
-      case Some(LEFT) => +ItemSize
-      case Some(RIGHT) => -ItemSize
+      case Some(LEFT) => +config.itemSize
+      case Some(RIGHT) => -config.itemSize
       case None => 0
     }
 
   private def getDirectionVertical(vertical: Option[Vertical]) =
     vertical match {
-      case Some(UP) => +ItemSize
-      case Some(DOWN) => -ItemSize
+      case Some(UP) => +config.itemSize
+      case Some(DOWN) => -config.itemSize
       case None => 0
     }
 

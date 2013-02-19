@@ -16,8 +16,10 @@ import scala.Some
 
 object MapGroup extends Group {
 
+  val config = implicitly[Config]
+
   val map = Map()
-  val mapView = new MapView
+  val mapView = new MapView[Rectangle](  initRec )
 
   def init() {
     children = mapView.init()
@@ -35,9 +37,17 @@ object MapGroup extends Group {
   /**
    * inits x,y and fill color
    */
-  private[fx] def initRec(rec: Rectangle, iCol: Int, iRow: Int) = {
-    rec.x = iCol * ItemSize
-    rec.y = iRow * ItemSize
+  private[fx] def initRec(opRec: Option[Rectangle], iCol: Int, iRow: Int) = {
+    val rec = opRec match {
+      case None => new Rectangle() {
+          width = config.itemSize + 2
+          height = config.itemSize + 2
+        }
+      case Some(r) => r
+    }
+
+    rec.x = iCol * config.itemSize
+    rec.y = iRow * config.itemSize
 
     rec.fill = map(iCol, iRow).fillColor
 

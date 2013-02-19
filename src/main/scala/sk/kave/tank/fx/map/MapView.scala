@@ -3,11 +3,8 @@ package sk.kave.tank.fx.map
 import sk.kave.tank._
 import collection.mutable
 import fx._
-import scalafx.scene.shape.Rectangle
 import collection.immutable.IndexedSeq
 import java.util
-import scala.Some
-import scala.Some
 import scala.Some
 
 /**
@@ -16,34 +13,32 @@ import scala.Some
  * Date: 18.2.2013
  * Time: 11:55
  */
-class MapView {
+
+class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Config) {
   val BORDER_SIZE = 1 //width of border (in rectangles) around user's view
 
   //current position of the map group; coordinates are indices in map data model
   var col = 0
   var row = 0
 
-  def colMax = Width / ItemSize + col - 1
+  def colMax = config.width / config.itemSize + col - 1
 
-  def rowMax = Height / ItemSize + row - 1
+  def rowMax = config.height / config.itemSize + row - 1
 
   val rows = mutable.Map() ++ (for (i <- col to colMax) yield {
-    (i, new util.LinkedList[Rectangle]())
+    (i, new util.LinkedList[R]())
   })
   val cols = mutable.Map() ++ (for (i <- row to rowMax) yield {
-    (i, new util.LinkedList[Rectangle]())
+    (i, new util.LinkedList[R]())
   })
 
-  def init(): IndexedSeq[Rectangle] = {
+  def init(): IndexedSeq[R] = {
 
     for (
       iCol <- col to colMax;
       iRow <- row to rowMax)
     yield {
-      val r = MapGroup.initRec(new Rectangle() {
-        width = ItemSize + 2
-        height = ItemSize + 2
-      }, iCol, iRow)
+      val r = initRec(None, iCol, iRow)
 
       rows(iRow).addLast(r)
       cols(iCol).addLast(r)
@@ -112,12 +107,9 @@ class MapView {
     val li = moveEdgeFromTo(cols, from, to)
     require(!li.isEmpty)
 
-
-    for (i <- 0 until li.get.size) {
-      val r = li.get.get(i)
-      require(r.y.toInt == (row + i) * ItemSize, " Zamiesalo sa ti to, kaaaaamo,.. Y [" + i + "," + row + "]  " + r.y() + "  === " + ((row + i) * ItemSize))
-
-      MapGroup.initRec(r, to, row + i)
+    val list = li.get
+    for (i <- 0 until list.size) {
+      initRec( Some( list.get(i)), to, row + i)
     }
   }
 
@@ -126,17 +118,14 @@ class MapView {
     val li = moveEdgeFromTo(rows, from, to)
     require(!li.isEmpty)
 
-
-    for (i <- 0 until li.get.size) {
-      val r = li.get.get(i)
-      require(r.x.toInt == (col + i) * ItemSize, " Zamiesalo sa ti to, kaaaaamo,..X [" + i + "," + col + "]  " + r.x() + "  === " + ((col + i) * ItemSize))
-
-      MapGroup.initRec(li.get.get(i), col + i, to)
+    val list = li.get
+    for (i <- 0 until list.size) {
+      initRec(Some(list.get(i)), col + i, to)
     }
   }
 
 
-  private def moveEdgeFromTo(map: mutable.Map[Int, util.LinkedList[Rectangle]], oldPosition: Int, newPosition: Int): Option[util.LinkedList[Rectangle]] = {
+  private def moveEdgeFromTo(map: mutable.Map[Int, util.LinkedList[R]], oldPosition: Int, newPosition: Int): Option[util.LinkedList[R]] = {
     logg.debug("move edge, oldposition = " + oldPosition + "    newposition = " + newPosition)
 
     val liOption = map.remove(oldPosition) //remove rectangles from their old position
@@ -146,7 +135,7 @@ class MapView {
     liOption
   }
 
-  private def moveEveryEdgeFromTo(map: mutable.Map[Int, util.LinkedList[Rectangle]], dir: Boolean) {
+  private def moveEveryEdgeFromTo(map: mutable.Map[Int, util.LinkedList[R]], dir: Boolean) {
 
     if (dir) {
       for (k <- map.keys) {
@@ -161,22 +150,4 @@ class MapView {
     }
   }
 
-  def printAll = {
-    println("\n COLS : ")
-    for (k <- cols.keys) {
-      println()
-      for (i <- 0 until cols(k).size;
-           r = cols(k).get(i)) {
-        print("[" + (r.x.toInt / ItemSize) + "," + (r.y.toInt / ItemSize) + "]")
-      }
-    }
-    println("\n ROWS: ")
-    for (k <- rows.keys) {
-      println()
-      for (i <- 0 until rows(k).size;
-           r = rows(k).get(i)) {
-        print("[" + (r.x.toInt / ItemSize) + "," + (r.y.toInt / ItemSize) + "]")
-      }
-    }
-  }
 }

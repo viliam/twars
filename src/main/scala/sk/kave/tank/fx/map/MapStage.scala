@@ -20,6 +20,8 @@ import javafx.stage.WindowEvent
  */
 object MapStage extends Stage {
 
+  val config = implicitly[Config]
+
   title = "ScalaFX Tetris"
 
   val map = Map()
@@ -29,7 +31,7 @@ object MapStage extends Stage {
 
 
 
-  scene = new Scene(Width, Height) {
+  scene = new Scene(config.width, config.height) {
     fill = Color.BLACK
     content = List(
       mapGroup
