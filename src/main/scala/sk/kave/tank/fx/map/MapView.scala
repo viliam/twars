@@ -1,10 +1,14 @@
-package sk.kave.tank.fx
+package sk.kave.tank.fx.map
 
 import sk.kave.tank._
 import collection.mutable
+import fx._
 import scalafx.scene.shape.Rectangle
 import collection.immutable.IndexedSeq
 import java.util
+import scala.Some
+import scala.Some
+import scala.Some
 
 /**
  * Created by IntelliJ IDEA.

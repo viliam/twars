@@ -16,6 +16,7 @@
 package sk.kave.tank.fx
 
 import actors.Actor
+import map.KeyPressEvent
 import scalafx.scene.Group
 import sk.kave.tank._
 

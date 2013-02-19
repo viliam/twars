@@ -1,6 +1,7 @@
 package sk.kave.tank.fx
 
 import actors.Actor
+import map.MapGroup
 import sk.kave.tank._
 import scalafx.animation.Timeline
 import javafx.event.{ActionEvent, EventHandler}
