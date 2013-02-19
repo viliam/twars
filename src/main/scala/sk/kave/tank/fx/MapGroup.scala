@@ -39,6 +39,7 @@ object MapGroup extends Group {
     rec.y = iRow * ItemSize
 
     rec.fill = map(iCol, iRow).fillColor
+
     rec
   }
 }

@@ -12,8 +12,8 @@ import org.apache.log4j.Logger
  */
 package object tank {
 
-  val Width = 400
-  val Height = 400
+  val Width = 900
+  val Height = 900
 
   val ItemSize = 10
 

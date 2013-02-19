@@ -11,7 +11,7 @@ import java.util.concurrent.CountDownLatch
 /**
  * actor performing moves
  *
- * @author Igo
+ * @author Igo & Vil
  */
 class MovingActor(val gameControllerActor: GameControllerActor) extends Actor {
   self =>
@@ -81,13 +81,13 @@ class MovingActor(val gameControllerActor: GameControllerActor) extends Actor {
   }
 
   private def runInJFXthread(runThis: => Unit) {
-    val latch = new CountDownLatch(1)
+    //val latch = new CountDownLatch(1)
     javafx.application.Platform.runLater(new Runnable() {
       def run() {
         runThis
-        latch.countDown()
+        //latch.countDown()
       }
     })
-    latch.await()
+    //latch.await()
   }
 }

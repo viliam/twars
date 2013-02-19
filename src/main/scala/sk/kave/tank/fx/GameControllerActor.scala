@@ -63,6 +63,15 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
 
 
   private def updateDirection(action: Action.Value, kpe: KeyPressEvent.Value) {
+
+    def setAction[T <: Direction](newDirection: T, oldDirection: Option[T], kpe: KeyPressEvent.Value): Option[T] = {
+      if (kpe == KeyPressEvent.RELEASED && oldDirection.get == newDirection) {
+        None
+      } else {
+        Some(newDirection)
+      }
+    }
+
     action match {
       case Action.UP =>
         vertical = setAction(UP, vertical, kpe)
@@ -79,13 +88,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
   }
 
 
-  private def setAction[T <: Direction](newDirection: T, oldDirection: Option[T], kpe: KeyPressEvent.Value): Option[T] = {
-    if (kpe == KeyPressEvent.RELEASED && oldDirection.get == newDirection) {
-      None
-    } else {
-      Some(newDirection)
-    }
-  }
+
 }
 
 
