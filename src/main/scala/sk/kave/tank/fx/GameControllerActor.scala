@@ -16,14 +16,8 @@
 package sk.kave.tank.fx
 
 import actors.Actor
-import scalafx.animation.Timeline
-import javafx.event.EventHandler
-import javafx.event.ActionEvent
-import scalafx.Includes._
 import scalafx.scene.Group
 import sk.kave.tank._
-import sun.awt.VerticalBagLayout
-import java.util.concurrent.CountDownLatch
 
 /*
 
@@ -33,7 +27,7 @@ synchronized.
  */
 
 object Action extends Enumeration {
-  val DOWN, LEFT, RIGHT, UP, EXIT = Value
+  val DOWN, LEFT, RIGHT, UP, EXIT, CONTINUE = Value
 }
 
 class GameControllerActor(val mapGroup: Group) extends Actor {
@@ -41,113 +35,56 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
 
   var (horizontal, vertical): (Option[Horizontal], Option[Vertical]) = (None, None)
 
-  private var isTimelineAlive = false  //private lock used for waiting for finish timeline moving
+  val movingActor = new MovingActor(self)
+  movingActor.start()
+
+  private var isTimelineAlive = false //private lock used for waiting for finish timeline moving
 
   def act() {
     react {
       case (Action.EXIT, _) =>
         logg.info("actor says 'Good bye'")
+        movingActor !(Action.EXIT, KeyPressEvent.PRESSED)
       case (a: Action.Value, kpe: KeyPressEvent.Value) =>
+
+        updateDirection(a, kpe)
+
         if (!isTimelineAlive) {
-          updateDirection(a, kpe)
-          runInJFXthread(move())
+          isTimelineAlive = true
+          movingActor !(horizontal, vertical)
         }
+        act()
+
+      case Action.CONTINUE =>
+        isTimelineAlive = false
         act()
     }
   }
 
-  private def isMoving: Boolean = !horizontal.isEmpty && !vertical.isEmpty
-
-
-  private def getDirectionHorizontal =
-    horizontal match {
-      case Some(LEFT) => +ItemSize
-      case Some(RIGHT) => -ItemSize
-      case None => 0
-    }
-
-  private def getDirectionVertical =
-    vertical match {
-      case Some(UP) => +ItemSize
-      case Some(DOWN) => -ItemSize
-      case None => 0
-    }
-
-  private def translateX = mapGroup.translateX
-
-  private def translateY = mapGroup.translateY
-
-  private def setAction[T <: Direction](newDirection: T, kpe: KeyPressEvent.Value): Option[T] = {
-    if (kpe == KeyPressEvent.RELEASED) {
-      None
-    } else {
-      Some(newDirection)
-    }
-  }
 
   private def updateDirection(action: Action.Value, kpe: KeyPressEvent.Value) {
     action match {
       case Action.UP =>
-        vertical = setAction(UP, kpe)
+        vertical = setAction(UP, vertical, kpe)
 
       case Action.DOWN =>
-        vertical = setAction(DOWN, kpe)
+        vertical = setAction(DOWN, vertical, kpe)
 
       case Action.LEFT =>
-        horizontal = setAction(LEFT, kpe)
+        horizontal = setAction(LEFT, horizontal, kpe)
 
       case Action.RIGHT =>
-        horizontal = setAction(RIGHT, kpe)
+        horizontal = setAction(RIGHT, horizontal, kpe)
     }
   }
 
-  private def move() {
-    if (!isMoving  && !MapGroup.canMove((horizontal, vertical))) {
-      return
+
+  private def setAction[T <: Direction](newDirection: T, oldDirection: Option[T], kpe: KeyPressEvent.Value): Option[T] = {
+    if (kpe == KeyPressEvent.RELEASED && oldDirection.get == newDirection) {
+      None
+    } else {
+      Some(newDirection)
     }
-
-    isTimelineAlive = true
-    val v = vertical
-    val h = horizontal
-
-
-    new Timeline() {
-      onFinished = new EventHandler[ActionEvent] {
-        def handle(e: ActionEvent) {
-          MapGroup.move(v)
-          MapGroup.move(h)
-
-          if (isMoving) {
-            move()
-          }
-          else {
-            isTimelineAlive = false
-          }
-        }
-      }
-
-      keyFrames = Seq(
-        at(0 ms) {
-          Set(translateX -> translateX(),
-            translateY -> translateY())
-        },
-        at(10 ms) {
-          Set(translateX -> (translateX() + getDirectionHorizontal),
-            translateY -> (translateY() + getDirectionVertical))
-        }
-      )
-    }.play
-  }
-
-  private def runInJFXthread(runThis: => Unit) {
-    val latch = new CountDownLatch(1)
-    javafx.application.Platform.runLater(new Runnable() {
-      def run() {
-        runThis
-        latch.countDown()
-      }
-    })
-    latch.await()
   }
 }
 
