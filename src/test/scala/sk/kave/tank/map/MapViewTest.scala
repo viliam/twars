@@ -44,9 +44,22 @@ class MapViewTest {
   def testMoveDown() {
     mapView.move(Some(DOWN))
 
+    //assert rows
     Assert.assertNotNull(rows)
-    Assert.assertTrue(rows.contains(rows.size))
-    Assert.assertFalse(rows.contains(0))
+    for (i <- 0 - mapView.BORDER_SIZE + 1 until 5 - mapView.BORDER_SIZE + 1) {
+      Assert.assertTrue(rows.contains(i))
+      Assert.assertArrayEquals((0 - mapView.BORDER_SIZE until 5 - mapView.BORDER_SIZE).toArray, rows(i).toArray)
+    }
+
+    //assert cols
+    Assert.assertNotNull(cols)
+    for (i <- 0 - mapView.BORDER_SIZE until 4 - mapView.BORDER_SIZE) {
+      Assert.assertTrue(cols.contains(i))
+      Assert.assertTrue(cols(i).toList.forall(i == _))
+    }
+
+    Assert.assertEquals(4 + mapView.BORDER_SIZE, rows.size)
+    Assert.assertEquals(4 + mapView.BORDER_SIZE, cols.size)
   }
 
   @Test
@@ -65,12 +78,20 @@ class MapViewTest {
     Assert.assertNotNull(rows)
     for (i <- 0 until 4) {
       Assert.assertTrue(rows.contains(i))
+      Assert.assertArrayEquals(Array(0, 1, 2, 3, -1), rows(i).toArray)
     }
 
     //assert cols
     Assert.assertNotNull(cols)
-    Assert.assertTrue(cols.contains(cols.size))
-    Assert.assertFalse(cols.contains(0))
+    for (i <- 0 - mapView.BORDER_SIZE + 1 until 4 - mapView.BORDER_SIZE + 1) {
+      Assert.assertTrue(cols.contains(i))
+      Assert.assertTrue(cols(i).toList.forall(i == _))
+    }
+
+    Assert.assertTrue(cols(cols.size - 1).toList.forall(-1 == _))
+
+    Assert.assertEquals(4 + mapView.BORDER_SIZE, rows.size)
+    Assert.assertEquals(4 + mapView.BORDER_SIZE, cols.size)
   }
 
   @Test
@@ -91,20 +112,23 @@ class MapViewTest {
     assertMap(rows, cols)
   }
 
+
   private def assertMap(rows: scala.collection.mutable.Map[Int, ListBuffer[Int]], cols: scala.collection.mutable.Map[Int, ListBuffer[Int]]) {
     //assert rows
-    Assert.assertNotNull(rows)
-    for (i <- 0 until 4) {
+    for (i <- 0 - mapView.BORDER_SIZE until 5 - mapView.BORDER_SIZE) {
       Assert.assertTrue(rows.contains(i))
+      Assert.assertArrayEquals((0 - mapView.BORDER_SIZE until 5 - mapView.BORDER_SIZE).toArray, rows(i).toArray)
     }
+
 
     //assert cols
     Assert.assertNotNull(cols)
-    for (i <- 0 until 4) {
+    for (i <- 0 - mapView.BORDER_SIZE until 5 - mapView.BORDER_SIZE) {
+      Assert.assertTrue(cols.contains(i))
       Assert.assertTrue(cols(i).toList.forall(i == _))
     }
 
-    Assert.assertEquals(4, rows.size)
-    Assert.assertEquals(4, cols.size)
+    Assert.assertEquals(4 + mapView.BORDER_SIZE, rows.size)
+    Assert.assertEquals(4 + mapView.BORDER_SIZE, cols.size)
   }
 }

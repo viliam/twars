@@ -47,21 +47,28 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
         logg.info("actor says 'Good bye'")
         movingActor !(Action.EXIT, KeyPressEvent.PRESSED)
       case (a: Action.Value, kpe: KeyPressEvent.Value) =>
-        logg.debug("action = " + a + " kpe = " + kpe)
         updateDirection(a, kpe)
 
         if (!isTimelineAlive) {
-          logg.debug("pustam: horizontal " + horizontal + " vertical " + vertical)
-          isTimelineAlive = true
-          movingActor !(horizontal, vertical)
+          makeMove()
         }
         act()
 
       case Action.CONTINUE =>
         isTimelineAlive = false
+        if (isMoving) {
+          makeMove()
+        }
         act()
     }
   }
+
+  private def makeMove() {
+    isTimelineAlive = true
+    movingActor !(horizontal, vertical)
+  }
+
+  private def isMoving: Boolean = horizontal.isDefined || vertical.isDefined
 
 
   private def updateDirection(action: Action.Value, kpe: KeyPressEvent.Value) {
