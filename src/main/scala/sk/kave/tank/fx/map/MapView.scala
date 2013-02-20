@@ -6,6 +6,7 @@ import fx._
 import collection.immutable.IndexedSeq
 import java.util
 import scala.Some
+import collection.mutable.ListBuffer
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,10 +27,10 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
   def rowMax = config.height / config.itemSize + row - 1
 
   val rows = mutable.Map() ++ (for (i <- col to colMax) yield {
-    (i, new util.LinkedList[R]())
+    (i, new ListBuffer[R]())
   })
   val cols = mutable.Map() ++ (for (i <- row to rowMax) yield {
-    (i, new util.LinkedList[R]())
+    (i, new ListBuffer[R]())
   })
 
   def init(): IndexedSeq[R] = {
@@ -40,8 +41,8 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
     yield {
       val r = initRec(None, iCol, iRow)
 
-      rows(iRow).addLast(r)
-      cols(iCol).addLast(r)
+      rows(iRow) += r
+      cols(iCol) += r
       r
     }
   }
@@ -109,7 +110,7 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
 
     val list = li.get
     for (i <- 0 until list.size) {
-      initRec( Some( list.get(i)), to, row + i)
+      initRec( Some( list(i)), to, row + i)
     }
   }
 
@@ -120,12 +121,12 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
 
     val list = li.get
     for (i <- 0 until list.size) {
-      initRec(Some(list.get(i)), col + i, to)
+      initRec(Some(list(i)), col + i, to)
     }
   }
 
 
-  private def moveEdgeFromTo(map: mutable.Map[Int, util.LinkedList[R]], oldPosition: Int, newPosition: Int): Option[util.LinkedList[R]] = {
+  private def moveEdgeFromTo(map: mutable.Map[Int, ListBuffer[R]], oldPosition: Int, newPosition: Int): Option[ListBuffer[R]] = {
     logg.debug("move edge, oldposition = " + oldPosition + "    newposition = " + newPosition)
 
     val liOption = map.remove(oldPosition) //remove rectangles from their old position
@@ -135,17 +136,17 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
     liOption
   }
 
-  private def moveEveryEdgeFromTo(map: mutable.Map[Int, util.LinkedList[R]], dir: Boolean) {
+  private def moveEveryEdgeFromTo(map: mutable.Map[Int, ListBuffer[R]], dir: Boolean) {
 
     if (dir) {
       for (k <- map.keys) {
-        val firstRect = map(k).removeFirst()
-        map(k).addLast(firstRect)
+        val firstRect = map(k).remove(0)
+        map(k) +=firstRect
       }
     } else {
       for (k <- map.keys) {
-        val firstRect = map(k).removeLast()
-        map(k).addFirst(firstRect)
+        val firstRect = map(k).remove(map(k).size-1)
+        firstRect +=: map(k)
       }
     }
   }
