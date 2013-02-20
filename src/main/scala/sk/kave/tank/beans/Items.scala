@@ -26,4 +26,5 @@ sealed abstract class Items(val fillColor:Color)
 case object Ground extends Items(Color.BROWN)
 case object Grass extends Items(Color.GREEN)
 case object Stone extends Items(Color.GREY)
+case object NoMap extends Items(Color.WHITE)
 

@@ -4,7 +4,6 @@ import sk.kave.tank._
 import collection.mutable
 import fx._
 import collection.immutable.IndexedSeq
-import java.util
 import scala.Some
 import collection.mutable.ListBuffer
 
@@ -15,16 +14,16 @@ import collection.mutable.ListBuffer
  * Time: 11:55
  */
 
-class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Config) {
+class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Config) {
   val BORDER_SIZE = 1 //width of border (in rectangles) around user's view
 
   //current position of the map group; coordinates are indices in map data model
-  var col = 0
-  var row = 0
+  var col = 0 - BORDER_SIZE
+  var row = 0 - BORDER_SIZE
 
-  def colMax = config.width / config.itemSize + col - 1
+  def colMax = config.width / config.itemSize + col - 1 + BORDER_SIZE
 
-  def rowMax = config.height / config.itemSize + row - 1
+  def rowMax = config.height / config.itemSize + row - 1 + BORDER_SIZE
 
   val rows = mutable.Map() ++ (for (i <- col to colMax) yield {
     (i, new ListBuffer[R]())
@@ -48,21 +47,26 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
   }
 
   def canMove(dir: (Option[Horizontal], Option[Vertical])): Boolean = {
-
-    (dir._1 match {
-      case Some(LEFT) if (col <= 0) =>
-        false
-      case Some(RIGHT) if (col == MapGroup.map.maxCols - 1) =>
-        false
-      case _ => true
-    }) &&
-      (dir._2 match {
-        case Some(UP) if (row <= 0) =>
+    val result =
+      (dir._1 match {
+        case Some(LEFT) if (col <= 0) =>
           false
-        case Some(DOWN) if (row == MapGroup.map.maxRows - 1) =>
+        case Some(RIGHT) if (col >= MapGroup.map.maxCols - 1 + BORDER_SIZE - colMax) =>
           false
         case _ => true
-      })
+      }) &&
+        (dir._2 match {
+          case Some(UP) if (row <= 0) =>
+            false
+          case Some(DOWN) if (row >= MapGroup.map.maxRows - 1 + BORDER_SIZE - rowMax) =>
+            false
+          case _ => true
+        })
+    if (!result) {
+      logg.debug("cannot move")
+    }
+
+    result
   }
 
   def move(d: Option[Direction]) {
@@ -70,31 +74,31 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
 
     d match {
       case Some(DOWN) => {
-        require(row >= 0 && row < MapGroup.map.maxRows - 1)
-        require(col >= 0 && col < MapGroup.map.maxCols)
+        require(row >= 0 - BORDER_SIZE && row < MapGroup.map.maxRows - 1 + BORDER_SIZE, "row = " + row + " maxRows = " + MapGroup.map.maxRows)
+        require(col >= 0 - BORDER_SIZE && col < MapGroup.map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + MapGroup.map.maxCols)
 
         moveVertical(row, rowMax + 1, DOWN)
 
         row = row + 1
       }
       case Some(UP) => {
-        require(row >= 1 && row < MapGroup.map.maxRows)
-        require(col >= 0 && col < MapGroup.map.maxCols)
+        require(row >= 1 - BORDER_SIZE && row < MapGroup.map.maxRows + BORDER_SIZE, "row = " + row + " maxRows = " + MapGroup.map.maxRows)
+        require(col >= 0 - BORDER_SIZE && col < MapGroup.map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + MapGroup.map.maxCols)
 
         moveVertical(rowMax, row - 1, UP)
 
         row = row - 1
       }
       case Some(RIGHT) =>
-        require(row >= 0 && row < MapGroup.map.maxRows)
-        require(col >= 0 && col < MapGroup.map.maxCols - 1)
+        require(row >= 0 - BORDER_SIZE && row < MapGroup.map.maxRows + BORDER_SIZE, "row = " + row + " maxRows = " + MapGroup.map.maxRows)
+        require(col >= 0 - BORDER_SIZE && col < MapGroup.map.maxCols - 1 + BORDER_SIZE, "col = " + col + " maxCols = " + MapGroup.map.maxCols)
 
         moveHorizontal(col, colMax + 1, RIGHT)
 
         col = col + 1
       case Some(LEFT) =>
-        require(row >= 0 && row < MapGroup.map.maxRows)
-        require(col >= 1 && col < MapGroup.map.maxCols)
+        require(row >= 0 - BORDER_SIZE && row < MapGroup.map.maxRows + BORDER_SIZE, "row = " + row + " maxRows = " + MapGroup.map.maxRows)
+        require(col >= 1 - BORDER_SIZE && col < MapGroup.map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + MapGroup.map.maxCols)
 
         moveHorizontal(colMax, col - 1, LEFT)
 
@@ -110,7 +114,7 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
 
     val list = li.get
     for (i <- 0 until list.size) {
-      initRec( Some( list(i)), to, row + i)
+      initRec(Some(list(i)), to, row + i)
     }
   }
 
@@ -127,8 +131,6 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
 
 
   private def moveEdgeFromTo(map: mutable.Map[Int, ListBuffer[R]], oldPosition: Int, newPosition: Int): Option[ListBuffer[R]] = {
-    logg.debug("move edge, oldposition = " + oldPosition + "    newposition = " + newPosition)
-
     val liOption = map.remove(oldPosition) //remove rectangles from their old position
 
     map(newPosition) = liOption.get //move them to new position
@@ -141,14 +143,13 @@ class MapView[R](val initRec : (Option[R],Int, Int) => R)(implicit config : Conf
     if (dir) {
       for (k <- map.keys) {
         val firstRect = map(k).remove(0)
-        map(k) +=firstRect
+        map(k) += firstRect
       }
     } else {
       for (k <- map.keys) {
-        val firstRect = map(k).remove(map(k).size-1)
+        val firstRect = map(k).remove(map(k).size - 1)
         firstRect +=: map(k)
       }
     }
   }
-
 }
