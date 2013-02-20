@@ -21,9 +21,9 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
   var col = 0 - BORDER_SIZE
   var row = 0 - BORDER_SIZE
 
-  def colMax = config.width / config.itemSize + col - 1 + BORDER_SIZE
+  def colMax = config.width + col - 1 + BORDER_SIZE
 
-  def rowMax = config.height / config.itemSize + row - 1 + BORDER_SIZE
+  def rowMax = config.height + row - 1 + BORDER_SIZE
 
   val rows = mutable.Map() ++ (for (i <- col to colMax) yield {
     (i, new ListBuffer[R]())

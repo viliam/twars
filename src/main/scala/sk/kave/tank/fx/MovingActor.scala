@@ -1,8 +1,9 @@
 package sk.kave.tank.fx
 
 import actors.Actor
-import map.MapGroup
+import map.{GameStage, MapGroup}
 import sk.kave.tank._
+import sk.kave.tank.beans.Tank
 import scalafx.animation.Timeline
 import javafx.event.{ActionEvent, EventHandler}
 import scalafx.Includes._
@@ -18,6 +19,8 @@ class MovingActor(val gameControllerActor: GameControllerActor) extends Actor {
   self =>
 
   val config = implicitly[Config]
+
+  var vect : Vector2D = ( None, Some(UP))  //todo move to tank
 
   def act() {
     react {
@@ -44,11 +47,12 @@ class MovingActor(val gameControllerActor: GameControllerActor) extends Actor {
     }
 
   private def translateX = MapGroup.translateX
-
   private def translateY = MapGroup.translateY
 
+  private def tankRotate = GameStage.tankNode.rotate
 
-  private def move(horizontal: Option[Horizontal], vertical: Option[Vertical]) {
+  private def move(vec : Vector2D) {
+    val (horizontal, vertical) = vec
     if (!MapGroup.canMove((horizontal, vertical))) {
       gameControllerActor ! Action.CONTINUE
       return
@@ -65,6 +69,8 @@ class MovingActor(val gameControllerActor: GameControllerActor) extends Actor {
             MapGroup.move(v)
             MapGroup.move(h)
 
+            vect = (h, v)
+
             gameControllerActor ! Action.CONTINUE
           }
         }
@@ -72,11 +78,14 @@ class MovingActor(val gameControllerActor: GameControllerActor) extends Actor {
         keyFrames = Seq(
           at(0 ms) {
             Set(translateX -> translateX(),
-              translateY -> translateY())
+                translateY -> translateY(),
+                tankRotate -> tankRotate()
+            )
           },
           at(10 ms) {
             Set(translateX -> (translateX() + getDirectionHorizontal(h)),
-              translateY -> (translateY() + getDirectionVertical(v)))
+                translateY -> (translateY() + getDirectionVertical(v)),
+                tankRotate -> (tankRotate() + Tank.getAngle( vect, (h,v) ) ) )
           }
         )
       }.play

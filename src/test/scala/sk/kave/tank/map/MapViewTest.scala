@@ -18,6 +18,7 @@ class MapViewTest {
     def height = 4
 
     def itemSize = 1
+    def tankSize = 2
   }
 
   def rows = mapView.rows

@@ -5,6 +5,7 @@ import java.io.{BufferedReader, File, FileReader}
 import collection.mutable.ArrayBuffer
 import org.apache.log4j.Logger
 import scalafx.beans.property.DoubleProperty
+import tank.fx.{Vertical, Horizontal}
 
 /**
  * User: wilo
@@ -13,17 +14,22 @@ import scalafx.beans.property.DoubleProperty
  */
 package object tank {
 
+  type Vector2D = ( Option[Horizontal], Option[Vertical])
+
   trait Config {
       def width  : Int
       def height : Int
       def itemSize : Int
+      def tankSize : Int
   }
 
   implicit object ConfigImpl extends Config {
-    val width = 900
-    val height = 900
+    val width = 30
+    val height = 30
 
     val itemSize = 10
+
+    val tankSize = 5
 
   }
 

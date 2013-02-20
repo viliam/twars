@@ -1,6 +1,6 @@
 package sk.kave.tank
 
-import fx.map.MapStage
+import fx.map.GameStage
 import fx.{Action, GameControllerActor}
 import scalafx.application.JFXApp
 import scalafx.animation.{KeyFrame, Animation, Timeline}
@@ -15,8 +15,8 @@ import scalafx.util.Duration
  */
 object Main extends JFXApp {
 
-  stage = MapStage
+  stage = GameStage
 
-  val controlerActor = (new GameControllerActor(MapStage.mapGroup)).start()
+  val controlerActor = (new GameControllerActor(GameStage.mapGroup)).start()
 
 }
