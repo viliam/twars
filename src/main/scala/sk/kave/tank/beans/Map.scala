@@ -23,7 +23,7 @@ class Map(val items: ROWS) extends EventTrait[MapChangedEvent] {
   val maxRows: Int = items.size
   val maxCols: Int = items(0).size
 
-  def apply(r: Int, c: Int): Items = {
+  def apply(c: Int, r: Int): Items = {
     if (r >= maxRows || r < 0 || c >= maxCols || c < 0) {
       return NoMap
     }
