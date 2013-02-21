@@ -15,7 +15,7 @@ import javafx.event.{ActionEvent, EventHandler}
  *
  * @author Vil
  */
-class TankActor(val klient : Actor) extends Actor {
+class TankActor extends Actor {
   self =>
 
   private def tankRotate = GameStage.tankNode.rotate
@@ -38,12 +38,12 @@ class TankActor(val klient : Actor) extends Actor {
 
           mapActor ! newVect
         } else {
-          klient ! Action.CONTINUE
+          Main.controlerActor ! Action.CONTINUE
         }
 
         act()
-      case Action.CONTINUE =>
-        klient ! Action.CONTINUE
+      case Action.CONTINUE =>        //when one key si released, actor needs to continue
+        Main.controlerActor ! Action.CONTINUE
         act()
     }
     }

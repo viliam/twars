@@ -17,23 +17,22 @@ import scala.Some
  */
 
 class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Config) {
+  import config._
+
   val BORDER_SIZE = 1 //width of border (in rectangles) around user's view
 
+  val map  = Game.map
+  val tank = Game.tank
+
   //current position of the map group; coordinates are indices in map data model
-  var col = 0 - BORDER_SIZE
-  var row = 0 - BORDER_SIZE
+  var col = tank.x - BORDER_SIZE - (config.width - tankSize)/2
+  var row = tank.y - BORDER_SIZE - (config.height - tankSize)/2
 
   def colMax = config.width + col - 1 + BORDER_SIZE
   def rowMax = config.height + row - 1 + BORDER_SIZE
 
-  val map  = Game.map
-
-  val rows = mutable.Map() ++ (for (i <- col to colMax) yield {
-    (i, new ListBuffer[R]())
-  })
-  val cols = mutable.Map() ++ (for (i <- row to rowMax) yield {
-    (i, new ListBuffer[R]())
-  })
+  val cols = mutable.Map() ++ (for (i <- col to colMax) yield (i, new ListBuffer[R]())  )
+  val rows = mutable.Map() ++ (for (i <- row to rowMax) yield (i, new ListBuffer[R]())  )
 
   def init(): IndexedSeq[R] = {
 
@@ -54,14 +53,14 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
       (dir._1 match {
         case Some(LEFT) if (col <= 0) =>
           false
-        case Some(RIGHT) if (col >= map.maxCols - 1 + BORDER_SIZE - colMax) =>
+        case Some(RIGHT) if (col >= map.maxCols - 1 + BORDER_SIZE - config.width) =>
           false
         case _ => true
       }) &&
         (dir._2 match {
           case Some(UP) if (row <= 0) =>
             false
-          case Some(DOWN) if (row >= map.maxRows - 1 + BORDER_SIZE - rowMax) =>
+          case Some(DOWN) if (row >= map.maxRows - 1 + BORDER_SIZE - config.height) =>
             false
           case _ => true
         })
@@ -77,7 +76,6 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
 
     d match {
       case Some(DOWN) => {
-
         require(row >= 0 - BORDER_SIZE && row < map.maxRows - 1 + BORDER_SIZE, "row = " + row + " maxRows = " + map.maxRows)
         require(col >= 0 - BORDER_SIZE && col < map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + map.maxCols)
 

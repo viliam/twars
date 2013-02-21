@@ -8,5 +8,5 @@ object Game {
   import config._
 
   def map = Map()
-  def tank = new Tank((config.width - tankSize) /2, (config.height - tankSize) /2)
+  def tank = new Tank(map.maxCols /2, map.maxRows /2)
 }

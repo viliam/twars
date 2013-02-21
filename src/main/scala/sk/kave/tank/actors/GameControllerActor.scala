@@ -11,7 +11,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
 
   var (horizontal, vertical): Vector2D = (None, None)
 
-  val tankActor = (new TankActor(self)).start()
+  val tankActor = (new TankActor).start()
 
   private var isTimelineAlive = false //private lock used for waiting for finish timeline moving
 
@@ -19,7 +19,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
     react {
       case (Action.EXIT, _) =>
         logg.info("actor says 'Good bye'")
-        tankActor !(Action.EXIT, KeyPressEvent.PRESSED)
+        exit()
       case (a: Action.Value, kpe: KeyPressEvent.Value) =>
         updateDirection(a, kpe)
 

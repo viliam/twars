@@ -14,12 +14,15 @@ import scala.Some
 object MapGroup extends Group {
 
   val config = implicitly[Config]
+  import config._
 
   val mapView = new MapView[Rectangle](  initRec )
   val map = Game.map
 
   def init() {
     children = mapView.init()
+    layoutX = -((mapView.col + mapView.BORDER_SIZE) * itemSize)  //todo: maybe move this transformations
+    layoutY = -((mapView.row + mapView.BORDER_SIZE) * itemSize)  //      to another place .?
     map.addListener(this, eventOccured)
   }
 
