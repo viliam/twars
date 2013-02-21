@@ -18,6 +18,7 @@ class MapViewTest {
     def height = 4
 
     def itemSize = 1
+
     def tankSize = 2
   }
 
@@ -112,7 +113,6 @@ class MapViewTest {
 
     assertMap(rows, cols)
   }
-
 
   private def assertMap(rows: scala.collection.mutable.Map[Int, ListBuffer[Int]], cols: scala.collection.mutable.Map[Int, ListBuffer[Int]]) {
     //assert rows

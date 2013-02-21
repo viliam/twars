@@ -7,16 +7,21 @@ package sk.kave.tank.beans
  */
 
 import sk.kave.tank._
+import events.EventTrait
+import events.mapchanged.MapChangedEvent
 
 
-object Map {
+object Map{
 
   lazy val m: Map = readMapFromFile("mapa.mapa")
 
   def apply() = m
 }
 
-class Map(val items: ROWS) {
+class Map(val items: ROWS) extends EventTrait[MapChangedEvent] {
+
+  val maxRows: Int = items.size
+  val maxCols: Int = items(0).size
 
   def apply(r: Int, c: Int): Items = {
     if (r >= maxRows || r < 0 || c >= maxCols || c < 0) {
@@ -25,6 +30,11 @@ class Map(val items: ROWS) {
     items(r)(c)
   }
 
-  val maxRows: Int = items.size
-  val maxCols: Int = items(0).size
+  def update(r: Int, c: Int, newValue: Items) {
+    items(r)(c) = newValue
+
+    fireEvent(new MapChangedEvent(r, c, newValue))
+  }
+
+
 }

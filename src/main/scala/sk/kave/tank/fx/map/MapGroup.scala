@@ -4,13 +4,10 @@ import scalafx.scene.Group
 import scalafx.scene.shape.Rectangle
 import sk.kave.tank._
 
+import events.mapchanged.MapChangedEvent
 import fx.{Vertical, Horizontal, Direction}
-import sk.kave.tank.beans.Map
-import scala.collection.mutable.ListBuffer
-import scalafx.animation.{KeyFrame, Timeline}
-import javafx.event.{ActionEvent, EventHandler}
+import beans.Map
 import scala._
-import scala.collection.mutable
 
 import scala.Some
 
@@ -19,10 +16,15 @@ object MapGroup extends Group {
   val config = implicitly[Config]
 
   val map = Map()
-  val mapView = new MapView[Rectangle](  initRec )
+  val mapView = new MapView[Rectangle](initRec)
 
   def init() {
     children = mapView.init()
+    map.addListener(this, eventOccured)
+  }
+
+  def destroy(){
+    map.removeListener(this)
   }
 
 
@@ -40,9 +42,9 @@ object MapGroup extends Group {
   private[fx] def initRec(opRec: Option[Rectangle], iCol: Int, iRow: Int) = {
     val rec = opRec match {
       case None => new Rectangle() {
-          width = config.itemSize + 2
-          height = config.itemSize + 2
-        }
+        width = config.itemSize + 2
+        height = config.itemSize + 2
+      }
       case Some(r) => r
     }
 
@@ -52,5 +54,9 @@ object MapGroup extends Group {
     rec.fill = map(iCol, iRow).fillColor
 
     rec
+  }
+
+  def eventOccured(event: MapChangedEvent) {
+    mapView.updateRec(event.row, event.col, event.newValue)
   }
 }

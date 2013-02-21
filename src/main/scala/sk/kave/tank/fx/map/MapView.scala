@@ -1,6 +1,7 @@
 package sk.kave.tank.fx.map
 
 import sk.kave.tank._
+import beans.Items
 import collection.mutable
 import fx._
 import collection.immutable.IndexedSeq
@@ -151,5 +152,19 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
         firstRect +=: map(k)
       }
     }
+  }
+
+  def updateRec(uRow: Int, uCol: Int, newItem: Items) {
+    if (row >= uRow && col >= uCol && row < rowMax && col < colMax) return
+    var r = rows(uRow)(uCol)
+
+    //update JFX
+    r = initRec(Some(r), uCol, uRow)
+
+    //update rows map
+    rows(uRow)(uCol) = r
+
+    //update cols map
+    cols(uCol)(uRow) = r
   }
 }
