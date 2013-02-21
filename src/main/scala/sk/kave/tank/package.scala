@@ -37,14 +37,15 @@ package object tank {
   val logg = Logger.getLogger(Main.getClass)
 
   def readMapFromFile( fileName : String ) : Map = {
-      val fileReader: FileReader = new FileReader(new File( fileName))
-      val buffReader: BufferedReader = new BufferedReader(fileReader)
+    val fileReader: FileReader = new FileReader(new File( fileName))
+    val buffReader: BufferedReader = new BufferedReader(fileReader)
 
-      var s: String = null
-      val li: ArrayBuffer[Array[Items]] = new ArrayBuffer[Array[Items]]
-      while ({s = buffReader.readLine; s} != null) {
-        li += (for (a <- s) yield Items(a)).toArray
-      }
-      new Map(li.toArray)
+    var s: String = null
+    val li: ArrayBuffer[Array[Items]] = new ArrayBuffer[Array[Items]]
+    while ({s = buffReader.readLine; s} != null) {
+      li += (for (a <- s) yield Items(a)).toArray
+    }
+
+    new Map(li.toArray)
   }
 }

@@ -14,7 +14,7 @@ import javafx.event.{ActionEvent, EventHandler}
  *
  * @author Igo & Vil
  */
-class MapMovingActor extends Actor {
+class MovementActor extends JfxActor {
   self =>
 
   private def translateX = MapGroup.translateX
@@ -80,12 +80,4 @@ class MapMovingActor extends Actor {
       case Some(DOWN) => -config.itemSize
       case None => 0
     }
-
-  override val scheduler = new SchedulerAdapter {
-    def execute( codeBlock : => Unit) : Unit = {
-      javafx.application.Platform.runLater(new Runnable() {
-        def run() = codeBlock
-      })
-    }
-  }
 }

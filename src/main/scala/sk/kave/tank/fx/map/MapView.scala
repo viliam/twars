@@ -28,8 +28,8 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
   var col = tank.x - BORDER_SIZE - (config.width - tankSize)/2
   var row = tank.y - BORDER_SIZE - (config.height - tankSize)/2
 
-  def colMax = config.width + col - 1 + BORDER_SIZE
-  def rowMax = config.height + row - 1 + BORDER_SIZE
+  def colMax = config.width + col + BORDER_SIZE*2
+  def rowMax = config.height + row  + BORDER_SIZE*2
 
   val cols = mutable.Map() ++ (for (i <- col to colMax) yield (i, new ListBuffer[R]())  )
   val rows = mutable.Map() ++ (for (i <- row to rowMax) yield (i, new ListBuffer[R]())  )

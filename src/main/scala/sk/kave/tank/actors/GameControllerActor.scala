@@ -11,7 +11,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
 
   var (horizontal, vertical): Vector2D = (None, None)
 
-  val tankActor = (new TankActor).start()
+  val tankActor = (new RotationActor).start()
 
   private var isTimelineAlive = false //private lock used for waiting for finish timeline moving
 

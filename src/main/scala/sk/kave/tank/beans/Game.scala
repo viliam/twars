@@ -8,5 +8,5 @@ object Game {
   import config._
 
   def map = Map()
-  def tank = new Tank(map.maxCols /2, map.maxRows /2)
+  val tank = new Tank(map.maxCols /2, map.maxRows /2)
 }

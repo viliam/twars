@@ -1,7 +1,10 @@
 package sk.kave.tank.beans
 
-import sk.kave.tank.fx.{UP, LEFT, DOWN, RIGHT}
 import sk.kave.tank._
+import fx._
+import scala.Some
+import sk.kave.tank.map
+import scala.Some
 
 object Tank {
 
@@ -19,9 +22,19 @@ object Tank {
   }
 }
 
-class Tank(
+class Tank (
     @volatile var x: Int,
     @volatile var y: Int,
-    @volatile var vect : Vector2D = ( None, Some(UP)) )  {
+    @volatile var vect : Vector2D = ( None, Some(UP)) ) (implicit config: Config) {
 
+  import config._
+
+  val map = Game.map
+
+  for ( c <- x until x+tankSize;
+        r <- y until y+tankSize) map.update(c, r, NoMap)
+
+  def move( vect: Option[Direction]) {
+
+  }
 }

@@ -15,11 +15,11 @@ import javafx.event.{ActionEvent, EventHandler}
  *
  * @author Vil
  */
-class TankActor extends Actor {
+class RotationActor extends JfxActor {
   self =>
 
   private def tankRotate = GameStage.tankNode.rotate
-  val mapActor = (new MapMovingActor).start()
+  val mapActor = (new MovementActor).start()
   val tank = Game.tank
 
   var newVect : Vector2D = tank.vect
@@ -72,11 +72,4 @@ class TankActor extends Actor {
     }.play
   }
 
-  override val scheduler = new SchedulerAdapter {
-    def execute( codeBlock : => Unit) : Unit = {
-      javafx.application.Platform.runLater(new Runnable() {
-        def run() = codeBlock
-      })
-    }
-  }
 }

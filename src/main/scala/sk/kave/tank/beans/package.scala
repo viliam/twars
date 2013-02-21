@@ -7,7 +7,7 @@ package sk.kave.tank
   */
 package object beans {
 
-  type COLUMNS = Array[Items]
-  type ROWS = Array[ COLUMNS]
+  type ROWS = Array[Items]
+  type COLUMNS = Array[ ROWS]
 
 }

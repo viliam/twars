@@ -18,22 +18,24 @@ private[beans] object Map {
   def apply() = m
 }
 
-class Map(val items: ROWS) extends EventTrait[MapChangedEvent] {
+class Map(val items: COLUMNS) extends EventTrait[MapChangedEvent] {
 
-  val maxRows: Int = items.size
-  val maxCols: Int = items(0).size
+  val maxCols: Int = items.size
+  val maxRows: Int = items(0).size
 
   def apply(c: Int, r: Int): Items = {
     if (r >= maxRows || r < 0 || c >= maxCols || c < 0) {
       return NoMap
     }
-    items(r)(c)
+    items(c)(r)
   }
 
-  def update(r: Int, c: Int, newValue: Items) {
-    items(r)(c) = newValue
+  def update(c: Int, r: Int,  newValue: Items) {
+    logg.debug("update map  col: "+ c + "row: " + r + "  item: " + newValue)
 
-    fireEvent(new MapChangedEvent(r, c, newValue))
+    items(c)(r) = newValue
+
+    fireEvent(new MapChangedEvent( c, r, newValue))
   }
 
 
