@@ -1,7 +1,7 @@
 package sk.kave.tank
 
+import actors.GameControllerActor
 import fx.map.GameStage
-import fx.{Action, GameControllerActor}
 import scalafx.application.JFXApp
 import scalafx.animation.{KeyFrame, Animation, Timeline}
 import javafx.event.{ActionEvent, EventHandler}

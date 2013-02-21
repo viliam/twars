@@ -11,7 +11,7 @@ import events.EventTrait
 import events.mapchanged.MapChangedEvent
 
 
-object Map{
+private[beans] object Map {
 
   lazy val m: Map = readMapFromFile("mapa.mapa")
 

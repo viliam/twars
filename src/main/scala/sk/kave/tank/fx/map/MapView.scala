@@ -1,12 +1,13 @@
 package sk.kave.tank.fx.map
 
 import sk.kave.tank._
-import beans.Items
+import beans.{Items, Game}
 import collection.mutable
-import fx._
+import sk.kave.tank.fx._
 import collection.immutable.IndexedSeq
 import scala.Some
 import collection.mutable.ListBuffer
+import scala.Some
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,8 +24,9 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
   var row = 0 - BORDER_SIZE
 
   def colMax = config.width + col - 1 + BORDER_SIZE
-
   def rowMax = config.height + row - 1 + BORDER_SIZE
+
+  val map  = Game.map
 
   val rows = mutable.Map() ++ (for (i <- col to colMax) yield {
     (i, new ListBuffer[R]())
@@ -52,14 +54,14 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
       (dir._1 match {
         case Some(LEFT) if (col <= 0) =>
           false
-        case Some(RIGHT) if (col >= MapGroup.map.maxCols - 1 + BORDER_SIZE - colMax) =>
+        case Some(RIGHT) if (col >= map.maxCols - 1 + BORDER_SIZE - colMax) =>
           false
         case _ => true
       }) &&
         (dir._2 match {
           case Some(UP) if (row <= 0) =>
             false
-          case Some(DOWN) if (row >= MapGroup.map.maxRows - 1 + BORDER_SIZE - rowMax) =>
+          case Some(DOWN) if (row >= map.maxRows - 1 + BORDER_SIZE - rowMax) =>
             false
           case _ => true
         })
@@ -75,31 +77,32 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
 
     d match {
       case Some(DOWN) => {
-        require(row >= 0 - BORDER_SIZE && row < MapGroup.map.maxRows - 1 + BORDER_SIZE, "row = " + row + " maxRows = " + MapGroup.map.maxRows)
-        require(col >= 0 - BORDER_SIZE && col < MapGroup.map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + MapGroup.map.maxCols)
+
+        require(row >= 0 - BORDER_SIZE && row < map.maxRows - 1 + BORDER_SIZE, "row = " + row + " maxRows = " + map.maxRows)
+        require(col >= 0 - BORDER_SIZE && col < map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + map.maxCols)
 
         moveVertical(row, rowMax + 1, DOWN)
 
         row = row + 1
       }
       case Some(UP) => {
-        require(row >= 1 - BORDER_SIZE && row < MapGroup.map.maxRows + BORDER_SIZE, "row = " + row + " maxRows = " + MapGroup.map.maxRows)
-        require(col >= 0 - BORDER_SIZE && col < MapGroup.map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + MapGroup.map.maxCols)
+        require(row >= 1 - BORDER_SIZE && row < map.maxRows + BORDER_SIZE, "row = " + row + " maxRows = " + map.maxRows)
+        require(col >= 0 - BORDER_SIZE && col < map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + map.maxCols)
 
         moveVertical(rowMax, row - 1, UP)
 
         row = row - 1
       }
       case Some(RIGHT) =>
-        require(row >= 0 - BORDER_SIZE && row < MapGroup.map.maxRows + BORDER_SIZE, "row = " + row + " maxRows = " + MapGroup.map.maxRows)
-        require(col >= 0 - BORDER_SIZE && col < MapGroup.map.maxCols - 1 + BORDER_SIZE, "col = " + col + " maxCols = " + MapGroup.map.maxCols)
+        require(row >= 0 - BORDER_SIZE && row < map.maxRows + BORDER_SIZE, "row = " + row + " maxRows = " + map.maxRows)
+        require(col >= 0 - BORDER_SIZE && col < map.maxCols - 1 + BORDER_SIZE, "col = " + col + " maxCols = " + map.maxCols)
 
         moveHorizontal(col, colMax + 1, RIGHT)
 
         col = col + 1
       case Some(LEFT) =>
-        require(row >= 0 - BORDER_SIZE && row < MapGroup.map.maxRows + BORDER_SIZE, "row = " + row + " maxRows = " + MapGroup.map.maxRows)
-        require(col >= 1 - BORDER_SIZE && col < MapGroup.map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + MapGroup.map.maxCols)
+        require(row >= 0 - BORDER_SIZE && row < map.maxRows + BORDER_SIZE, "row = " + row + " maxRows = " + map.maxRows)
+        require(col >= 1 - BORDER_SIZE && col < map.maxCols + BORDER_SIZE, "col = " + col + " maxCols = " + map.maxCols)
 
         moveHorizontal(colMax, col - 1, LEFT)
 

@@ -6,7 +6,7 @@ import sk.kave.tank._
 
 import events.mapchanged.MapChangedEvent
 import fx.{Vertical, Horizontal, Direction}
-import beans.Map
+import beans.{Game, Map}
 import scala._
 
 import scala.Some
@@ -15,8 +15,8 @@ object MapGroup extends Group {
 
   val config = implicitly[Config]
 
-  val map = Map()
-  val mapView = new MapView[Rectangle](initRec)
+  val mapView = new MapView[Rectangle](  initRec )
+  val map = Game.map
 
   def init() {
     children = mapView.init()

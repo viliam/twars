@@ -1,43 +1,17 @@
-/*
- * Copyright viliam.kois@gmail.com Kois Viliam
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *        http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and limitations under the License.
- */
-
-package sk.kave.tank.fx
+package sk.kave.tank.actors
 
 import actors.Actor
-import map.KeyPressEvent
-import scalafx.scene.Group
 import sk.kave.tank._
-
-/*
-
-This actor will be responsible for handling events. This asynchronized processing of events make processing events
-synchronized.
-
- */
-
-object Action extends Enumeration {
-  val DOWN, LEFT, RIGHT, UP, EXIT, CONTINUE = Value
-}
+import sk.kave.tank.fx._
+import sk.kave.tank.fx.map.KeyPressEvent
+import scalafx.scene.Group
 
 class GameControllerActor(val mapGroup: Group) extends Actor {
   self =>
 
-  var (horizontal, vertical): (Option[Horizontal], Option[Vertical]) = (None, None)
+  var (horizontal, vertical): Vector2D = (None, None)
 
-  val movingActor = new MovingActor(self)
-  movingActor.start()
+  val tankActor = (new TankActor(self)).start()
 
   private var isTimelineAlive = false //private lock used for waiting for finish timeline moving
 
@@ -45,7 +19,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
     react {
       case (Action.EXIT, _) =>
         logg.info("actor says 'Good bye'")
-        movingActor !(Action.EXIT, KeyPressEvent.PRESSED)
+        tankActor !(Action.EXIT, KeyPressEvent.PRESSED)
       case (a: Action.Value, kpe: KeyPressEvent.Value) =>
         updateDirection(a, kpe)
 
@@ -55,7 +29,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
         act()
 
       case Action.CONTINUE =>
-        isTimelineAlive = false
+          isTimelineAlive = false
         if (isMoving) {
           makeMove()
         }
@@ -65,16 +39,15 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
 
   private def makeMove() {
     isTimelineAlive = true
-    movingActor !(horizontal, vertical)
+    tankActor !(horizontal, vertical)
   }
 
   private def isMoving: Boolean = horizontal.isDefined || vertical.isDefined
 
-
   private def updateDirection(action: Action.Value, kpe: KeyPressEvent.Value) {
 
     def setAction[T <: Direction](newDirection: T, oldDirection: Option[T], kpe: KeyPressEvent.Value): Option[T] = {
-      if (kpe == KeyPressEvent.RELEASED && oldDirection.get == newDirection) {
+      if (kpe == KeyPressEvent.RELEASED && oldDirection.isDefined && oldDirection.get == newDirection) {
         None
       } else {
         Some(newDirection)
@@ -97,4 +70,6 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
   }
 }
 
-
+object Action extends Enumeration {
+  val DOWN, LEFT, RIGHT, UP, EXIT, CONTINUE = Value
+}

@@ -7,7 +7,7 @@ import image.{Image, ImageView}
 import shape.Rectangle
 
 import sk.kave.tank._
-import fx.Action
+import actors.Action
 import javafx.scene.paint.Color
 import sk.kave.tank.beans._
 import javafx.event.EventHandler
@@ -26,11 +26,13 @@ object GameStage extends Stage {
 
   title = "ScalaFX Tetris"
 
-  val map = Map()
+  val map = Game.map
+  val tank = Game.tank
+
   val tankNode = new ImageView {
     image = new Image( GameStage.getClass.getResource( "/tank.png").toString )
-    x = ((config.width - tankSize) /2 ) * itemSize
-    y = ((config.height - tankSize)/2 ) * itemSize
+    x = tank.x  * itemSize
+    y = tank.y  * itemSize
     fitWidth = config.tankSize * config.itemSize
     fitHeight = config.tankSize * config.itemSize
   }
