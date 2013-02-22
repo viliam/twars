@@ -19,7 +19,7 @@ import scalafx.util.Duration
  *
  * @author Igo & Vil
  */
-class MovementActor extends JfxActor {
+class MovementActor extends Actor {
   self =>
 
   val config = implicitly[Config]

@@ -2,24 +2,24 @@ package sk.kave.tank.fx.map
 
 import scalafx.stage.Stage
 import scalafx.Includes._
-import scalafx.scene._
-import image.{Image, ImageView}
-import shape.Rectangle
+import scalafx.scene.image.{Image, ImageView}
+import scalafx.scene.input.{KeyCode, KeyEvent}
+import scalafx.stage.WindowEvent
+import scalafx.scene.shape.Rectangle
 
 import sk.kave.tank._
 import actors.Action
 import javafx.scene.paint.Color
-import sk.kave.tank.beans._
+import scalafx.application.JFXApp.PrimaryStage
+import scalafx.scene.Scene
 import javafx.event.EventHandler
-import javafx.scene.input.{KeyCode, KeyEvent}
-import javafx.stage.WindowEvent
 
 /**
  * User: wilo
  * Date: 2/13/13
  * Time: 1:11 PM
  */
-object GameStage extends Stage {
+object GameStage extends PrimaryStage {
 
   val config = implicitly[Config]
   import config._
@@ -35,8 +35,8 @@ object GameStage extends Stage {
       mapGroup
     )
 
-    onKeyPressed = new EventHandler[KeyEvent] {
-      def handle(e: KeyEvent) {
+    onKeyPressed =
+      (e: KeyEvent) => {
         e.code match {
           case (KeyCode.W) => Main.controlerActor !(Action.UP, KeyPressEvent.PRESSED)
           case (KeyCode.A) => Main.controlerActor !(Action.LEFT, KeyPressEvent.PRESSED)
@@ -45,10 +45,9 @@ object GameStage extends Stage {
           case _ => ()
         }
       }
-    }
 
-    onKeyReleased = new EventHandler[KeyEvent] {
-      def handle(e: KeyEvent) {
+    onKeyReleased =
+      (e: KeyEvent) => {
         e.code match {
           case (KeyCode.W) => Main.controlerActor !(Action.UP, KeyPressEvent.RELEASED)
           case (KeyCode.A) => Main.controlerActor !(Action.LEFT, KeyPressEvent.RELEASED)
@@ -58,13 +57,13 @@ object GameStage extends Stage {
           case _ => ()
         }
       }
-    }
   }
 
-  onHiding = new EventHandler[WindowEvent] {
-    def handle(e: WindowEvent) {
+  onHiding = //new EventHandler[WindowEvent] {
+    //def handle
+    (e: WindowEvent) => {
       Main.controlerActor !(Action.EXIT, KeyPressEvent.PRESSED)
-    }
+    //}
   }
 }
 

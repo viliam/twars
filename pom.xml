@@ -21,7 +21,7 @@
         <profile>
             <id>vilo</id>
             <properties>
-                <jfx-rt>c:\Program Files\Oracle\JavaFX 2.1 SDK\rt\lib\jfxrt.jar</jfx-rt>
+                <jfx-rt>c:\Program Files\Oracle\JavaFX 2.2 SDK\rt\lib\jfxrt.jar</jfx-rt>
             </properties>
         </profile>
     </profiles>
@@ -60,7 +60,7 @@
         <dependency>
             <groupId>javafx</groupId>
             <artifactId>javafx</artifactId>
-            <version>2.1</version>
+            <version>2.2</version>
             <scope>system</scope>
             <systemPath>${jfx-rt}</systemPath>
         </dependency>

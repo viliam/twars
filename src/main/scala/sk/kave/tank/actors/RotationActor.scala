@@ -15,7 +15,7 @@ import javafx.event.{ActionEvent, EventHandler}
  *
  * @author Vil
  */
-class RotationActor extends JfxActor {
+class RotationActor extends Actor{
   self =>
 
   val mapActor = (new MovementActor).start()
