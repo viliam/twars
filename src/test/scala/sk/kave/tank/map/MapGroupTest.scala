@@ -2,8 +2,8 @@ package sk.kave.tank.map
 
 import org.junit.{Assert, Test, Before}
 import sk.kave.tank.fx.map.MapGroup
-import sk.kave.tank.events.mapchanged.MapChangedEvent
 import sk.kave.tank.beans.NoMap
+import sk.kave.tank.events.MapChangeEvent
 
 /**
  * @author Igo
@@ -22,7 +22,7 @@ class MapGroupTest {
     val recOld = MapGroup.map(2, 2)
     require(recOld != newItem)
 
-    MapGroup.map.addListener(42, (event: MapChangedEvent) => {
+    MapGroup.map.addListener(42, (event: MapChangeEvent) => {
       Assert.assertEquals(2, event.col)
       Assert.assertEquals(2, event.row)
 

@@ -1,6 +1,7 @@
 package sk.kave.tank.beans
 
 import sk.kave.tank._
+import events.{TankEvent, TankRotationEvent, EventListener, TankMoveEvent}
 import sk.kave.tank.fx._
 import scala.Some
 import scala.Some
@@ -15,7 +16,7 @@ object Tank {
     (None, Some(DOWN)), (Some(RIGHT), Some(DOWN)),
     (Some(RIGHT), None), (Some(RIGHT), Some(UP)))
 
-  def getAngle( from : Vector2D, to : Vector2D) : Int = {
+  def getAngle( from : Vector2D, to : Vector2D) : Double   = {
     val i1 = transformation.indexOf(from)
     val i2 = transformation.indexOf(to)
 
@@ -24,11 +25,22 @@ object Tank {
 }
 
 class Tank (
-    @volatile var x: Int,
-    @volatile var y: Int,
-    @volatile var vect : Vector2D = ( None, Some(UP)) ) (implicit config: Config) {
+    @volatile private var _x: Int,
+    @volatile private var _y: Int,
+    @volatile private var _vect : Vector2D = ( None, Some(UP)) )
+           (implicit config: Config) extends EventListener[TankEvent] {
 
   import config._
+
+  def x = _x
+  def y = _y
+  def vect = _vect
+
+  def update(vect : Vector2D) = {
+    val oldVect = _vect
+    _vect = vect
+    fireEvent( TankRotationEvent( oldVect))
+  }
 
   val map = Game.map
 
@@ -37,13 +49,14 @@ class Tank (
 
   def canMove(vect : Vector2D) = map.canMove( (x,y), (tankSize,tankSize), vect)
 
-  def move( vect: Option[Direction]) {
+  def move( vect: Option[Direction]) {  //todo fire event
     vect match {
-      case Some(DOWN)  => y = y +1
-      case Some(UP)    => y = y -1
-      case Some(RIGHT) => x = x +1
-      case Some(LEFT)  => x = x -1
+      case Some(DOWN)  => _y = y +1
+      case Some(UP)    => _y = y -1
+      case Some(RIGHT) => _x = x +1
+      case Some(LEFT)  => _x = x -1
       case None =>
     }
+    fireEvent(TankMoveEvent( _x, _y))
   }
 }

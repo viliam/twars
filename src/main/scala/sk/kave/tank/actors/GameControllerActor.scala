@@ -29,7 +29,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
         act()
 
       case Action.CONTINUE =>
-          isTimelineAlive = false
+        isTimelineAlive = false
         if (isMoving) {
           makeMove()
         }

@@ -7,11 +7,8 @@ package sk.kave.tank.beans
  */
 
 import sk.kave.tank._
-import events.EventTrait
-import events.mapchanged.MapChangedEvent
+import events.{MapChangeEvent, EventListener}
 import fx._
-import sk.kave.tank.map
-import scala.Some
 import scala.Some
 
 
@@ -22,7 +19,7 @@ private[beans] object Map {
   def apply() = m
 }
 
-class Map(val items: COLUMNS) extends EventTrait[MapChangedEvent] {
+class Map(val items: COLUMNS) extends EventListener[MapChangeEvent] {
 
   val maxCols: Int = items.size
   val maxRows: Int = items(0).size
@@ -39,7 +36,7 @@ class Map(val items: COLUMNS) extends EventTrait[MapChangedEvent] {
 
     items(c)(r) = newValue
 
-    fireEvent(new MapChangedEvent( c, r, newValue))
+    fireEvent( MapChangeEvent( c, r, newValue))
   }
 
 

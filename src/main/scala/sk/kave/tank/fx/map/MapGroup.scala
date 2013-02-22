@@ -4,30 +4,48 @@ import scalafx.scene.Group
 import scalafx.scene.shape.Rectangle
 import sk.kave.tank._
 
-import events.mapchanged.MapChangedEvent
+import events.{TankRotationEvent, TankMoveEvent, TankEvent, MapChangeEvent}
 import fx.{Vertical, Horizontal, Direction}
-import beans.{Game, Map}
+import beans.{Tank, Game, Map}
 import scala._
 
 import scala.Some
+import scalafx.scene.image.{Image, ImageView}
+import sk.kave.tank.actors.{TimelineMessage, TimelineActor}
+import scalafx.Includes._
 
 object MapGroup extends Group {
 
   val config = implicitly[Config]
   import config._
 
+  val timelineActor = (new TimelineActor).start()
   val mapView = new MapView[Rectangle](  initRec )
+
   val map = Game.map
+  val tank = Game.tank
+
+  val tankNode = new ImageView {
+      image = new Image( GameStage.getClass.getResource( "/tank.png").toString )
+      x = tank.x  * itemSize + MapGroup.layoutX.intValue()
+      y = tank.y  * itemSize + MapGroup.layoutY.intValue()
+      fitWidth = config.tankSize * config.itemSize
+      fitHeight = config.tankSize * config.itemSize
+    }
+
 
   def init() {
-    children = mapView.init()
+    children = mapView.init() :+ tankNode
     layoutX = -((mapView.col + mapView.BORDER_SIZE) * itemSize)  //todo: maybe move this transformations
     layoutY = -((mapView.row + mapView.BORDER_SIZE) * itemSize)  //      to another place .?
+
     map.addListener(this, eventOccured)
+    tank.addListener(this, eventOccured)
   }
 
   def destroy(){
-    map.removeListener(this)
+    map.removeListener( this)
+    tank.removeListener( this)
   }
 
 
@@ -59,7 +77,19 @@ object MapGroup extends Group {
     rec
   }
 
-  def eventOccured(event: MapChangedEvent) {
+  def eventOccured(event: MapChangeEvent) {
     mapView.updateRec(event.row, event.col, event.newValue)
+  }
+
+  def eventOccured(event :TankEvent) {
+    event match {
+      case TankMoveEvent(_,_) =>  println ("nic")
+      case TankRotationEvent(e) =>
+        timelineActor ! TimelineMessage[Number](
+          event,
+          20 ms,
+          List((tankNode.rotate , tankNode.rotate() + Tank.getAngle(e, tank.vect)) )
+        )
+    }
   }
 }

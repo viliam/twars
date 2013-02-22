@@ -26,8 +26,8 @@ class MovementActor extends JfxActor {
 
   private val translateX = MapGroup.translateX
   private val translateY = MapGroup.translateY
-  private val tankX = GameStage.tankNode.x
-  private val tankY = GameStage.tankNode.y
+  private val tankX = MapGroup.tankNode.x
+  private val tankY = MapGroup.tankNode.y
 
   private val tank = Game.tank
 

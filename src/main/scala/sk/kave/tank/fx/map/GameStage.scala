@@ -26,25 +26,13 @@ object GameStage extends Stage {
 
   title = "ScalaFX Tetris"
 
-  val map = Game.map
-  val tank = Game.tank
-
   val mapGroup = MapGroup
   mapGroup.init()
-
-  val tankNode = new ImageView {
-    image = new Image( GameStage.getClass.getResource( "/tank.png").toString )
-    x = tank.x  * itemSize + mapGroup.layoutX.toInt
-    y = tank.y  * itemSize + mapGroup.layoutY.toInt
-    fitWidth = config.tankSize * config.itemSize
-    fitHeight = config.tankSize * config.itemSize
-  }
 
   scene = new Scene(config.width * itemSize, config.height * itemSize) {
     fill = Color.BLACK
     content = List(
-      mapGroup,
-      tankNode
+      mapGroup
     )
 
     onKeyPressed = new EventHandler[KeyEvent] {
