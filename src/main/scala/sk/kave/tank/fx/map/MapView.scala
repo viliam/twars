@@ -48,28 +48,10 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
     }
   }
 
-  def canMove(dir: (Option[Horizontal], Option[Vertical])): Boolean = {
-    val result =
-      (dir._1 match {
-        case Some(LEFT) if (col <= 0) =>
-          false
-        case Some(RIGHT) if (col >= map.maxCols - 1 + BORDER_SIZE - config.width) =>
-          false
-        case _ => true
-      }) &&
-        (dir._2 match {
-          case Some(UP) if (row <= 0) =>
-            false
-          case Some(DOWN) if (row >= map.maxRows - 1 + BORDER_SIZE - config.height) =>
-            false
-          case _ => true
-        })
-    if (!result) {
-      logg.debug("cannot move")
-    }
-
-    result
-  }
+  def canMove(vect: Vector2D) =
+    map.canMove( (col, row),
+                 (BORDER_SIZE + config.width, BORDER_SIZE + config.height),
+                  vect)
 
   def move(d: Option[Direction]) {
     logg.debug("move to direction = " + d + "  on row: " + row + "; col:" + col)

@@ -9,6 +9,10 @@ package sk.kave.tank.beans
 import sk.kave.tank._
 import events.EventTrait
 import events.mapchanged.MapChangedEvent
+import fx._
+import sk.kave.tank.map
+import scala.Some
+import scala.Some
 
 
 private[beans] object Map {
@@ -38,5 +42,32 @@ class Map(val items: COLUMNS) extends EventTrait[MapChangedEvent] {
     fireEvent(new MapChangedEvent( c, r, newValue))
   }
 
+
+  /*
+  For give position and bounds return if is posible move to specific direction
+   */
+  def canMove(position : => (Int, Int),
+              bounds   : => (Int, Int),
+              direction: => Vector2D): Boolean = {
+      val (col,row) = position
+      val (width,height) = bounds
+      val (vertical, horizontal) = direction
+      val result =
+        (vertical match {
+          case Some(LEFT)  if (col <= 0) =>   false
+          case Some(RIGHT) if (col >= maxCols - width) =>  false
+          case _ => true
+        }) &&
+          (horizontal match {
+            case Some(UP)   if (row <= 0) => false
+            case Some(DOWN) if (row >= maxRows - height) => false
+            case _ => true
+          })
+      if (!result) {
+        logg.debug("tank, cannot move")
+      }
+
+      result
+    }
 
 }

@@ -17,6 +17,7 @@ import scalafx.util.Duration
 object Main extends JFXApp {
   stage = GameStage
 
-  val controlerActor = (new GameControllerActor(GameStage.mapGroup)).start()
+  val controlerActor = new GameControllerActor(GameStage.mapGroup)
+  controlerActor.start()
 
 }

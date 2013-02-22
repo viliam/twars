@@ -9,9 +9,9 @@ import scalafx.scene.Group
 class GameControllerActor(val mapGroup: Group) extends Actor {
   self =>
 
-  var (horizontal, vertical): Vector2D = (None, None)
+  private var (horizontal, vertical): Vector2D = (None, None)
 
-  val tankActor = (new RotationActor).start()
+  private val rotationActor = (new RotationActor).start()
 
   private var isTimelineAlive = false //private lock used for waiting for finish timeline moving
 
@@ -39,7 +39,7 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
 
   private def makeMove() {
     isTimelineAlive = true
-    tankActor !(horizontal, vertical)
+    rotationActor !(horizontal, vertical)
   }
 
   private def isMoving: Boolean = horizontal.isDefined || vertical.isDefined

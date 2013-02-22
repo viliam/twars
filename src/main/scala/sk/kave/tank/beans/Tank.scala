@@ -1,7 +1,8 @@
 package sk.kave.tank.beans
 
 import sk.kave.tank._
-import fx._
+import sk.kave.tank.fx._
+import scala.Some
 import scala.Some
 import sk.kave.tank.map
 import scala.Some
@@ -34,7 +35,15 @@ class Tank (
   for ( c <- x until x+tankSize;
         r <- y until y+tankSize) map.update(c, r, NoMap)
 
-  def move( vect: Option[Direction]) {
+  def canMove(vect : Vector2D) = map.canMove( (x,y), (tankSize,tankSize), vect)
 
+  def move( vect: Option[Direction]) {
+    vect match {
+      case Some(DOWN)  => y = y +1
+      case Some(UP)    => y = y -1
+      case Some(RIGHT) => x = x +1
+      case Some(LEFT)  => x = x -1
+      case None =>
+    }
   }
 }
