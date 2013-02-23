@@ -6,7 +6,7 @@ import sk.kave.tank.beans.Items
 /**
  * @author Igo & Vil
  */
-abstract class Event
+sealed abstract class Event
 
 abstract class TankEvent extends Event
 

@@ -25,7 +25,7 @@ class TimelineActor extends Actor {
 
         timeline.onFinished = new EventHandler[ActionEvent] {
             def handle(e: ActionEvent) {
-              Main.controlerActor ! event
+              context.parent ! Action.CONTINUE
             }
           }
 

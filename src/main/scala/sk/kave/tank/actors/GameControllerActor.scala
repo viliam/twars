@@ -1,20 +1,13 @@
 package sk.kave.tank.actors
 
 import sk.kave.tank._
-import actors.TimelineMessage
+import events.TankRotationEvent
 import sk.kave.tank.fx._
 import sk.kave.tank.fx.map.KeyPressEvent
-import scalafx.scene.Group
 import akka.actor.{Props, Actor}
 import scala.Some
-import java.util.concurrent.{TimeUnit, AbstractExecutorService}
-import java.util.concurrent.{ThreadFactory, ExecutorService, TimeUnit, AbstractExecutorService}
-import java.util.Collections
-import akka.dispatch.{ExecutorServiceFactory, DispatcherPrerequisites, ExecutorServiceConfigurator}
-import com.typesafe
 
 class GameControllerActor extends Actor {
-  self =>
 
   private var (horizontal, vertical): Vector2D = (None, None)
 
@@ -24,18 +17,18 @@ class GameControllerActor extends Actor {
   def receive = {
     case (Action.EXIT, _) =>
       logg.info("actor says 'Good bye'")
-      exit()
+      context.stop(self)
     case (a: Action.Value, kpe: KeyPressEvent.Value) =>
       updateDirection(a, kpe)
-
       makeMove()
     case Action.CONTINUE =>
       if (isMoving) {
         makeMove()
       }
     case m @ TimelineMessage(_,_,_) =>
-      logg.debug("start time line")
       timelineActor ! m
+    case TankRotationEvent(_) =>
+      rotationActor ! Action.CONTINUE
     case m @ AnyRef => logg.debug("GameControllerActor : Unknow message = " + m)
   }
 
