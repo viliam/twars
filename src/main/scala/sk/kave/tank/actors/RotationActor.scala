@@ -1,14 +1,10 @@
 package sk.kave.tank.actors
 
-import scala.actors.{SchedulerAdapter, Actor}
-import sk.kave.tank.Config
 import sk.kave.tank._
-import beans.{Game, Tank}
+import beans.Game
 import fx._
-import fx.map.{MapGroup, GameStage}
-import scalafx.animation.{Timeline, KeyFrame}
 import scalafx.Includes._
-import javafx.event.{ActionEvent, EventHandler}
+import akka.actor.{Props, ActorDSL, Actor}
 
 /**
  * actor performing movement of tank.
@@ -16,35 +12,29 @@ import javafx.event.{ActionEvent, EventHandler}
  * @author Vil
  */
 class RotationActor extends Actor{
-  self =>
 
-  val mapActor = (new MovementActor).start()
+  val mapActor = context.actorOf( Props[MovementActor])
   val tank = Game.tank
 
   private var newVect : Vector2D = tank.vect
 
-  private var isTimelineAlive = false
+  def receive = {
+    case (horizontal: Option[Horizontal], vertical: Option[Vertical])  =>
+      //if (!isTimelineAlive) {
+        newVect = (horizontal, vertical)
+        if (newVect != tank.vect ) {
+          tank() = newVect
+        }
 
-  def act() {
-    link(Main.controlerActor)
-    react {
-      case (horizontal: Option[Horizontal], vertical: Option[Vertical])  =>
-        //if (!isTimelineAlive) {
-          newVect = (horizontal, vertical)
-          if (newVect != tank.vect ) {
-            tank() = newVect
-          }
-
-          mapActor ! newVect
+      //  mapActor ! newVect
 //        } else {
 //          Main.controlerActor ! Action.CONTINUE
 //        }
+    case Action.CONTINUE =>        //when one key si released, actor needs to continue
+      Main.controlerActor ! Action.CONTINUE
 
-        act()
-      case Action.CONTINUE =>        //when one key si released, actor needs to continue
-        Main.controlerActor ! Action.CONTINUE
-        act()
-    }
+    case m @ AnyRef => logg.debug("RotationActor : Unknow message = " + m)
   }
+
 
 }

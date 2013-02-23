@@ -1,18 +1,14 @@
 package sk.kave.tank.fx.map
 
-import scalafx.stage.Stage
 import scalafx.Includes._
-import scalafx.scene.image.{Image, ImageView}
 import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.stage.WindowEvent
-import scalafx.scene.shape.Rectangle
 
 import sk.kave.tank._
 import actors.Action
 import javafx.scene.paint.Color
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
-import javafx.event.EventHandler
 
 /**
  * User: wilo
@@ -59,12 +55,10 @@ object GameStage extends PrimaryStage {
       }
   }
 
-  onHiding = //new EventHandler[WindowEvent] {
-    //def handle
+  onHiding =
     (e: WindowEvent) => {
       Main.controlerActor !(Action.EXIT, KeyPressEvent.PRESSED)
-    //}
-  }
+    }
 }
 
 object KeyPressEvent extends Enumeration {

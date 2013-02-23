@@ -11,7 +11,7 @@ import scala._
 
 import scala.Some
 import scalafx.scene.image.{Image, ImageView}
-import sk.kave.tank.actors.{TimelineMessage, TimelineActor}
+import sk.kave.tank.actors.{TimelineMessage}
 import scalafx.Includes._
 
 object MapGroup extends Group {
@@ -19,7 +19,6 @@ object MapGroup extends Group {
   val config = implicitly[Config]
   import config._
 
-  val timelineActor = (new TimelineActor).start()
   val mapView = new MapView[Rectangle](  initRec )
 
   val map = Game.map
@@ -85,7 +84,7 @@ object MapGroup extends Group {
     event match {
       case TankMoveEvent(_,_) =>  println ("nic")
       case TankRotationEvent(e) =>
-        timelineActor ! TimelineMessage[Number](
+        Main.controlerActor ! TimelineMessage[Number](
           event,
           20 ms,
           List((tankNode.rotate , tankNode.rotate() + Tank.getAngle(e, tank.vect)) )

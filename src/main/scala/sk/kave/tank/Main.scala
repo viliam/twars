@@ -1,13 +1,9 @@
 package sk.kave.tank
 
 import actors.GameControllerActor
-import beans.Game
 import fx.map.GameStage
 import scalafx.application.JFXApp
-import scalafx.animation.{KeyFrame, Animation, Timeline}
-import javafx.event.{ActionEvent, EventHandler}
-import scalafx.Includes._
-import scalafx.util.Duration
+import akka.actor.{Props, ActorSystem, ActorDSL}
 
 /**
  * User: wilo
@@ -17,7 +13,7 @@ import scalafx.util.Duration
 object Main extends JFXApp {
   stage = GameStage
 
-  val controlerActor = new GameControllerActor(GameStage.mapGroup)
-  controlerActor.start()
+  val system = ActorSystem("ControllerSystem")
+  val controlerActor = system.actorOf(Props[GameControllerActor], name = "controller")
 
 }

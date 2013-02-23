@@ -1,1 +1,7 @@
-This file was created by IntelliJ IDEA 12.0.3 for binding GitHub repository
+use MAVEN for building project
+
+ScalaFX project don't have maven artifact today. To use it, you must add scalafx_2.10-1.0.0-M1.jar file manually to yours local repository, see:
+
+http://code.google.com/p/scalafx/downloads/list
+
+mvn install:install-file -DartifactId=scalafx -DgroupId=org.scalafx -Dpackaging=jar -Dfile=scalafx_2.10-1.0.0-M1.jar -Dversion=2.10-1.0.0-M1

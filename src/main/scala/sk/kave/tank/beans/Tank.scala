@@ -4,9 +4,6 @@ import sk.kave.tank._
 import events.{TankEvent, TankRotationEvent, EventListener, TankMoveEvent}
 import sk.kave.tank.fx._
 import scala.Some
-import scala.Some
-import sk.kave.tank.map
-import scala.Some
 
 object Tank {
 

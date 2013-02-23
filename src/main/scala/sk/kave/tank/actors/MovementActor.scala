@@ -1,7 +1,6 @@
 package sk.kave.tank.actors
 
 import sk.kave.tank._
-import scala.Some
 import fx.map.{GameStage, MapGroup}
 import sk.kave.tank._
 import sk.kave.tank.beans.Game
@@ -9,10 +8,9 @@ import sk.kave.tank.fx._
 import scalafx.animation.{KeyValue, Timeline, KeyFrame}
 import scalafx.Includes._
 import scala.Some
-import scala.actors.{SchedulerAdapter, Actor}
 import javafx.event.{ActionEvent, EventHandler}
-import collection.parallel.mutable
 import scalafx.util.Duration
+import akka.actor.Actor
 
 /**
  * actor performing moves of map
@@ -20,7 +18,6 @@ import scalafx.util.Duration
  * @author Igo & Vil
  */
 class MovementActor extends Actor {
-  self =>
 
   val config = implicitly[Config]
 
@@ -34,14 +31,11 @@ class MovementActor extends Actor {
 
   protected var newVect : Vector2D  = (None, None)
 
-  def act() {
-    link(Main.controlerActor)
-    react {
+  def receive  = {
       case (horizontal: Option[Horizontal], vertical: Option[Vertical]) =>
         newVect = (horizontal, vertical)
         move
-        act()
-    }
+      case m @ AnyRef => logg.debug("MovementActor : Unknow message = " + m)
   }
 
 

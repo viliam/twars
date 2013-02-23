@@ -1,44 +1,46 @@
 package sk.kave.tank.actors
 
-import actors.Actor
 import sk.kave.tank._
+import actors.TimelineMessage
 import sk.kave.tank.fx._
 import sk.kave.tank.fx.map.KeyPressEvent
 import scalafx.scene.Group
+import akka.actor.{Props, Actor}
+import scala.Some
+import java.util.concurrent.{TimeUnit, AbstractExecutorService}
+import java.util.concurrent.{ThreadFactory, ExecutorService, TimeUnit, AbstractExecutorService}
+import java.util.Collections
+import akka.dispatch.{ExecutorServiceFactory, DispatcherPrerequisites, ExecutorServiceConfigurator}
+import com.typesafe
 
-class GameControllerActor(val mapGroup: Group) extends Actor {
+class GameControllerActor extends Actor {
   self =>
 
   private var (horizontal, vertical): Vector2D = (None, None)
 
-  private val rotationActor = (new RotationActor).start()
+  private val rotationActor = context.actorOf( Props[RotationActor])
+  val timelineActor = context.actorOf( Props[TimelineActor]) //.withDispatcher("javafx-dispatcher"))
 
-  private var isTimelineAlive = false //private lock used for waiting for finish timeline moving
+  def receive = {
+    case (Action.EXIT, _) =>
+      logg.info("actor says 'Good bye'")
+      exit()
+    case (a: Action.Value, kpe: KeyPressEvent.Value) =>
+      updateDirection(a, kpe)
 
-  def act() {
-    react {
-      case (Action.EXIT, _) =>
-        logg.info("actor says 'Good bye'")
-        exit()
-      case (a: Action.Value, kpe: KeyPressEvent.Value) =>
-        updateDirection(a, kpe)
-
-        if (!isTimelineAlive) {
-          makeMove()
-        }
-        act()
-
-      case Action.CONTINUE =>
-        isTimelineAlive = false
-        if (isMoving) {
-          makeMove()
-        }
-        act()
-    }
+      makeMove()
+    case Action.CONTINUE =>
+      if (isMoving) {
+        makeMove()
+      }
+    case m @ TimelineMessage(_,_,_) =>
+      logg.debug("start time line")
+      timelineActor ! m
+    case m @ AnyRef => logg.debug("GameControllerActor : Unknow message = " + m)
   }
 
+
   private def makeMove() {
-    isTimelineAlive = true
     rotationActor !(horizontal, vertical)
   }
 
@@ -73,3 +75,5 @@ class GameControllerActor(val mapGroup: Group) extends Actor {
 object Action extends Enumeration {
   val DOWN, LEFT, RIGHT, UP, EXIT, CONTINUE = Value
 }
+
+
