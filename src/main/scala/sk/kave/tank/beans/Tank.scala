@@ -17,7 +17,13 @@ object Tank {
     val i1 = transformation.indexOf(from)
     val i2 = transformation.indexOf(to)
 
-    (i1 - i2) * 45
+    val n = (i1 - i2)
+
+    //sometimes clockwise direction isn't shortest path
+    if ( math.abs(n) > transformation.size/2) {
+      (transformation.size - math.abs(n)) * (n/math.abs(n)) * -45
+    }
+    else n* 45
   }
 }
 
@@ -33,10 +39,10 @@ class Tank (
   def y = _y
   def vect = _vect
 
-  def update(vect : Vector2D) = {
+  def changeDirection(vect : Vector2D)( callBack : () => Unit)  {
     val oldVect = _vect
     _vect = vect
-    fireEvent( TankRotationEvent( oldVect))
+    fireEvent( TankRotationEvent( oldVect, callBack))
   }
 
   val map = Game.map
@@ -46,14 +52,20 @@ class Tank (
 
   def canMove(vect : Vector2D) = map.canMove( (x,y), (tankSize,tankSize), vect)
 
-  def move( vect: Option[Direction]) {  //todo fire event
-    vect match {
-      case Some(DOWN)  => _y = y +1
-      case Some(UP)    => _y = y -1
+  def move( vect: Vector2D)(callback : () => Unit) {  //todo fire event
+    val (h,v) = vect
+
+    h match {
       case Some(RIGHT) => _x = x +1
       case Some(LEFT)  => _x = x -1
       case None =>
     }
-    fireEvent(TankMoveEvent( _x, _y))
+
+    v match {
+      case Some(DOWN)  => _y = y +1
+      case Some(UP)    => _y = y -1
+      case None =>
+    }
+    fireEvent(TankMoveEvent( _x, _y, callback))
   }
 }

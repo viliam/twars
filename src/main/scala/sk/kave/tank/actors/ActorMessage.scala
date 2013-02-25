@@ -15,5 +15,7 @@ abstract class ActorMessage
 case class Exit() extends ActorMessage
 case class UserMessage( direction : Direction, keyPress : KeyPressEvent.Value) extends ActorMessage
 case class UnLock() extends ActorMessage
-case class TimelineMessage[T]( e : Event, duration : Duration, trf : List[ (WritableValue[T], T) ] ) extends ActorMessage
+case class TimelineMessage[T]( e : Event, duration : Duration,
+                               trf : List[ (WritableValue[T], T) ],
+                               callback : () => Unit ) extends ActorMessage
 case class NewDirection( direction : Vector2D) extends ActorMessage

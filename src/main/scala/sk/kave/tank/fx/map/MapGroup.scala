@@ -5,14 +5,13 @@ import scalafx.scene.shape.Rectangle
 import sk.kave.tank._
 
 import events.{TankRotationEvent, TankMoveEvent, TankEvent, MapChangeEvent}
-import fx.{Vertical, Horizontal, Direction}
-import beans.{Tank, Game, Map}
+import fx._
+import beans.{Tank, Game}
 import scala._
-
-import scala.Some
 import scalafx.scene.image.{Image, ImageView}
-import sk.kave.tank.actors.{TimelineMessage}
+import sk.kave.tank.actors.TimelineMessage
 import scalafx.Includes._
+import scala.Some
 
 object MapGroup extends Group {
 
@@ -82,13 +81,57 @@ object MapGroup extends Group {
 
   def eventOccured(event :TankEvent) {
     event match {
-      case TankMoveEvent(_,_) =>  println ("nic")
-      case TankRotationEvent(e) =>
-        Main.controlerActor ! TimelineMessage[Number](
-          event,
-          120 ms,
-          List((tankNode.rotate , tankNode.rotate() + Tank.getAngle(e, tank.vect)) )
-        )
+      case e @ TankMoveEvent(_,_,_) => moveTank(e)
+      case e @ TankRotationEvent(_, _) => rotateTank(e)
+
     }
   }
+
+  private def rotateTank( e: TankRotationEvent) {
+    Main.controlerActor ! TimelineMessage[Number](
+      e,
+      100 ms,
+      List((tankNode.rotate , tankNode.rotate() + Tank.getAngle(e.oldVector, tank.vect))),
+      e.callback
+    )
+  }
+
+  private def moveTank( e : TankMoveEvent)  {
+
+    def getDirection(direction : Vector2D) =
+        (
+          direction._1 match {
+            case Some(LEFT) => +config.itemSize
+            case Some(RIGHT) => -config.itemSize
+            case None => 0
+          }
+        ,
+          direction._2 match {
+            case Some(UP) => +config.itemSize
+            case Some(DOWN) => -config.itemSize
+            case None => 0
+          }
+        )
+
+    val (h,v) = tank.vect
+    val (dH, dV) = getDirection( tank.vect)
+    if ( canMove(tank.vect)) {
+      Main.controlerActor ! TimelineMessage[Number](
+        e,
+        10 ms,
+        List((translateX, translateX() + dH ),
+             (translateY, translateY() + dV ),
+             (tankNode.translateX, tankNode.translateX() - dH),
+             (tankNode.translateY, tankNode.translateY() - dV)),
+        () => {
+          MapGroup.move(v)
+          MapGroup.move(h)
+
+          e.callback()
+        }
+      )
+    } else
+      e.callback()
+  }
+
 }

@@ -17,7 +17,7 @@ class TimelineActor extends Actor {
   }
 
   def receive = {
-    case TimelineMessage(event, duration, trf) =>
+    case TimelineMessage(event, duration, trf, callback) =>
       Platform.runLater {
         val timeline = new Timeline()
 
@@ -29,7 +29,7 @@ class TimelineActor extends Actor {
 
         timeline.onFinished = new EventHandler[ActionEvent] {
             def handle(e: ActionEvent) {
-              context.parent forward event
+              callback()
             }
           }
 

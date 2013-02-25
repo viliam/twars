@@ -2,32 +2,35 @@ package sk.kave.tank.actors
 
 import sk.kave.tank._
 import beans.Game
-import fx._
-import scalafx.Includes._
-import akka.actor.{Props, ActorDSL, Actor}
+import akka.actor.Actor
 
 /**
  * actor performing movement of tank.
  *
  * @author Vil
  */
-class RotationActor extends Actor{
+class TankActor extends Actor{
 
-  val mapActor = context.actorOf( Props[MovementActor])
   val tank = Game.tank
 
   private var newVect : Vector2D = tank.vect
-  @volatile private var isTimelineAlive =false
+  private var lock =false
 
   def receive = {
     case NewDirection( newDirection : Vector2D)  =>
-      if (!isTimelineAlive) {
+      if (!lock) {
+        logg.debug("TankActor:  lock")
+        lock = true
+
         newVect = newDirection
         if (newVect != tank.vect ) {
-          logg.debug("RotationActor :  lock")
-          isTimelineAlive = true
-
-          tank() = newVect
+          tank.changeDirection( newVect ) {
+            () => self ! UnLock
+          }
+        } else {
+          tank.move( newVect) {
+            () => self ! UnLock
+          }
         }
 
       } else {
@@ -35,9 +38,9 @@ class RotationActor extends Actor{
       }
 
     case UnLock =>        //when one key si released, actor needs to continue
-      isTimelineAlive = false
+      lock = false
       logg.debug("RotationActor: unlock actor")
-    case m @ AnyRef => logg.debug("RotationActor : Unknow message = " + m)
+    case m @ AnyRef => logg.warn("RotationActor : Unknow message = " + m)
   }
 
 
