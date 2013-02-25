@@ -1,7 +1,7 @@
 use MAVEN for building project
 
-ScalaFX project don't have maven artifact today. To use it, you must add scalafx_2.10-1.0.0-M1.jar file manually to yours local repository, see:
+ScalaFX project doesn't have maven artifact, yet. To use it, you must manually add scalafx_2.10-1.0.0-M1.jar file to your local repository:
 
-http://code.google.com/p/scalafx/downloads/list
-
+download scalafx_2.10-1.0.0-M1.jar file from http://code.google.com/p/scalafx/downloads/list
+then run maven command to install this file to your local repository:
 mvn install:install-file -DartifactId=scalafx -DgroupId=org.scalafx -Dpackaging=jar -Dfile=scalafx_2.10-1.0.0-M1.jar -Dversion=2.10-1.0.0-M1
