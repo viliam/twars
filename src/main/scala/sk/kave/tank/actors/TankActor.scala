@@ -34,14 +34,16 @@ class TankActor extends Actor{
         }
 
       } else {
-        logg.debug("RotationActor: message is ignoring")
+        logg.debug("RotationActor: message is ignoring " + newDirection)
       }
 
     case UnLock =>        //when one key si released, actor needs to continue
       lock = false
-      logg.debug("RotationActor: unlock actor")
+      logg.debug("RotationActor: unlock actor" + newVect)
+
     case m @ AnyRef => logg.warn("RotationActor : Unknow message = " + m)
   }
+
 
 
 }

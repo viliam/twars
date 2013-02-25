@@ -5,7 +5,6 @@ import beans.{Items, Game}
 import collection.mutable
 import sk.kave.tank.fx._
 import collection.immutable.IndexedSeq
-import scala.Some
 import collection.mutable.ListBuffer
 import scala.Some
 
@@ -17,22 +16,28 @@ import scala.Some
  */
 
 class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Config) {
+
   import config._
 
   val BORDER_SIZE = 1 //width of border (in rectangles) around user's view
 
-  val map  = Game.map
+  val map = Game.map
   val tank = Game.tank
 
   //current position of the map group; coordinates are indices in map data model
-  var col = tank.x - BORDER_SIZE - (config.width - tankSize)/2
-  var row = tank.y - BORDER_SIZE - (config.height - tankSize)/2
+  var col = tank.x - BORDER_SIZE - (config.width - tankSize) / 2
+  var row = tank.y - BORDER_SIZE - (config.height - tankSize) / 2
 
-  def colMax = config.width + col + BORDER_SIZE*2
-  def rowMax = config.height + row  + BORDER_SIZE*2
+  def colMax = config.width + col + BORDER_SIZE * 2
 
-  val cols = mutable.Map() ++ (for (i <- col to colMax) yield (i, new ListBuffer[R]())  )
-  val rows = mutable.Map() ++ (for (i <- row to rowMax) yield (i, new ListBuffer[R]())  )
+  def rowMax = config.height + row + BORDER_SIZE * 2
+
+  val cols = mutable.Map() ++ (for (i <- col to colMax) yield {
+    (i, new ListBuffer[R]())
+  })
+  val rows = mutable.Map() ++ (for (i <- row to rowMax) yield {
+    (i, new ListBuffer[R]())
+  })
 
   def init(): IndexedSeq[R] = {
 
@@ -48,13 +53,10 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
     }
   }
 
-  def canMove(vect: Vector2D) =
-    map.canMove( (col, row),
-                 (BORDER_SIZE + config.width, BORDER_SIZE + config.height),
-                  vect)
+  def canMove(vect: Vector2D) = map.canMove( (col, row), (BORDER_SIZE + config.width, BORDER_SIZE + config.height), vect)
 
   def move(d: Option[Direction]) {
-    logg.debug("move to direction = " + d + "  on row: " + row + "; col:" + col)
+    //logg.debug("move to direction = " + d + "  on row: " + row + "; col:" + col)
 
     d match {
       case Some(DOWN) => {

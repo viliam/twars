@@ -21,7 +21,7 @@ object Tank {
 
     //sometimes clockwise direction isn't shortest path
     if ( math.abs(n) > transformation.size/2) {
-      (transformation.size - math.abs(n)) * (n/math.abs(n)) * -45
+      (transformation.size - math.abs(n)) * math.signum(n) * -45
     }
     else n* 45
   }
@@ -30,18 +30,28 @@ object Tank {
 class Tank (
     @volatile private var _x: Int,
     @volatile private var _y: Int,
-    @volatile private var _vect : Vector2D = ( None, Some(UP)) )
+    @volatile private var _vect : Vector2D =  (None, Some(UP)) )
            (implicit config: Config) extends EventListener[TankEvent] {
 
   import config._
 
   def x = _x
+  def x_=(v:Int){
+    _x = v
+  }
   def y = _y
+  def y_=(v:Int){
+    _y = v
+  }
   def vect = _vect
+  def vect_=(v:Vector2D) {
+    _vect = v
+  }
 
   def changeDirection(vect : Vector2D)( callBack : () => Unit)  {
-    val oldVect = _vect
-    _vect = vect
+    val oldVect = this.vect
+    this.vect = vect
+
     fireEvent( TankRotationEvent( oldVect, callBack))
   }
 
@@ -52,7 +62,7 @@ class Tank (
 
   def canMove(vect : Vector2D) = map.canMove( (x,y), (tankSize,tankSize), vect)
 
-  def move( vect: Vector2D)(callback : () => Unit) {  //todo fire event
+  def move( vect: Vector2D)(callback : () => Unit) {  //todo fire event - remove this todo?
     val (h,v) = vect
 
     h match {
@@ -66,6 +76,6 @@ class Tank (
       case Some(UP)    => _y = y -1
       case None =>
     }
-    fireEvent(TankMoveEvent( _x, _y, callback))
+    fireEvent(TankMoveEvent( this.x, this.y, callback))
   }
 }
