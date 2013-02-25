@@ -26,7 +26,7 @@ class GameControllerActor extends Actor {
       updateDirection(a, kpe)
       if (isMoving) tankActor ! NewDirection(horizontal, vertical)
 
-    case m @ TimelineMessage(_,_,_,_) =>
+    case m @ TimelineMessage(_,_,_) =>
       timelineActor ! m
   }
 

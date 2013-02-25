@@ -89,7 +89,6 @@ object MapGroup extends Group {
 
   private def rotateTank( e: TankRotationEvent) {
     Main.controlerActor ! TimelineMessage[Number](
-      e,
       100 ms,
       List((tankNode.rotate , tankNode.rotate() + Tank.getAngle(e.oldVector, tank.vect))),
       e.callback
@@ -117,7 +116,6 @@ object MapGroup extends Group {
     val (dH, dV) = getDirection( tank.vect)
     if ( canMove(tank.vect)) {
       Main.controlerActor ! TimelineMessage[Number](
-        e,
         10 ms,
         List((translateX, translateX() + dH ),
              (translateY, translateY() + dV ),
