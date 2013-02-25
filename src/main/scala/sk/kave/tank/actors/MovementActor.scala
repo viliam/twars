@@ -32,8 +32,8 @@ class MovementActor extends Actor {
   protected var newVect : Vector2D  = (None, None)
 
   def receive  = {
-      case (horizontal: Option[Horizontal], vertical: Option[Vertical]) =>
-        newVect = (horizontal, vertical)
+      case NewDirection(newDirection : Vector2D) =>
+        newVect = newDirection
         move
       case m @ AnyRef => logg.debug("MovementActor : Unknow message = " + m)
   }
@@ -57,7 +57,7 @@ class MovementActor extends Actor {
 
         tank.move(v)
         tank.move(h)
-        sender ! Action.CONTINUE
+        sender ! UnLock
       }
     } else if (Game.tank.canMove( newVect)) {
       val tb = new TimelineBuilder
@@ -70,10 +70,10 @@ class MovementActor extends Actor {
       tb.play(10 ms) {
         tank.move(v)
         tank.move(h)
-        sender ! Action.CONTINUE
+        sender ! UnLock
       }
     } else
-      sender ! Action.CONTINUE
+      sender ! UnLock
   }
 
 

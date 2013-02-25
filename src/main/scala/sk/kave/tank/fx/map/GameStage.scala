@@ -5,7 +5,8 @@ import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.stage.WindowEvent
 
 import sk.kave.tank._
-import actors.Action
+import actors.{UserMessage, KeyPressEvent, Exit}
+import fx.{UP, DOWN, LEFT, RIGHT}
 import javafx.scene.paint.Color
 import scalafx.application.JFXApp.PrimaryStage
 import scalafx.scene.Scene
@@ -34,10 +35,10 @@ object GameStage extends PrimaryStage {
     onKeyPressed =
       (e: KeyEvent) => {
         e.code match {
-          case (KeyCode.W) => Main.controlerActor !(Action.UP, KeyPressEvent.PRESSED)
-          case (KeyCode.A) => Main.controlerActor !(Action.LEFT, KeyPressEvent.PRESSED)
-          case (KeyCode.D) => Main.controlerActor !(Action.RIGHT, KeyPressEvent.PRESSED)
-          case (KeyCode.S) => Main.controlerActor !(Action.DOWN, KeyPressEvent.PRESSED)
+          case (KeyCode.W) => Main.controlerActor ! UserMessage(UP, KeyPressEvent.PRESSED)
+          case (KeyCode.A) => Main.controlerActor ! UserMessage(LEFT, KeyPressEvent.PRESSED)
+          case (KeyCode.D) => Main.controlerActor ! UserMessage(RIGHT, KeyPressEvent.PRESSED)
+          case (KeyCode.S) => Main.controlerActor ! UserMessage(DOWN, KeyPressEvent.PRESSED)
           case _ => ()
         }
       }
@@ -45,22 +46,15 @@ object GameStage extends PrimaryStage {
     onKeyReleased =
       (e: KeyEvent) => {
         e.code match {
-          case (KeyCode.W) => Main.controlerActor !(Action.UP, KeyPressEvent.RELEASED)
-          case (KeyCode.A) => Main.controlerActor !(Action.LEFT, KeyPressEvent.RELEASED)
-          case (KeyCode.D) => Main.controlerActor !(Action.RIGHT, KeyPressEvent.RELEASED)
-          case (KeyCode.S) => Main.controlerActor !(Action.DOWN, KeyPressEvent.RELEASED)
-          case (KeyCode.ESCAPE) => Main.controlerActor !(Action.EXIT, KeyPressEvent.RELEASED)
+          case (KeyCode.W) => Main.controlerActor !UserMessage( UP, KeyPressEvent.RELEASED)
+          case (KeyCode.A) => Main.controlerActor !UserMessage( LEFT, KeyPressEvent.RELEASED)
+          case (KeyCode.D) => Main.controlerActor !UserMessage( RIGHT, KeyPressEvent.RELEASED)
+          case (KeyCode.S) => Main.controlerActor !UserMessage( DOWN, KeyPressEvent.RELEASED)
+          case (KeyCode.ESCAPE) => Main.controlerActor ! Exit
           case _ => ()
         }
       }
   }
 
-  onHiding =
-    (e: WindowEvent) => {
-      Main.controlerActor !(Action.EXIT, KeyPressEvent.PRESSED)
-    }
-}
-
-object KeyPressEvent extends Enumeration {
-  val PRESSED, RELEASED = Value
+  onHiding = (e: WindowEvent) =>  Main.controlerActor ! Exit
 }

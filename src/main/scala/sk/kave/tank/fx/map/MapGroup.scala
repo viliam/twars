@@ -86,7 +86,7 @@ object MapGroup extends Group {
       case TankRotationEvent(e) =>
         Main.controlerActor ! TimelineMessage[Number](
           event,
-          20 ms,
+          120 ms,
           List((tankNode.rotate , tankNode.rotate() + Tank.getAngle(e, tank.vect)) )
         )
     }

@@ -17,26 +17,26 @@ class RotationActor extends Actor{
   val tank = Game.tank
 
   private var newVect : Vector2D = tank.vect
-  private var isTimelineAlive =false
+  @volatile private var isTimelineAlive =false
 
   def receive = {
-    case (horizontal: Option[Horizontal], vertical: Option[Vertical])  =>
+    case NewDirection( newDirection : Vector2D)  =>
       if (!isTimelineAlive) {
-        isTimelineAlive = true
-
-        newVect = (horizontal, vertical)
+        newVect = newDirection
         if (newVect != tank.vect ) {
+          logg.debug("RotationActor :  lock")
+          isTimelineAlive = true
+
           tank() = newVect
         }
 
-        //mapActor ! newVect
+      } else {
+        logg.debug("RotationActor: message is ignoring")
       }
-//        } else {
-//          Main.controlerActor ! Action.CONTINUE
-//        }
-    case Action.CONTINUE =>        //when one key si released, actor needs to continue
-      isTimelineAlive = false
 
+    case UnLock =>        //when one key si released, actor needs to continue
+      isTimelineAlive = false
+      logg.debug("RotationActor: unlock actor")
     case m @ AnyRef => logg.debug("RotationActor : Unknow message = " + m)
   }
 

@@ -12,6 +12,10 @@ import scalafx.application.Platform
 
 class TimelineActor extends Actor {
 
+  override def preRestart(reason: Throwable, message: Option[Any]) {
+    println("in preRestart hook")
+  }
+
   def receive = {
     case TimelineMessage(event, duration, trf) =>
       Platform.runLater {
@@ -25,7 +29,7 @@ class TimelineActor extends Actor {
 
         timeline.onFinished = new EventHandler[ActionEvent] {
             def handle(e: ActionEvent) {
-              context.parent ! Action.CONTINUE
+              context.parent forward event
             }
           }
 
@@ -38,6 +42,3 @@ class TimelineActor extends Actor {
             def run() = run
           })
 }
-
-abstract class Messages
-case class TimelineMessage[T]( e : Event, duration : Duration, trf : List[ (WritableValue[T], T) ] ) extends Messages
