@@ -10,9 +10,10 @@ import sk.kave.tank._
 import events.{MapChangeEvent, EventListener}
 import fx._
 import scala.Some
+import utils.Logger
 
 
-private[beans] object Map {
+private[beans] object Map extends Logger {
 
   lazy val m: Map = readMapFromFile("mapa.mapa")
 

@@ -1,10 +1,12 @@
 package sk.kave.tank.events
 
 import sk.kave.tank._
+import utils.Logger
+
 /**
  * @author Igo
  */
-trait EventListener[E <: Event] {
+trait EventListener[E <: Event] extends Logger {
 
   private var listenerMap = Map[Any, (E => Unit)]()
 

@@ -4,8 +4,9 @@ import sk.kave.tank._
 import sk.kave.tank.fx.{Direction, Vertical, Horizontal}
 import akka.actor.{Props, Actor}
 import scala.Some
+import utils.Logger
 
-class GameControllerActor extends Actor {
+class GameControllerActor extends Actor with Logger {
 
   private var (horizontal, vertical): Vector2D = (None, None)
 

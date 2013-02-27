@@ -33,8 +33,6 @@ package object tank {
 
   }
 
-  val logg = Logger.getLogger(Main.getClass)
-
   def readMapFromFile( fileName : String ) : Map = {
     val fileReader: FileReader = new FileReader(new File( fileName))
     val buffReader: BufferedReader = new BufferedReader(fileReader)
