@@ -76,7 +76,7 @@ object MapGroup extends Group {
   }
 
   def eventOccured(event: MapChangeEvent) {
-    mapView.updateRec(event.row, event.col, event.newValue)
+    mapView.updateRec( event.col, event.row, event.newValue)
   }
 
   def eventOccured(event :TankEvent) {

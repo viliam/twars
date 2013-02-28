@@ -139,17 +139,17 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
     }
   }
 
-  def updateRec(uRow: Int, uCol: Int, newItem: Items) {
+  def updateRec(uCol : Int, uRow: Int, newItem: Items) {
     if (row >= uRow && col >= uCol && row < rowMax && col < colMax) return
-    var r = rows(uRow)(uCol)
+    var r = rows(uRow)(uCol - col)
 
     //update JFX
     r = initRec(Some(r), uCol, uRow)
 
     //update rows map
-    rows(uRow)(uCol) = r
+    rows(uRow)(uCol - col) = r
 
     //update cols map
-    cols(uCol)(uRow) = r
+    cols(uCol)(uRow - row) = r
   }
 }

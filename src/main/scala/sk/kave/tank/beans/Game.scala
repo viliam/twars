@@ -7,6 +7,6 @@ object Game {
   val config = implicitly[Config]
   import config._
 
-  def map = Map()
-  val tank = new Tank(map.maxCols /2, map.maxRows /2)
+  val map = Map()
+  lazy val tank = new Tank(map.maxCols /2, map.maxRows /2)
 }

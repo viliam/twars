@@ -57,8 +57,9 @@ class Tank (
 
   val map = Game.map
 
-  for ( c <- x until x+tankSize;
-        r <- y until y+tankSize) map.update(c, r, NoMap)
+  def cleanGround() =
+    for ( c <- x until x+tankSize;
+          r <- y until y+tankSize) map.update(c, r, Grass)
 
   def canMove(vect : Vector2D) = map.canMove( (x,y), (tankSize,tankSize), vect)
 
@@ -76,6 +77,11 @@ class Tank (
       case Some(UP)    => _y = y -1
       case None =>
     }
-    fireEvent(TankMoveEvent( this.x, this.y, callback))
+
+    val cb = () => {
+      cleanGround()
+      callback()
+    }
+    fireEvent(TankMoveEvent( this.x, this.y, cb))
   }
 }
