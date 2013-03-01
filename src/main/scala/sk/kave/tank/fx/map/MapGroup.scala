@@ -81,7 +81,7 @@ object MapGroup extends Group {
 
   def eventOccured(event :TankEvent) {
     event match {
-      case e @ TankMoveEvent(_,_,_) => moveTank(e)
+      case e @ TankMoveEvent(_,_,_,_) => moveTank(e)
       case e @ TankRotationEvent(_, _) => rotateTank(e)
 
     }
@@ -125,11 +125,11 @@ object MapGroup extends Group {
           MapGroup.move(v)
           MapGroup.move(h)
 
-          e.callback()
+          e.callbackCanMove()
         }
       )
     } else
-      e.callback()
+      e.callbackCannotMove()
   }
 
 }

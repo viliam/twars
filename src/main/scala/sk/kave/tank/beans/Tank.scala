@@ -63,7 +63,7 @@ class Tank (
 
   def canMove(vect : Vector2D) = map.canMove( (x,y), (tankSize,tankSize), vect)
 
-  def move( vect: Vector2D)(callback : () => Unit) {  //todo fire event - remove this todo?
+  def move( vect: Vector2D)(callback : () => Unit) {
     val (h,v) = vect
 
     h match {
@@ -82,6 +82,10 @@ class Tank (
       cleanGround()
       callback()
     }
-    fireEvent(TankMoveEvent( this.x, this.y, cb))
+    val cb2 = () => {
+      callback()
+    }
+
+    fireEvent(TankMoveEvent( this.x, this.y, cb, cb2))
   }
 }
