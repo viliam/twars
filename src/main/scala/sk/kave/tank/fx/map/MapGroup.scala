@@ -101,15 +101,59 @@ object MapGroup extends Group with Logger {
   }
 
   private def handleMovement(e: TankMoveEvent) {
-    if (canMapMove(e.direction)) {
+    val (posH, posV) = Tank.isInPosition(e.x, e.y)
+    if (canMapMove(e.direction) && ((posH, posV).equals(true, true))) {
       moveMap(e)
     } else {
-      if (tank.canMove(e.direction)) {
+      debug("posH = " + posH + " posV = " + posV,Igor)
+      movementNearTheEdge(posH, posV, e)
+    }
+  }
+
+  private def movementNearTheEdge(posH: Boolean, posV: Boolean, e: TankMoveEvent) {
+    debug("movementNearTheEdge", Igor)
+    val (dirH, dirV) = e.direction
+
+    //horizontal movement
+    if (dirH.isDefined && posH) {
+      debug("map moving", Igor)
+      //move the map if possible
+      if (canMapMove(e.direction)) {
+        moveMap(TankMoveEvent(e.x, e.y, (dirH, None): Vector2D, () => e.callback()))
+        moveTank(TankMoveEvent(e.x, e.y, (dirH, None): Vector2D, () => e.callback()))
+      } else {
+        e.callback()
+      }
+    } else {
+      //move the tank if possible
+      if (canTankMove(e.direction)) {
+        debug("tank moving", Igor)
         moveTank(e)
-      }else{
+      } else {
+        debug("nothing moving", Igor)
         e.callback()
       }
     }
+   //fixme refactor into one method with horizontal movement (if possible)
+    if (dirV.isDefined && posV) {
+         debug("map moving V", Igor)
+         //move the map if possible
+         if (canMapMove(e.direction)) {
+           moveMap(TankMoveEvent(e.x, e.y, (None, dirV): Vector2D, () => e.callback()))
+           moveTank(TankMoveEvent(e.x, e.y, (None, dirV): Vector2D, () => e.callback()))
+         } else {
+           e.callback()
+         }
+       } else {
+         //move the tank if possible
+         if (canTankMove(e.direction)) {
+           debug("tank moving V", Igor)
+           moveTank(e)
+         } else {
+           debug("nothing moving V", Igor)
+           e.callback()
+         }
+       }
   }
 
   private def moveTank(e: TankMoveEvent) {
@@ -129,7 +173,7 @@ object MapGroup extends Group with Logger {
         }
         )
 
-    val (dH, dV) = getDirection(tank.vect)
+    val (dH, dV) = getDirection(e.direction)
 
     Main.controlerActor ! TimelineMessage[Number](
       10 ms,

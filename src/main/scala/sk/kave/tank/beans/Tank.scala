@@ -7,79 +7,96 @@ import scala.Some
 
 object Tank {
 
-  val transformation = Vector[Vector2D](     //clockwise path
+  val transformation = Vector[Vector2D](//clockwise path
     (None, Some(UP)), (Some(LEFT), Some(UP)),
     (Some(LEFT), None), (Some(LEFT), Some(DOWN)),
     (None, Some(DOWN)), (Some(RIGHT), Some(DOWN)),
     (Some(RIGHT), None), (Some(RIGHT), Some(UP)))
 
-  def getAngle( from : Vector2D, to : Vector2D) : Double   = {
+  def getAngle(from: Vector2D, to: Vector2D): Double = {
     val i1 = transformation.indexOf(from)
     val i2 = transformation.indexOf(to)
 
     val n = (i1 - i2)
 
     //sometimes clockwise direction isn't shortest path
-    if ( math.abs(n) > transformation.size/2) {
+    if (math.abs(n) > transformation.size / 2) {
       (transformation.size - math.abs(n)) * math.signum(n) * -45
     }
-    else n* 45
+    else {
+      n * 45
+    }
+  }
+
+  def isInPosition(x: Int, y: Int)(implicit config: Config): (Boolean, Boolean) = {
+
+    val h = if ((x > Map().maxCols - config.width / 2) || (x < config.width / 2)) false else true
+    val v = if ((y > Map().maxRows - config.height / 2) || (y < config.height / 2)) false else true
+
+    (h, v)
   }
 }
 
-class Tank (
-    @volatile private var _x: Int,
-    @volatile private var _y: Int,
-    @volatile private var _vect : Vector2D =  (None, Some(UP)) )
-           (implicit config: Config) extends EventListener[TankEvent] {
+class Tank(
+            @volatile private var _x: Int,
+            @volatile private var _y: Int,
+            @volatile private var _vect: Vector2D = (None, Some(UP)))
+          (implicit config: Config) extends EventListener[TankEvent] {
 
   import config._
 
   def x = _x
-  def x_=(v:Int){
+
+  def x_=(v: Int) {
     _x = v
   }
+
   def y = _y
-  def y_=(v:Int){
+
+  def y_=(v: Int) {
     _y = v
   }
+
   def vect = _vect
-  def vect_=(v:Vector2D) {
+
+  def vect_=(v: Vector2D) {
     _vect = v
   }
 
-  def changeDirection(vect : Vector2D)( callBack : () => Unit)  {
+  def changeDirection(vect: Vector2D)(callBack: () => Unit) {
     val oldVect = this.vect
     this.vect = vect
 
-    fireEvent( TankRotationEvent( oldVect, callBack))
+    fireEvent(TankRotationEvent(oldVect, callBack))
   }
 
   val map = Game.map
 
   def cleanGround() =
-    for ( c <- x until x+tankSize;
-          r <- y until y+tankSize) map.update(c, r, Grass)
+    for (c <- x until x + tankSize;
+         r <- y until y + tankSize) {
+      map.update(c, r, Grass)
+    }
 
-  def canMove(vect : Vector2D) = map.canMove( (x,y), (tankSize,tankSize), vect)
+  def canMove(vect: Vector2D) = map.canMove((x, y), (tankSize, tankSize), vect)
 
-  def move( vect: Vector2D)(callback : () => Unit) {
-    if (!canMove(vect)){
+  def move(vect: Vector2D)(callback: () => Unit) {
+    if (!canMove(vect)) {
       debug("tank cannot move anymore", All)
       callback()
       return
     }
-    val (h,v) = vect
+    val (h, v) = vect
 
     h match {
-      case Some(RIGHT) => _x = x +1
-      case Some(LEFT)  => _x = x -1
+      case Some(RIGHT) => _x = x + 1
+      case Some(LEFT) => _x = x - 1
       case None =>
     }
 
     v match {
-      case Some(DOWN)  => _y = y +1
-      case Some(UP)    => _y = y -1
+      case Some(DOWN) => _y = y + 1
+      case Some(UP) => _y = y - 1
       case None =>
     }
 
@@ -90,6 +107,6 @@ class Tank (
       callback()
     }
 
-    fireEvent(TankMoveEvent( this.x, this.y, vect, cb))
+    fireEvent(TankMoveEvent(this.x, this.y, vect, cb))
   }
 }
