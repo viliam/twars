@@ -20,7 +20,7 @@ class TankActor extends Actor with Logger {
   def receive = {
     case NewDirection(newDirection: Vector2D) =>
       if (!lock) {
-        logg.debug("TankActor:  lock")
+        debug("TankActor:  lock", Vilo)
         lock = true
 
         direction = newDirection
@@ -34,13 +34,13 @@ class TankActor extends Actor with Logger {
           }
         }
       } else {
-        logg.debug("RotationActor: message is ignoring " + newDirection)
+        debug("RotationActor: message is ignoring " + newDirection, All)
       }
 
     case UnLock => //when one key si released, actor needs to continue
       lock = false
-      logg.debug("RotationActor: unlock actor" + direction)
+      debug("RotationActor: unlock actor" + direction, Vilo)
 
-    case m@AnyRef => logg.warn("RotationActor : Unknow message = " + m)
+    case m@AnyRef => warn("RotationActor : Unknow message = " + m, All)
   }
 }

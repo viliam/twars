@@ -33,7 +33,7 @@ class Map(val items: COLUMNS) extends EventListener[MapChangeEvent] {
   }
 
   def update(c: Int, r: Int,  newValue: Items) {
-    logg.debug("update map  col: "+ c + "row: " + r + "  item: " + newValue)
+    debug("update map  col: "+ c + "row: " + r + "  item: " + newValue, Vilo)
 
     items(c)(r) = newValue
 
@@ -62,7 +62,7 @@ class Map(val items: COLUMNS) extends EventListener[MapChangeEvent] {
             case _ => true
           })
       if (!result) {
-        logg.debug("cannot move")
+        debug("cannot move",All)
       }
 
       result

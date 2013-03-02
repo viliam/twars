@@ -19,7 +19,7 @@ trait EventListener[E <: Event] extends Logger {
   }
 
   def fireEvent(event: E) {
-    logg.debug( "Fire event : " + event)
+    debug( "Fire event : " + event, Vilo)
     listenerMap.values.foreach(call => call(event))
   }
 }

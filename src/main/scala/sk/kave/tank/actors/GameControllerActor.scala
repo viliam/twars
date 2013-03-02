@@ -14,12 +14,12 @@ class GameControllerActor extends Actor with Logger {
   private lazy val timelineActor = context.actorOf( Props[TimelineActor]) //.withDispatcher("javafx-dispatcher"))
 
   override def preRestart(reason: Throwable, message: Option[Any]) {
-    println("in preRestart hook")
+    debug("in preRestart hook", All)
   }
 
   def receive = {
     case Exit  =>
-      logg.info("actor says 'Good bye'")
+      info("actor says 'Good bye'", All)
       context.stop( self)
       context.system.shutdown()
 
