@@ -34,12 +34,12 @@ class TankActor extends Actor with Logger {
           }
         }
       } else {
-        debug("RotationActor: message is ignoring " + newDirection, All)
+        debug("TankActor: message is ignoring " + newDirection, All)
       }
 
     case UnLock => //when one key si released, actor needs to continue
       lock = false
-      debug("RotationActor: unlock actor" + direction, Vilo)
+      debug("TankActor: unlock actor" + direction, Vilo)
 
     case m@AnyRef => warn("RotationActor : Unknow message = " + m, All)
   }

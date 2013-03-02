@@ -29,11 +29,6 @@ trait Logger {
     val userList = ListBuffer[UserEnum](user)
     userList ++= users
 
-    if (userList.isEmpty) {
-      logg.warn("Logger warning: logg users not defined - no logs will be printed!")
-      return
-    }
-
     if (LoggerObj.loggUser == "default" || userList.contains(All)) {
       loggF()
       return

@@ -9,41 +9,43 @@ import fx._
 import beans.{Tank, Game}
 import scala._
 import scalafx.scene.image.{Image, ImageView}
-import sk.kave.tank.actors.TimelineMessage
+import actors.TimelineMessage
 import scalafx.Includes._
 import scala.Some
+import utils.Logger
 
-object MapGroup extends Group {
+object MapGroup extends Group with Logger {
 
   val config = implicitly[Config]
+
   import config._
 
-  val mapView = new MapView[Rectangle](  initRec )
+  val mapView = new MapView[Rectangle](initRec)
 
   val map = Game.map
   val tank = Game.tank
 
   val tankNode = new ImageView {
-      image = new Image( GameStage.getClass.getResource( "/tank.png").toString )
-      x = tank.x  * itemSize + MapGroup.layoutX.intValue()
-      y = tank.y  * itemSize + MapGroup.layoutY.intValue()
-      fitWidth = config.tankSize * config.itemSize
-      fitHeight = config.tankSize * config.itemSize
-    }
+    image = new Image(GameStage.getClass.getResource("/tank.png").toString)
+    x = tank.x * itemSize + MapGroup.layoutX.intValue()
+    y = tank.y * itemSize + MapGroup.layoutY.intValue()
+    fitWidth = config.tankSize * config.itemSize
+    fitHeight = config.tankSize * config.itemSize
+  }
 
 
   def init() {
     children = mapView.init() :+ tankNode
-    layoutX = -((mapView.col + mapView.BORDER_SIZE) * itemSize)  //todo: maybe move this transformations
-    layoutY = -((mapView.row + mapView.BORDER_SIZE) * itemSize)  //      to another place .?
+    layoutX = -((mapView.col + mapView.BORDER_SIZE) * itemSize) //todo: maybe move this transformations
+    layoutY = -((mapView.row + mapView.BORDER_SIZE) * itemSize) //      to another place .?
 
     map.addListener(this, eventOccured)
     tank.addListener(this, eventOccured)
   }
 
-  def destroy(){
-    map.removeListener( this)
-    tank.removeListener( this)
+  def destroy() {
+    map.removeListener(this)
+    tank.removeListener(this)
   }
 
 
@@ -51,8 +53,12 @@ object MapGroup extends Group {
     mapView.move(dir)
   }
 
-  def canMove(tuple: (Option[Horizontal], Option[Vertical])): Boolean = {
+  def canMapMove(tuple: (Option[Horizontal], Option[Vertical])): Boolean = {
     mapView.canMove(tuple)
+  }
+
+  private def canTankMove(tuple: Vector2D): Boolean = {
+    tank.canMove(tuple)
   }
 
   /**
@@ -76,60 +82,100 @@ object MapGroup extends Group {
   }
 
   def eventOccured(event: MapChangeEvent) {
-    mapView.updateRec( event.col, event.row, event.newValue)
+    mapView.updateRec(event.col, event.row, event.newValue)
   }
 
-  def eventOccured(event :TankEvent) {
+  def eventOccured(event: TankEvent) {
     event match {
-      case e @ TankMoveEvent(_,_,_,_) => moveTank(e)
-      case e @ TankRotationEvent(_, _) => rotateTank(e)
-
+      case e@TankMoveEvent(_, _, _, _) => handleMovement(e)
+      case e@TankRotationEvent(_, _) => rotateTank(e)
     }
   }
 
-  private def rotateTank( e: TankRotationEvent) {
+  private def rotateTank(e: TankRotationEvent) {
     Main.controlerActor ! TimelineMessage[Number](
       100 ms,
-      List((tankNode.rotate , tankNode.rotate() + Tank.getAngle(e.oldVector, tank.vect))),
+      List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldVector, tank.vect))),
       e.callback
     )
   }
 
-  private def moveTank( e : TankMoveEvent)  {
+  private def handleMovement(e: TankMoveEvent) {
+    if (canMapMove(e.direction)) {
+      moveMap(e)
+    } else {
+      if (tank.canMove(e.direction)) {
+        moveTank(e)
+      }else{
+        e.callback()
+      }
+    }
+  }
 
-    def getDirection(direction : Vector2D) =
-        (
-          direction._1 match {
-            case Some(LEFT) => +config.itemSize
-            case Some(RIGHT) => -config.itemSize
-            case None => 0
-          }
+  private def moveTank(e: TankMoveEvent) {
+    debug("move tank " + e, Igor)
+    def getDirection(direction: Vector2D) =
+      (
+        direction._1 match {
+          case Some(LEFT) => +config.itemSize
+          case Some(RIGHT) => -config.itemSize
+          case None => 0
+        }
         ,
-          direction._2 match {
-            case Some(UP) => +config.itemSize
-            case Some(DOWN) => -config.itemSize
-            case None => 0
-          }
+        direction._2 match {
+          case Some(UP) => +config.itemSize
+          case Some(DOWN) => -config.itemSize
+          case None => 0
+        }
         )
 
-    val (h,v) = tank.vect
-    val (dH, dV) = getDirection( tank.vect)
-    if ( canMove(tank.vect)) {
+    val (dH, dV) = getDirection(tank.vect)
+
+    Main.controlerActor ! TimelineMessage[Number](
+      10 ms,
+      List(
+        (tankNode.translateX, tankNode.translateX() - dH),
+        (tankNode.translateY, tankNode.translateY() - dV)),
+      () => {
+        e.callback()
+      }
+    )
+  }
+
+
+  private def moveMap(e: TankMoveEvent) {
+
+    def getDirection(direction: Vector2D) =
+      (
+        direction._1 match {
+          case Some(LEFT) => +config.itemSize
+          case Some(RIGHT) => -config.itemSize
+          case None => 0
+        }
+        ,
+        direction._2 match {
+          case Some(UP) => +config.itemSize
+          case Some(DOWN) => -config.itemSize
+          case None => 0
+        }
+        )
+
+    val (h, v) = tank.vect
+    val (dH, dV) = getDirection(tank.vect)
+    if (canMapMove(tank.vect)) {
       Main.controlerActor ! TimelineMessage[Number](
         10 ms,
-        List((translateX, translateX() + dH ),
-             (translateY, translateY() + dV ),
-             (tankNode.translateX, tankNode.translateX() - dH),
-             (tankNode.translateY, tankNode.translateY() - dV)),
+        List((translateX, translateX() + dH),
+          (translateY, translateY() + dV),
+          (tankNode.translateX, tankNode.translateX() - dH),
+          (tankNode.translateY, tankNode.translateY() - dV)),
         () => {
           MapGroup.move(v)
           MapGroup.move(h)
 
-          e.callbackCanMove()
+          e.callback()
         }
       )
-    } else
-      e.callbackCannotMove()
+    }
   }
-
 }

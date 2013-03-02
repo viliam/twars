@@ -64,6 +64,11 @@ class Tank (
   def canMove(vect : Vector2D) = map.canMove( (x,y), (tankSize,tankSize), vect)
 
   def move( vect: Vector2D)(callback : () => Unit) {
+    if (!canMove(vect)){
+      debug("tank cannot move anymore", All)
+      callback()
+      return
+    }
     val (h,v) = vect
 
     h match {
@@ -78,14 +83,13 @@ class Tank (
       case None =>
     }
 
+    cleanGround()
+
+
     val cb = () => {
-      cleanGround()
-      callback()
-    }
-    val cb2 = () => {
       callback()
     }
 
-    fireEvent(TankMoveEvent( this.x, this.y, cb, cb2))
+    fireEvent(TankMoveEvent( this.x, this.y, vect, cb))
   }
 }
