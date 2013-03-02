@@ -1,6 +1,7 @@
 package sk.kave.tank.utils
 
 import org.apache.log4j.Logger
+import collection.mutable.ListBuffer
 
 object LoggerObj {
   var loggUser: String = null
@@ -12,31 +13,33 @@ trait Logger {
   private val prefix = "-DloggUser="
   private val logg = Logger.getLogger(mf.runtimeClass)
 
-  def debug(message: String, users: UserEnum*) {
-    logg(users)(() => logg.debug(message))
+  def debug(message: String, user: UserEnum, users: UserEnum*) {
+    logg(user, users)(() => logg.debug(message))
   }
 
-  def info(message: String, users: UserEnum*) {
-    logg(users)(() => logg.info(message))
+  def info(message: String, user: UserEnum, users: UserEnum*) {
+    logg(user, users)(() => logg.info(message))
   }
 
-  def warn(message: String, users: UserEnum*) {
-    logg(users)(() => logg.warn(message))
+  def warn(message: String, user: UserEnum, users: UserEnum*) {
+    logg(user, users)(() => logg.warn(message))
   }
 
-  private def logg(users: Seq[UserEnum])(loggF: () => Unit) {
+  private def logg(user: UserEnum, users: Seq[UserEnum])(loggF: () => Unit) {
+    val userList = ListBuffer[UserEnum](user)
+    userList ++= users
 
-    if (users == null || users.isEmpty) {
+    if (userList.isEmpty) {
       logg.warn("Logger warning: logg users not defined - no logs will be printed!")
       return
     }
 
-    if (LoggerObj.loggUser == "default" || users.contains(All)) {
+    if (LoggerObj.loggUser == "default" || userList.contains(All)) {
       loggF()
       return
     }
 
-    if (users.exists(user => prefix + user.name == LoggerObj.loggUser)) {
+    if (userList.exists(user => prefix + user.name == LoggerObj.loggUser)) {
       loggF()
     }
   }
