@@ -6,6 +6,7 @@ import collection.mutable.ArrayBuffer
 import org.apache.log4j.Logger
 import scalafx.beans.property.DoubleProperty
 import tank.fx.{Vertical, Horizontal}
+import tank.utils.Vector2D
 
 /**
  * User: wilo
@@ -32,6 +33,10 @@ package object tank {
     val tankSize = 5
 
   }
+
+  implicit def convertVector(v:Vector2D):sk.kave.tank.utils.Vector2D= Vector2D(v)
+  implicit def convertVector(v:sk.kave.tank.utils.Vector2D):Vector2D= v()
+
 
   def readMapFromFile( fileName : String ) : Map = {
     val fileReader: FileReader = new FileReader(new File( fileName))
