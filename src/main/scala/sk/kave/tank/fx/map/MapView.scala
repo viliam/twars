@@ -7,6 +7,7 @@ import sk.kave.tank.fx._
 import collection.immutable.IndexedSeq
 import collection.mutable.ListBuffer
 import scala.Some
+import utils.Logger
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,7 +16,7 @@ import scala.Some
  * Time: 11:55
  */
 
-class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Config) {
+class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Config) extends Logger{
 
   import config._
 
@@ -56,7 +57,7 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
   def canMove(vect: Vector2D) = map.canMove( (col, row), (BORDER_SIZE + config.width, BORDER_SIZE + config.height), vect)
 
   def move(d: Option[Direction]) {
-    //logg.debug("move to direction = " + d + "  on row: " + row + "; col:" + col)
+//    debug("move to direction = " + d + "  on row: " + row + "; col:" + col, Igor)
 
     d match {
       case Some(DOWN) => {
