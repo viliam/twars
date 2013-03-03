@@ -26,11 +26,21 @@ class TankActor extends Actor with Logger {
         direction = newDirection
         if (direction != tank.vect) {
           tank.changeDirection(direction) {
-            () => self ! UnLock
+            () => {
+              self ! UnLock
+              if (tank.vect.isDefined) {
+                Main.controlerActor ! ContinueMovement(tank.vect)
+              }
+            }
           }
         } else {
-          tank.move( direction) {
-            () => self ! UnLock
+          tank.move(direction) {
+            () => {
+              self ! UnLock
+              if (tank.vect.isDefined) {
+                Main.controlerActor ! ContinueMovement(tank.vect)
+              }
+            }
           }
         }
       } else {
@@ -41,6 +51,6 @@ class TankActor extends Actor with Logger {
       lock = false
       debug("TankActor: unlock actor" + direction, Vilo)
 
-    case m@AnyRef => warn("RotationActor : Unknow message = " + m, All)
+    case m@AnyRef => warn("TankActor : Unknow message = " + m, All)
   }
 }

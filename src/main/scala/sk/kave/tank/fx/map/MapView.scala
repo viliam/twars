@@ -57,7 +57,7 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Confi
   def canMove(vect: Vector2D) = map.canMove( (col, row), (BORDER_SIZE + config.width, BORDER_SIZE + config.height), vect)
 
   def move(d: Option[Direction]) {
-//    debug("move to direction = " + d + "  on row: " + row + "; col:" + col, Igor)
+//    debug("map move to direction = " + d + "  on row: " + row + "; col:" + col, Igor)
 
     d match {
       case Some(DOWN) => {

@@ -9,7 +9,7 @@ import fx._
 import beans.{Tank, Game}
 import scala._
 import scalafx.scene.image.{Image, ImageView}
-import actors.TimelineMessage
+import actors.{ContinueMovement, TimelineMessage}
 import scalafx.Includes._
 import scala.Some
 import utils.Logger
@@ -94,9 +94,13 @@ object MapGroup extends Group with Logger {
 
   private def rotateTank(e: TankRotationEvent) {
     Main.controlerActor ! TimelineMessage[Number](
-      100 ms,
-      List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldVector, tank.vect))),
-      e.callback
+    10 ms,
+    List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldVector, tank.vect))), ()=>{
+      e.callback()
+      if (tank.vect.isDefined){
+        Main.controlerActor ! ContinueMovement(tank.vect)
+      }
+    }
     )
   }
 
@@ -105,20 +109,15 @@ object MapGroup extends Group with Logger {
     if (canMapMove(e.direction) && ((posH, posV).equals(true, true))) {
       moveMap(e)
     } else {
-      debug("posH = " + posH + " posV = " + posV, Igor)
       movementNearTheEdge(posH, posV, e)
     }
   }
 
   private def movementNearTheEdge(posH: Boolean, posV: Boolean, e: TankMoveEvent) {
-    debug("movementNearTheEdge", Igor)
     val (dirH, dirV) = e.direction
-
-
 
     //diagonal movement must be handeled separately
     if (dirH.isDefined && dirV.isDefined) {
-      debug("diagonal movement near the edge", Igor)
       moveTankAndMap(e, posH, posV)
       return
     }
@@ -196,9 +195,6 @@ object MapGroup extends Group with Logger {
 
 
   private def moveMap(e: TankMoveEvent) {
-
-
-
     val (h, v) = e.direction
     val (dH, dV) = e.direction.getShift
     if (canMapMove(e.direction)) {
