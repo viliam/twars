@@ -68,6 +68,8 @@ class Tank(
     this.vect = vect
 
     fireEvent(TankRotationEvent(oldVect, callBack))
+
+    move(vect)(callBack) //tank will not only rotate, it will also move
   }
 
   val map = Game.map
