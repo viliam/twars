@@ -72,13 +72,39 @@ class Tank(
 
   val map = Game.map
 
-  def cleanGround() =
+  def cleanGround(): Int = {
+    var groundCount = 0
     for (c <- x until x + tankSize;
          r <- y until y + tankSize) {
-      map.update(c, r, Grass)
+      if (map(c, r) == Ground) groundCount = groundCount + 1
+      map(c, r) = Grass
+    }
+    groundCount
+  }
+
+  def canMove(vect: Vector2D) = map.canMove((x, y), (tankSize, tankSize), vect) && !isStoneAhead(vect)
+
+  private def isStoneAhead(direction: Vector2D): Boolean = {
+
+    val x = direction.horizontal match {
+      case Some(RIGHT) => _x + 1
+      case Some(LEFT) => _x - 1
+      case None => _x
     }
 
-  def canMove(vect: Vector2D) = map.canMove((x, y), (tankSize, tankSize), vect)
+    val y = direction.vertical match {
+      case Some(DOWN) => _y + 1
+      case Some(UP) => _y - 1
+      case None => _y
+    }
+
+    for (c <- x until x + tankSize;
+         r <- y until y + tankSize) {
+      if (map(c, r) == Stone) return true
+    }
+
+    false
+  }
 
   def move(vect: Vector2D)(callback: () => Unit) {
     if (!canMove(vect)) {
@@ -86,22 +112,21 @@ class Tank(
       callback()
       return
     }
-    val (h, v) = vect
 
-    h match {
+    vect.horizontal match {
       case Some(RIGHT) => _x = x + 1
       case Some(LEFT) => _x = x - 1
       case None =>
     }
 
-    v match {
+    vect.vertical match {
       case Some(DOWN) => _y = y + 1
       case Some(UP) => _y = y - 1
       case None =>
     }
 
-    cleanGround()
-
+    val groundCleaned = cleanGround()
+    debug("Tank cleared ground " + groundCleaned, Igor)
 
     val cb = () => {
       callback()
