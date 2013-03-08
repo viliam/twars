@@ -16,7 +16,6 @@ import utils.Logger
 
 object MapGroup extends Group with Logger {
 
-
   val gContext = implicitly[Game]
   import gContext._
   import gContext.config._
@@ -25,8 +24,8 @@ object MapGroup extends Group with Logger {
 
   val tankNode = new ImageView {
     image = new Image(GameStage.getClass.getResource("/tank.png").toString)
-    x = tank.x * itemSize + MapGroup.layoutX.intValue()
-    y = tank.y * itemSize + MapGroup.layoutY.intValue()
+    x = initG.tankX * itemSize + MapGroup.layoutX.intValue()
+    y = initG.tankY * itemSize + MapGroup.layoutY.intValue()
     fitWidth = config.tankSize * config.itemSize
     fitHeight = config.tankSize * config.itemSize
   }
@@ -43,7 +42,7 @@ object MapGroup extends Group with Logger {
 
   def destroy() {
     map.removeListener(this)
-    tank.removeListener(this)
+    //tank.removeListener(this)
   }
 
 
@@ -85,18 +84,18 @@ object MapGroup extends Group with Logger {
 
   def eventOccured(event: TankEvent) {
     event match {
-      case e@TankMoveEvent(_, _, _, _) => handleMovement(e)
-      case e@TankRotationEvent(_, _) => rotateTank(e)
+      case e : TankMoveEvent => handleMovement(e)
+      case e : TankRotationEvent => rotateTank(e)
     }
   }
 
   private def rotateTank(e: TankRotationEvent) {
     Main.controlerActor ! TimelineMessage[Number](
     10 ms,
-    List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldVector, tank.vect))), ()=>{
+    List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldDirection , e.newDirection ))), ()=>{
       e.callback()
-      if (tank.vect.isDefined){
-        Main.controlerActor ! ContinueMovement(tank.vect)
+      if (tank.direction.isDefined){
+        Main.controlerActor ! ContinueMovement(tank.direction)
       }
     }
     )

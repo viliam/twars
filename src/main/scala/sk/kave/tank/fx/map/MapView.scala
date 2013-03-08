@@ -22,11 +22,12 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)
   import gContext._
   import gContext.config._
 
+
   val BORDER_SIZE = 1 //width of border (in rectangles) around user's view
 
   //current position of the map group; coordinates are indices in map data model
-  var col = tank.x - BORDER_SIZE - (config.width - tankSize) / 2
-  var row = tank.y - BORDER_SIZE - (config.height - tankSize) / 2
+  var col = initG.tankX - BORDER_SIZE - (config.width - tankSize) / 2
+  var row = initG.tankY - BORDER_SIZE - (config.height - tankSize) / 2
 
   def colMax = config.width + col + BORDER_SIZE * 2
 

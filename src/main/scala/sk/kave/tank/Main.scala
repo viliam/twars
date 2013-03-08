@@ -12,6 +12,10 @@ import utils.{LoggerObj, Logger}
  * Time: 1:11 PM
  */
 object Main extends JFXApp with Logger {
+
+  val system = ActorSystem("ControllerSystem")
+  val controlerActor = system.actorOf(Props[GameControllerActor], name = "controller")
+
   stage = GameStage
 
 
@@ -20,6 +24,6 @@ object Main extends JFXApp with Logger {
     super.main(args)
   }
 
-  val system = ActorSystem("ControllerSystem")
-  val controlerActor = system.actorOf(Props[GameControllerActor], name = "controller")
+
+
 }

@@ -5,72 +5,26 @@ import events.{TankEvent, TankRotationEvent, EventListener, TankMoveEvent}
 import sk.kave.tank.fx._
 import scala.Some
 
-object Tank {
-
-  val transformation = Vector[Vector2D](//clockwise path
-    (None, Some(UP)), (Some(LEFT), Some(UP)),
-    (Some(LEFT), None), (Some(LEFT), Some(DOWN)),
-    (None, Some(DOWN)), (Some(RIGHT), Some(DOWN)),
-    (Some(RIGHT), None), (Some(RIGHT), Some(UP)))
-
-  def getAngle(from: Vector2D, to: Vector2D): Double = {
-    val i1 = transformation.indexOf(from)
-    val i2 = transformation.indexOf(to)
-
-    val n = (i1 - i2)
-
-    //sometimes clockwise direction isn't shortest path
-    if (math.abs(n) > transformation.size / 2) {
-      (transformation.size - math.abs(n)) * math.signum(n) * -45
-    }
-    else {
-      n * 45
-    }
-  }
-
-  def isInPosition(x: Int, y: Int)(implicit gContext: Game): (Boolean, Boolean) = {
-    import gContext.config._
-
-    val h = if ((x > Map().maxCols - width / 2)  || (x < width / 2)) false else true
-    val v = if ((y > Map().maxRows - height / 2) || (y < height / 2)) false else true
-
-    (h, v)
-  }
-}
-
-class Tank(
+class TankImpl (
             @volatile private var _x: Int,
             @volatile private var _y: Int,
-            @volatile private var _vect: Vector2D = (None, Some(UP)))
-          (implicit gContext : Game) extends EventListener[TankEvent] {
-
+            @volatile private var _direction : Vector2D = (None, Some(UP)))
+          (implicit gContext : Game) extends Tank with EventListener[TankEvent] {
 
   import gContext._
   import gContext.config._
 
   def x = _x
-
-  def x_=(v: Int) {
-    _x = v
-  }
-
   def y = _y
 
-  def y_=(v: Int) {
-    _y = v
-  }
 
-  def vect = _vect
+  def direction = _direction
 
-  def vect_=(v: Vector2D) {
-    _vect = v
-  }
+  def changeDirection(direction: Vector2D)(callBack: () => Unit) {
+    val oldDirection = this.direction
+    this._direction = direction
 
-  def changeDirection(vect: Vector2D)(callBack: () => Unit) {
-    val oldVect = this.vect
-    this.vect = vect
-
-    fireEvent(TankRotationEvent(oldVect, callBack))
+    fireEvent(TankRotationEvent(direction, oldDirection, callBack))
   }
 
   def cleanGround(): Int = {

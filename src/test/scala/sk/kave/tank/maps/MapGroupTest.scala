@@ -1,4 +1,4 @@
-package sk.kave.tank.map
+package sk.kave.tank.maps
 
 import org.junit.{Assert, Test, Before}
 import sk.kave.tank.fx.map.MapGroup

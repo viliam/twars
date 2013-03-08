@@ -5,7 +5,7 @@ import java.io.{BufferedReader, File, FileReader}
 import collection.mutable.ArrayBuffer
 import org.apache.log4j.Logger
 import scalafx.beans.property.DoubleProperty
-import tank.fx.{Vertical, Horizontal}
+import tank.fx.{UP, Vertical, Horizontal}
 import tank.utils.Vector2D
 
 /**
@@ -27,14 +27,13 @@ package object tank {
   object ConfigImpl extends Config {
     val width = 30
     val height = 30
-
     val itemSize = 10
 
     val tankSize = 5
-
   }
 
   implicit object GameContext extends Game
+  val map = GameContext.map
 
   implicit def convertVector(v:Vector2D):sk.kave.tank.utils.Vector2D= Vector2D(v)
   implicit def convertVector(v:sk.kave.tank.utils.Vector2D):Vector2D= v()

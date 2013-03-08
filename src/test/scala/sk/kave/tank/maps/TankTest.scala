@@ -1,7 +1,7 @@
-package sk.kave.tank.map
+package sk.kave.tank.maps
 
 import org.junit.{Assert, Test, Before}
-import sk.kave.tank.beans.Tank
+import sk.kave.tank.beans.{TankImpl, Tank}
 import sk.kave.tank.fx.{RIGHT, DOWN, LEFT, UP}
 import sk.kave.tank.Config
 

@@ -16,7 +16,7 @@ class TankActor extends Actor with Logger {
   val gContext = implicitly[Game]
   import gContext._
 
-  private var direction: Vector2D = tank.vect
+  private var direction: Vector2D = initG.direction
   private var lock = false
 
   def receive = {
@@ -26,24 +26,10 @@ class TankActor extends Actor with Logger {
         lock = true
 
         direction = newDirection
-        if (direction != tank.vect) {
-          tank.changeDirection(direction) {
-            () => {
-              self ! UnLock
-              if (tank.vect.isDefined) {
-                Main.controlerActor ! ContinueMovement(tank.vect)
-              }
-            }
-          }
+        if (direction != tank.direction) {
+          tank.changeDirection(direction) {  () => { self ! UnLock } }
         } else {
-          tank.move(direction) {
-            () => {
-              self ! UnLock
-              if (tank.vect.isDefined) {
-                Main.controlerActor ! ContinueMovement(tank.vect)
-              }
-            }
-          }
+          tank.move(direction) {  () => self ! UnLock  }
         }
       } else {
         debug("TankActor: message is ignoring " + newDirection, All)
@@ -51,6 +37,9 @@ class TankActor extends Actor with Logger {
 
     case UnLock => //when one key si released, actor needs to continue
       lock = false
+      if (tank.direction.isDefined) {
+        Main.controlerActor ! ContinueMovement(tank.direction)
+      }
       debug("TankActor: unlock actor" + direction, Vilo)
 
     case m@AnyRef => warn("TankActor : Unknow message = " + m, All)

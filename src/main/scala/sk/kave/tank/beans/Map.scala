@@ -33,7 +33,7 @@ class Map(val items: COLUMNS) extends EventListener[MapChangeEvent] {
   }
 
   def update(c: Int, r: Int,  newValue: Items) {
-    debug("update map  col: "+ c + "row: " + r + "  item: " + newValue, Vilo)
+//    debug("update map  col: "+ c + "row: " + r + "  item: " + newValue, Vilo)
 
     items(c)(r) = newValue
 

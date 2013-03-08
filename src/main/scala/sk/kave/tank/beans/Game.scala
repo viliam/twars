@@ -1,12 +1,30 @@
 package sk.kave.tank.beans
 
 import sk.kave.tank._
+import fx.UP
+import akka.actor.{TypedActor, TypedProps}
 
 trait Game {
+
+  trait IGameInit {
+     def tankX : Int
+     def tankY : Int
+     def direction : Vector2D
+  }
+
+  val map = Map()
+
+  val initG : IGameInit = new IGameInit {
+    override val tankX = map.maxCols /2
+    override val tankY = map.maxRows /2
+    override val direction = (None, Some(UP))
+  }
 
   val config :Config = ConfigImpl
   import config._
 
-  val map = Map()
-  lazy val tank = new Tank(map.maxCols /2, map.maxRows /2)
+  lazy val tank : Tank = TypedActor(Main.system).typedActorOf(TypedProps(classOf[Tank],
+                            new TankImpl(map.maxCols /2, map.maxRows /2)), "tank")
+
+
 }

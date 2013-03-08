@@ -18,6 +18,8 @@ trait EventListener[E <: Event] extends Logger {
     listenerMap -= listener
   }
 
+  //todo fix me:!! event is running in the same thread like actor
+  //      - be carefull for deadlocks
   def fireEvent(event: E) {
     debug( "Fire event : " + event, Vilo)
     listenerMap.values.foreach(call => call(event))
