@@ -5,6 +5,7 @@ import sk.kave.tank.fx.map.MapView
 import sk.kave.tank.fx._
 import sk.kave.tank.Config
 import collection.mutable.ListBuffer
+import sk.kave.tank.beans.Game
 
 /**
  * @author Igo
@@ -14,12 +15,13 @@ class MapViewTest {
 
   val testConfig = new Config() {
     def width = 4
-
     def height = 4
-
     def itemSize = 1
-
     def tankSize = 2
+  }
+
+  implicit val testGameContext = new Game {
+    override val config = testConfig
   }
 
   def rows = mapView.rows
@@ -32,7 +34,7 @@ class MapViewTest {
     mapView = new MapView[Int](
       (oI: Option[Int], x: Int, y: Int) => {
         x
-      })(testConfig)
+      })
     mapView.init()
     logg.debug(mapView.rows.mkString("\n"))
   }

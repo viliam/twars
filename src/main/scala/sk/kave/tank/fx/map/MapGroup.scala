@@ -16,14 +16,12 @@ import utils.Logger
 
 object MapGroup extends Group with Logger {
 
-  val config = implicitly[Config]
 
-  import config._
+  val gContext = implicitly[Game]
+  import gContext._
+  import gContext.config._
 
   val mapView = new MapView[Rectangle](initRec)
-
-  val map = Game.map
-  val tank = Game.tank
 
   val tankNode = new ImageView {
     image = new Image(GameStage.getClass.getResource("/tank.png").toString)
@@ -156,7 +154,7 @@ object MapGroup extends Group with Logger {
   private def moveTankAndMap(e: TankMoveEvent, posH: Boolean, posV: Boolean) {
 
     val (h, v) = e.direction
-    val (dH, dV) = e.direction.getShift
+    val (dH, dV) = e.direction.getShift( itemSize)
     Main.controlerActor ! TimelineMessage[Number](
       10 ms,
       List(
@@ -181,7 +179,7 @@ object MapGroup extends Group with Logger {
   }
 
   private def moveTank(e: TankMoveEvent, dirH: Option[Horizontal], dirV: Option[Vertical]) {
-    val (dH, dV) = e.direction.getShift
+    val (dH, dV) = e.direction.getShift( itemSize)
     Main.controlerActor ! TimelineMessage[Number](
       10 ms,
       List(
@@ -196,7 +194,7 @@ object MapGroup extends Group with Logger {
 
   private def moveMap(e: TankMoveEvent) {
     val (h, v) = e.direction
-    val (dH, dV) = e.direction.getShift
+    val (dH, dV) = e.direction.getShift( itemSize)
     if (canMapMove(e.direction)) {
       Main.controlerActor ! TimelineMessage[Number](
         10 ms,

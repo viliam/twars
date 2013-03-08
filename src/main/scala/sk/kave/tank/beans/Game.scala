@@ -2,9 +2,9 @@ package sk.kave.tank.beans
 
 import sk.kave.tank._
 
-object Game {
+trait Game {
 
-  val config = implicitly[Config]
+  val config :Config = ConfigImpl
   import config._
 
   val map = Map()

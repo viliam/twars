@@ -1,5 +1,6 @@
 package sk.kave.tank.actors
 
+
 import sk.kave.tank._
 import beans.Game
 import akka.actor.Actor
@@ -12,7 +13,8 @@ import utils.Logger
  */
 class TankActor extends Actor with Logger {
 
-  val tank = Game.tank
+  val gContext = implicitly[Game]
+  import gContext._
 
   private var direction: Vector2D = tank.vect
   private var lock = false

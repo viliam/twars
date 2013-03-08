@@ -16,14 +16,13 @@ import utils.Logger
  * Time: 11:55
  */
 
-class MapView[R](val initRec: (Option[R], Int, Int) => R)(implicit config: Config) extends Logger{
+class MapView[R](val initRec: (Option[R], Int, Int) => R)
+                (implicit gContext: Game) extends Logger{
 
-  import config._
+  import gContext._
+  import gContext.config._
 
   val BORDER_SIZE = 1 //width of border (in rectangles) around user's view
-
-  val map = Game.map
-  val tank = Game.tank
 
   //current position of the map group; coordinates are indices in map data model
   var col = tank.x - BORDER_SIZE - (config.width - tankSize) / 2

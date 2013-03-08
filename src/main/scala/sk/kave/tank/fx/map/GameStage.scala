@@ -6,6 +6,7 @@ import scalafx.stage.WindowEvent
 
 import sk.kave.tank._
 import actors.{UserMessage, KeyPressEvent, Exit}
+import beans.Game
 import fx.{UP, DOWN, LEFT, RIGHT}
 import javafx.scene.paint.Color
 import scalafx.application.JFXApp.PrimaryStage
@@ -18,8 +19,9 @@ import scalafx.scene.Scene
  */
 object GameStage extends PrimaryStage {
 
-  val config = implicitly[Config]
-  import config._
+  val gContext = implicitly[Game]
+  import gContext._
+  import gContext.config._
 
   title = "ScalaFX Tetris"
 

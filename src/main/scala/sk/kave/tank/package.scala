@@ -1,6 +1,6 @@
 package sk.kave
 
-import tank.beans.{Items, Map}
+import tank.beans.{Game, Items, Map}
 import java.io.{BufferedReader, File, FileReader}
 import collection.mutable.ArrayBuffer
 import org.apache.log4j.Logger
@@ -24,7 +24,7 @@ package object tank {
       def tankSize : Int
   }
 
-  implicit object ConfigImpl extends Config {
+  object ConfigImpl extends Config {
     val width = 30
     val height = 30
 
@@ -33,6 +33,8 @@ package object tank {
     val tankSize = 5
 
   }
+
+  implicit object GameContext extends Game
 
   implicit def convertVector(v:Vector2D):sk.kave.tank.utils.Vector2D= Vector2D(v)
   implicit def convertVector(v:sk.kave.tank.utils.Vector2D):Vector2D= v()

@@ -7,7 +7,7 @@ import scala.Some
 /**
  * @author Igo
  */
-case class Vector2D(value: (Option[Horizontal], Option[Vertical]))(implicit config: Config) {
+case class Vector2D(value: (Option[Horizontal], Option[Vertical])) {
   val horizontal = value._1
   val vertical = value._2
 
@@ -17,17 +17,17 @@ case class Vector2D(value: (Option[Horizontal], Option[Vertical]))(implicit conf
    * calculates shift of a object according to Vector2D value
    * @return
    */
-  def getShift =
+  def getShift(px : Int) =
     (
       value._1 match {
-        case Some(LEFT) => +config.itemSize
-        case Some(RIGHT) => -config.itemSize
+        case Some(LEFT)  => +px
+        case Some(RIGHT) => -px
         case None => 0
       }
       ,
       value._2 match {
-        case Some(UP) => +config.itemSize
-        case Some(DOWN) => -config.itemSize
+        case Some(UP)   => +px
+        case Some(DOWN) => -px
         case None => 0
       }
       )

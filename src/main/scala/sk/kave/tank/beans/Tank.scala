@@ -28,10 +28,11 @@ object Tank {
     }
   }
 
-  def isInPosition(x: Int, y: Int)(implicit config: Config): (Boolean, Boolean) = {
+  def isInPosition(x: Int, y: Int)(implicit gContext: Game): (Boolean, Boolean) = {
+    import gContext.config._
 
-    val h = if ((x > Map().maxCols - config.width / 2) || (x < config.width / 2)) false else true
-    val v = if ((y > Map().maxRows - config.height / 2) || (y < config.height / 2)) false else true
+    val h = if ((x > Map().maxCols - width / 2)  || (x < width / 2)) false else true
+    val v = if ((y > Map().maxRows - height / 2) || (y < height / 2)) false else true
 
     (h, v)
   }
@@ -41,9 +42,11 @@ class Tank(
             @volatile private var _x: Int,
             @volatile private var _y: Int,
             @volatile private var _vect: Vector2D = (None, Some(UP)))
-          (implicit config: Config) extends EventListener[TankEvent] {
+          (implicit gContext : Game) extends EventListener[TankEvent] {
 
-  import config._
+
+  import gContext._
+  import gContext.config._
 
   def x = _x
 
@@ -69,8 +72,6 @@ class Tank(
 
     fireEvent(TankRotationEvent(oldVect, callBack))
   }
-
-  val map = Game.map
 
   def cleanGround(): Int = {
     var groundCount = 0
