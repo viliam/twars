@@ -42,7 +42,7 @@ object MapGroup extends Group with Logger {
 
   def destroy() {
     map.removeListener(this)
-    //tank.removeListener(this)
+    tank.removeListener(this)
   }
 
 

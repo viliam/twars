@@ -2,26 +2,30 @@ package sk.kave.tank.events
 
 import sk.kave.tank._
 import utils.Logger
+import akka.actor.{ActorRef, Props, Actor}
 
 /**
  * @author Igo
  */
 trait EventListener[E <: Event] extends Logger {
 
-  private var listenerMap = Map[Any, (E => Unit)]()
+  private var listenerMap = Map[Any, ActorRef]()
 
   def addListener(listener: Any, callback: (E => Unit)) {
-    listenerMap += (listener -> callback)
+    val listenerActor = Main.system.actorOf( Props( new Actor {
+      def receive = {
+        case e : E => callback(e)
+      }
+    }))
+    listenerMap += (listener -> listenerActor)
   }
 
   def removeListener(listener: Any) {
     listenerMap -= listener
   }
 
-  //todo fix me:!! event is running in the same thread like actor
-  //      - be carefull for deadlocks
   def fireEvent(event: E) {
     debug( "Fire event : " + event, Vilo)
-    listenerMap.values.foreach(call => call(event))
+    listenerMap.values.foreach(call => call ! event)
   }
 }
