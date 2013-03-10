@@ -24,7 +24,7 @@ trait Game {
   import config._
 
   lazy val tank : Tank = TypedActor(Main.system).typedActorOf(TypedProps(classOf[Tank],
-                            new TankImpl(map.maxCols /2, map.maxRows /2)), "tank")
+                            new TankImpl(initG.tankX,initG.tankY)), "tank")
 
 
 }

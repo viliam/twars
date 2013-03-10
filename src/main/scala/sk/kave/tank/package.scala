@@ -7,6 +7,7 @@ import org.apache.log4j.Logger
 import scalafx.beans.property.DoubleProperty
 import tank.fx.{UP, Vertical, Horizontal}
 import tank.utils.Vector2D
+import javafx.util.Duration
 
 /**
  * User: wilo
@@ -17,11 +18,13 @@ package object tank {
 
   type Vector2D = ( Option[Horizontal], Option[Vertical])
 
-  trait Config {
+  trait Config extends scalafx.Includes{
       def width  : Int
       def height : Int
       def itemSize : Int
       def tankSize : Int
+      def tankRotationDuration:Duration
+      def tankMovementDuration:Duration
   }
 
   object ConfigImpl extends Config {
@@ -29,7 +32,9 @@ package object tank {
     val height = 30
     val itemSize = 10
 
-    val tankSize = 5
+    val tankSize = 3
+    val tankRotationDuration = 130 ms
+    val tankMovementDuration = 20 ms
   }
 
   implicit object GameContext extends Game

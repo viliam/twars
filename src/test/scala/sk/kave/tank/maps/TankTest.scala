@@ -4,6 +4,7 @@ import org.junit.{Assert, Test, Before}
 import sk.kave.tank.beans.{TankImpl, Tank}
 import sk.kave.tank.fx.{RIGHT, DOWN, LEFT, UP}
 import sk.kave.tank.Config
+import javafx.util.Duration
 
 class TankTest {
 
@@ -19,6 +20,10 @@ class TankTest {
       def itemSize = 1
 
       def tankSize = 2
+
+      def tankRotationDuration:Duration = 10 ms
+
+      def tankMovementDuration:Duration = 10 ms
     }
   }
 

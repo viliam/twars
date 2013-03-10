@@ -15,7 +15,7 @@ import utils.Logger
 
 private[beans] object Map extends Logger {
 
-  lazy val m: Map = readMapFromFile("mapa.mapa")
+  lazy val m: Map = readMapFromFile("mapaGround.mapa")
 
   def apply() = m
 }

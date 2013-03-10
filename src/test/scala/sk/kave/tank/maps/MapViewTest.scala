@@ -6,6 +6,7 @@ import sk.kave.tank.fx._
 import sk.kave.tank.Config
 import collection.mutable.ListBuffer
 import sk.kave.tank.beans.Game
+import javafx.util.Duration
 
 /**
  * @author Igo
@@ -18,6 +19,8 @@ class MapViewTest {
     def height = 4
     def itemSize = 1
     def tankSize = 2
+    def tankRotationDuration:Duration = 10 ms
+    def tankMovementDuration:Duration = 10 ms
   }
 
   implicit val testGameContext = new Game {

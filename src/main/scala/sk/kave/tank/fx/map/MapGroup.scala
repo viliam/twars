@@ -91,7 +91,7 @@ object MapGroup extends Group with Logger {
 
   private def rotateTank(e: TankRotationEvent) {
     Main.controlerActor ! TimelineMessage[Number](
-    10 ms,
+    tankRotationDuration,
     List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldDirection , e.newDirection ))), ()=>{
       e.callback()
       if (tank.direction.isDefined){
@@ -119,21 +119,19 @@ object MapGroup extends Group with Logger {
       return
     }
 
-
-
-    def movement(dirDefined: Boolean, pos: Boolean, event: TankMoveEvent, dirH_temp: Option[Horizontal], dirV_temp: Option[Vertical]) {
-      if (dirDefined) {
-        if (pos) {
+    def movement(canMove: Boolean, inPosition: Boolean, event: TankMoveEvent, dirNew:Vector2D) {
+      if (canMove) {
+        if (inPosition) {
           //move the map if possible
-          if (canMapMove(dirH_temp, dirV_temp)) {
+          if (canMapMove(dirNew.horizontal, dirNew.vertical)) {
             moveMap(event)
           } else {
             e.callback()
           }
         } else {
           //move the tank if possible
-          if (canTankMove(dirH_temp, dirV_temp)) {
-            moveTank(event, dirH, dirV)
+          if (canTankMove(dirNew.horizontal, dirNew.vertical)) {
+            moveTank(event, dirNew.horizontal, dirNew.vertical)
           } else {
             e.callback()
           }
@@ -145,9 +143,9 @@ object MapGroup extends Group with Logger {
     val evV = TankMoveEvent(e.x, e.y, (None, dirV): Vector2D, () => e.callback())
 
     //horizontal movement
-    movement(dirH.isDefined, posH, evH, dirH, None)
+    movement(dirH.isDefined, posH, evH, (dirH, None))
     //vertical movement
-    movement(dirV.isDefined, posV, evV, None, dirV)
+    movement(dirV.isDefined, posV, evV, (None, dirV))
   }
 
   private def moveTankAndMap(e: TankMoveEvent, posH: Boolean, posV: Boolean) {
@@ -155,7 +153,7 @@ object MapGroup extends Group with Logger {
     val (h, v) = e.direction
     val (dH, dV) = e.direction.getShift( itemSize)
     Main.controlerActor ! TimelineMessage[Number](
-      10 ms,
+      tankMovementDuration,
       List(
         if (posH) (translateX, translateX() + dH) else (translateY, translateY() + dV),
         (tankNode.translateX, tankNode.translateX() - dH),
@@ -180,7 +178,7 @@ object MapGroup extends Group with Logger {
   private def moveTank(e: TankMoveEvent, dirH: Option[Horizontal], dirV: Option[Vertical]) {
     val (dH, dV) = e.direction.getShift( itemSize)
     Main.controlerActor ! TimelineMessage[Number](
-      10 ms,
+      tankMovementDuration,
       List(
         (tankNode.translateX, tankNode.translateX() - dH),
         (tankNode.translateY, tankNode.translateY() - dV)),
@@ -196,7 +194,7 @@ object MapGroup extends Group with Logger {
     val (dH, dV) = e.direction.getShift( itemSize)
     if (canMapMove(e.direction)) {
       Main.controlerActor ! TimelineMessage[Number](
-        10 ms,
+        tankMovementDuration,
         List((translateX, translateX() + dH),
           (translateY, translateY() + dV),
           (tankNode.translateX, tankNode.translateX() - dH),
