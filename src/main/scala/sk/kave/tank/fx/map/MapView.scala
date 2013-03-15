@@ -58,35 +58,35 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)
 
   def move(d: Option[Direction]) {
 //    debug("map move to direction = " + d + "  on row: " + row + "; col:" + col, Igor)
-    val (mx, my) = gContext.map.bound
+
     
     d match {
       case Some(DOWN) => {
-        require(row >= 0 - BORDER_SIZE && row < my - 1 + BORDER_SIZE, "row = " + row + " maxRows = " + my)
-        require(col >= 0 - BORDER_SIZE && col < mx + BORDER_SIZE, "col = " + col + " maxCols = " + mx)
+        require(row >= 0 - BORDER_SIZE && row < mapHeight - 1 + BORDER_SIZE, "row = " + row + " maxRows = " + mapHeight)
+        require(col >= 0 - BORDER_SIZE && col < mapWidth + BORDER_SIZE, "col = " + col + " maxCols = " + mapWidth)
 
         moveVertical(row, rowMax + 1, DOWN)
 
         row = row + 1
       }
       case Some(UP) => {
-        require(row >= 1 - BORDER_SIZE && row < my + BORDER_SIZE, "row = " + row + " maxRows = " + my)
-        require(col >= 0 - BORDER_SIZE && col < mx + BORDER_SIZE, "col = " + col + " maxCols = " + mx)
+        require(row >= 1 - BORDER_SIZE && row < mapHeight + BORDER_SIZE, "row = " + row + " maxRows = " + mapHeight)
+        require(col >= 0 - BORDER_SIZE && col < mapWidth + BORDER_SIZE, "col = " + col + " maxCols = " + mapWidth)
 
         moveVertical(rowMax, row - 1, UP)
 
         row = row - 1
       }
       case Some(RIGHT) =>
-        require(row >= 0 - BORDER_SIZE && row < my + BORDER_SIZE, "row = " + row + " maxRows = " + my)
-        require(col >= 0 - BORDER_SIZE && col < mx - 1 + BORDER_SIZE, "col = " + col + " maxCols = " + mx)
+        require(row >= 0 - BORDER_SIZE && row < mapHeight + BORDER_SIZE, "row = " + row + " maxRows = " + mapHeight)
+        require(col >= 0 - BORDER_SIZE && col < mapWidth - 1 + BORDER_SIZE, "col = " + col + " maxCols = " + mapWidth)
 
         moveHorizontal(col, colMax + 1, RIGHT)
 
         col = col + 1
       case Some(LEFT) =>
-        require(row >= 0 - BORDER_SIZE && row < my + BORDER_SIZE, "row = " + row + " maxRows = " + my)
-        require(col >= 1 - BORDER_SIZE && col < mx + BORDER_SIZE, "col = " + col + " maxCols = " + mx)
+        require(row >= 0 - BORDER_SIZE && row < mapHeight + BORDER_SIZE, "row = " + row + " maxRows = " + mapHeight)
+        require(col >= 1 - BORDER_SIZE && col < mapWidth + BORDER_SIZE, "col = " + col + " maxCols = " + mapWidth)
 
         moveHorizontal(colMax, col - 1, LEFT)
 

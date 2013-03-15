@@ -29,11 +29,12 @@ object Tank {
   }
 
   def isInPosition(x: Int, y: Int)(implicit gContext: Game): (Boolean, Boolean) = {
+    import gContext._
     import gContext.config._
 
-    val (mx, my) = Map().bound
-    val h = if ((x > mx - width / 2)  || (x < width / 2)) false else true
-    val v = if ((y > my - height / 2) || (y < height / 2)) false else true
+
+    val h = if ((x > mapWidth- width / 2)  || (x < width / 2)) false else true
+    val v = if ((y > mapHeight - height / 2) || (y < height / 2)) false else true
 
     (h, v)
   }

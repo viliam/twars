@@ -5,12 +5,10 @@ import events.MapChangeEvent
 import fx.{DOWN, UP, RIGHT, LEFT}
 import scala.Some
 
-class MapImpl(val items: COLUMNS) extends Map {
+private[beans] class MapImpl(val items: COLUMNS) extends Map {
 
   val maxCols: Int = items.size
   val maxRows: Int = items(0).size
-
-  override def bound = ( maxCols, maxRows)
 
   override def apply(c: Int, r: Int): Items = {
     if (r >= maxRows || r < 0 || c >= maxCols || c < 0) {
