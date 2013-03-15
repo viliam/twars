@@ -1,6 +1,6 @@
 package sk.kave
 
-import tank.beans.{Game, Items, Map}
+import tank.beans._
 import java.io.{BufferedReader, File, FileReader}
 import collection.mutable.ArrayBuffer
 import org.apache.log4j.Logger
@@ -8,6 +8,7 @@ import scalafx.beans.property.DoubleProperty
 import tank.fx.{UP, Vertical, Horizontal}
 import tank.utils.Vector2D
 import javafx.util.Duration
+import tank.utils.Vector2D
 
 /**
  * User: wilo
@@ -44,7 +45,7 @@ package object tank {
   implicit def convertVector(v:sk.kave.tank.utils.Vector2D):Vector2D= v()
 
 
-  def readMapFromFile( fileName : String ) : Map = {
+  def readMapFromFile( fileName : String ) : COLUMNS = {
     val fileReader: FileReader = new FileReader(new File( fileName))
     val buffReader: BufferedReader = new BufferedReader(fileReader)
 
@@ -54,6 +55,6 @@ package object tank {
       li += (for (a <- s) yield Items(a)).toArray
     }
 
-    new Map(li.toArray)
+    li.toArray
   }
 }

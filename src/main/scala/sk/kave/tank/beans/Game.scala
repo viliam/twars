@@ -15,8 +15,8 @@ trait Game {
   val map = Map()
 
   val initG : IGameInit = new IGameInit {
-    override val tankX = map.maxCols /2
-    override val tankY = map.maxRows /2
+    override val tankX = map.bound._1 /2
+    override val tankY = map.bound._2 /2
     override val direction = (None, Some(UP))
   }
 
