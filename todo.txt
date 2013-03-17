@@ -1,6 +1,13 @@
-(todo) Make Map like actor. Use the same way as tank
+(done) Make Map like actor. Use the same way as tank
+(inProgres - vil) unify GameControllerActor and TankActor to one KeyControlerActor
 (todo) Correct all tests
 (todo) Simplified MapGroup.movementNearTheEdge method
 (todo) Make simple gui (choose map and start new game)
 (plan) Shoots
 (plan) tank io
+
+TASK DESCRIPTION:
+(todo) thing that is ready to develop
+(inProgres - name) lock on task with owner
+(done) task is finished a can be deleted from this todo-list
+(plan) task is in state of planning,. maybe it will be splited to small todo tasks
