@@ -37,8 +37,8 @@ class TimelineActor extends Actor {
       }
   }
 
-  def runJfx( run : => Unit) =
-    javafx.application.Platform.runLater(new Runnable() {
-            def run() = run
-          })
+//  def runJfx( run : => Unit) =
+//    javafx.application.Platform.runLater(new Runnable() {
+//            def run() = run
+//          })
 }

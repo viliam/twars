@@ -9,7 +9,7 @@ class GameControllerActor extends Actor with Logger {
   private var direction: Vector2D = (None, None)
 
   private lazy val tankActor = context.actorOf(Props[TankActor])
-  private lazy val timelineActor = context.actorOf(Props[TimelineActor]) //.withDispatcher("javafx-dispatcher"))
+  private lazy val timelineActor = context.actorOf(Props[TimelineActor])
 
   override def preRestart(reason: Throwable, message: Option[Any]) {
     debug("in preRestart hook", All)
@@ -34,7 +34,7 @@ class GameControllerActor extends Actor with Logger {
         if (direction.isDefined ) tankActor ! NewDirection( direction)
       }
 
-    case ContinueMovement(dir) =>
+    case ContinueMovement =>
       if (direction.isDefined ) tankActor ! NewDirection(direction)
 
     case m@TimelineMessage(_, _, _) =>

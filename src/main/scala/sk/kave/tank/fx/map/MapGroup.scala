@@ -95,7 +95,7 @@ object MapGroup extends Group with Logger {
     List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldDirection , e.newDirection ))), ()=>{
       e.callback()
       if (tank.direction.isDefined){
-        Main.controlerActor ! ContinueMovement(tank.direction)
+        Main.controlerActor ! ContinueMovement
       }
     }
     )
