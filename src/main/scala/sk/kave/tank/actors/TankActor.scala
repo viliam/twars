@@ -18,16 +18,19 @@ class TankActor extends Actor with Logger {
 
   //private var direction: Vector2D = initG.direction
   private var lockMove = false
+  private var lockShoot = false
 
   private var direction: Vector2D = (None, None)
 
   def receive = {
-    case UserMessage(a, kpe) =>
+    case ChangeMovement(a, kpe) =>
       if ( checkDirection( direction.updateDirection(a, kpe)) ) {
         move(direction)
       }
     case ContinueMovement => move(direction)
-    case UnLock => unlockMove()
+    case UnLockMoving => unlockMove()
+    case Shoot( KeyPressEvent.PRESSED) => shoot()
+    case Shoot( KeyPressEvent.RELEASED) => lockShoot = false
     case m@AnyRef => warn("TankActor : Unknow message = " + m, All)
   }
 
@@ -45,9 +48,9 @@ class TankActor extends Actor with Logger {
       lockMove = true
 
       if (direction != tank.direction) {
-        tank.changeDirection(direction) {  () => { self ! UnLock } }
+        tank.changeDirection(direction) {  () => { self ! UnLockMoving } }
       } else {
-        tank.move(direction) {  () => self ! UnLock  }
+        tank.move(direction) {  () => self ! UnLockMoving  }
       }
     } else {
       debug("TankActor: message is ignoring " + direction, All)
@@ -61,4 +64,12 @@ class TankActor extends Actor with Logger {
       move(direction)
     }
   }
+
+  def shoot() {
+   if (!lockShoot) {
+     lockShoot = false
+     tank.shoot  {  () => self ! UnLockMoving  }
+   }
+  }
+
 }

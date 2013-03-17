@@ -50,4 +50,6 @@ trait Tank extends EventListener[TankEvent] {
   def move(vect: Vector2D)(callback: () => Unit) : Unit
 
   def canMove(direction: Vector2D) : Boolean
+
+  def shoot(callback: () => Unit)
 }

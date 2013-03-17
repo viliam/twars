@@ -1,8 +1,11 @@
 package sk.kave.tank.beans
 
 import sk.kave.tank._
-import events.{TankEvent, TankRotationEvent, EventListener, TankMoveEvent}
+import events._
+import events.TankMoveEvent
+import events.TankRotationEvent
 import sk.kave.tank.fx._
+import scala.Some
 import scala.Some
 
 class TankImpl (
@@ -40,7 +43,6 @@ class TankImpl (
   def canMove(vect: Vector2D) = map.canMove((x, y), (tankSize, tankSize), vect) && !isStoneAhead(vect)
 
   private def isStoneAhead(direction: Vector2D): Boolean = {
-
     val x = direction.horizontal match {
       case Some(RIGHT) => _x + 1
       case Some(LEFT) => _x - 1
@@ -83,10 +85,10 @@ class TankImpl (
     val groundCleaned = cleanGround()
     debug("Tank cleared ground " + groundCleaned, Igor)
 
-    val cb = () => {
-      callback()
-    }
+    fireEvent(TankMoveEvent(this.x, this.y, vect, callback))
+  }
 
-    fireEvent(TankMoveEvent(this.x, this.y, vect, cb))
+  override def shoot(callback: () => Unit) {
+    map.shoot(this.x, this.y, direction, callback)
   }
 }

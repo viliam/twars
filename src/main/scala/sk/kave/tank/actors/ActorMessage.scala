@@ -10,12 +10,14 @@ object KeyPressEvent extends Enumeration {
   val PRESSED, RELEASED = Value
 }
 
-abstract class ActorMessage
+sealed abstract class ActorMessage
 
-case class Exit() extends ActorMessage
-case class UserMessage( direction : Direction, keyPress : KeyPressEvent.Value) extends ActorMessage
-case class UnLock() extends ActorMessage
 case class TimelineMessage[T]( duration : Duration,
                                trf : List[ (WritableValue[T], T) ],
                                callback : () => Unit ) extends ActorMessage
+
+case class ChangeMovement( direction : Direction, keyPress : KeyPressEvent.Value) extends ActorMessage
+case class UnLockMoving() extends ActorMessage
 case class ContinueMovement() extends ActorMessage
+
+case class Shoot(keyPress : KeyPressEvent.Value) extends ActorMessage

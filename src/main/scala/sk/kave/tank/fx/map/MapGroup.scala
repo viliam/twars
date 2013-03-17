@@ -4,7 +4,12 @@ import scalafx.scene.Group
 import scalafx.scene.shape.Rectangle
 import sk.kave.tank._
 
-import events.{TankRotationEvent, TankMoveEvent, TankEvent, MapChangeEvent}
+import actors.ContinueMovement
+import actors.TimelineMessage
+import events._
+import events.MapChangeEvent
+import events.TankMoveEvent
+import events.TankRotationEvent
 import fx._
 import beans.{Tank, Game}
 import scala._
@@ -14,6 +19,7 @@ import scalafx.Includes._
 import scala.Some
 import utils.Logger
 import akka.actor.Props
+import scala.Some
 
 object MapGroup extends Group with Logger {
 
@@ -81,8 +87,11 @@ object MapGroup extends Group with Logger {
     rec
   }
 
-  def eventOccured(event: MapChangeEvent) {
-    mapView.updateRec(event.col, event.row, event.newValue)
+  def eventOccured(event: MapEvent) {
+    event match {
+      case e: MapChangeEvent => mapView.updateRec(e.col, e.row, e.newValue)
+      case e: ShootEvent => shoot(e)
+    }
   }
 
   def eventOccured(event: TankEvent) {
@@ -94,14 +103,18 @@ object MapGroup extends Group with Logger {
 
   private def rotateTank(e: TankRotationEvent) {
     timelineActor ! TimelineMessage[Number](
-    tankRotationDuration,
-    List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldDirection , e.newDirection ))), ()=>{
-      e.callback()
-      if (tank.direction.isDefined){
-        tankActor ! ContinueMovement
+      tankRotationDuration,
+      List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldDirection , e.newDirection ))), ()=>{
+        e.callback()
+        if (tank.direction.isDefined){
+          tankActor ! ContinueMovement
+        }
       }
-    }
     )
+  }
+
+  private def shoot(e : ShootEvent) {
+    debug("Shoot: " + e, Vilo)
   }
 
   private def handleMovement(e: TankMoveEvent) {

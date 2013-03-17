@@ -1,7 +1,7 @@
 package sk.kave.tank.beans
 
 import sk.kave.tank._
-import events.MapChangeEvent
+import events.{ShootEvent, MapChangeEvent}
 import fx.{DOWN, UP, RIGHT, LEFT}
 import scala.Some
 
@@ -50,4 +50,8 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
       result
     }
 
+  override def shoot(x : Int, y : Int, direction: Vector2D, callback: () => Unit) {
+    //todo, check map, maybe clean map
+    fireEvent(ShootEvent(x, y, direction, callback))
+  }
 }

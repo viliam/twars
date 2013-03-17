@@ -7,7 +7,7 @@ package sk.kave.tank.beans
  */
 
 import sk.kave.tank._
-import events.{MapChangeEvent, EventListener}
+import events.{MapEvent, MapChangeEvent, EventListener}
 import fx._
 import scala.Some
 import utils.Logger
@@ -22,7 +22,7 @@ private[beans] object Map extends Logger {
   def bound : (Int, Int) = ( items.size, items(0).size )
 }
 
-trait Map extends EventListener[MapChangeEvent] {
+trait Map extends EventListener[MapEvent] {
 
   def apply(c: Int, r: Int): Items
 
@@ -35,4 +35,5 @@ trait Map extends EventListener[MapChangeEvent] {
               bounds   : => (Int, Int),
               direction: => Vector2D): Boolean
 
+  def shoot(x : Int, y : Int, direction: Vector2D, callback: () => Unit)
 }

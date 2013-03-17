@@ -5,7 +5,7 @@ import scalafx.scene.input.{KeyCode, KeyEvent}
 import scalafx.stage.WindowEvent
 
 import sk.kave.tank._
-import actors.{UserMessage, KeyPressEvent, Exit}
+import actors.{Shoot, ChangeMovement, KeyPressEvent}
 import beans.Game
 import fx.{UP, DOWN, LEFT, RIGHT}
 import javafx.scene.paint.Color
@@ -37,10 +37,11 @@ object GameStage extends PrimaryStage {
     onKeyPressed =
       (e: KeyEvent) => {
         e.code match {
-          case (KeyCode.W) => tankActor ! UserMessage(UP, KeyPressEvent.PRESSED)
-          case (KeyCode.A) => tankActor ! UserMessage(LEFT, KeyPressEvent.PRESSED)
-          case (KeyCode.D) => tankActor ! UserMessage(RIGHT, KeyPressEvent.PRESSED)
-          case (KeyCode.S) => tankActor ! UserMessage(DOWN, KeyPressEvent.PRESSED)
+          case (KeyCode.W) => tankActor ! ChangeMovement(UP, KeyPressEvent.PRESSED)
+          case (KeyCode.A) => tankActor ! ChangeMovement(LEFT, KeyPressEvent.PRESSED)
+          case (KeyCode.D) => tankActor ! ChangeMovement(RIGHT, KeyPressEvent.PRESSED)
+          case (KeyCode.S) => tankActor ! ChangeMovement(DOWN, KeyPressEvent.PRESSED)
+          case (KeyCode.SPACE) => tankActor ! Shoot( KeyPressEvent.PRESSED)
           case _ => ()
         }
       }
@@ -48,11 +49,12 @@ object GameStage extends PrimaryStage {
     onKeyReleased =
       (e: KeyEvent) => {
         e.code match {
-          case (KeyCode.W) => tankActor !UserMessage( UP, KeyPressEvent.RELEASED)
-          case (KeyCode.A) => tankActor !UserMessage( LEFT, KeyPressEvent.RELEASED)
-          case (KeyCode.D) => tankActor !UserMessage( RIGHT, KeyPressEvent.RELEASED)
-          case (KeyCode.S) => tankActor !UserMessage( DOWN, KeyPressEvent.RELEASED)
-          case (KeyCode.ESCAPE) => tankActor ! Exit
+          case (KeyCode.W) => tankActor !ChangeMovement( UP, KeyPressEvent.RELEASED)
+          case (KeyCode.A) => tankActor !ChangeMovement( LEFT, KeyPressEvent.RELEASED)
+          case (KeyCode.D) => tankActor !ChangeMovement( RIGHT, KeyPressEvent.RELEASED)
+          case (KeyCode.S) => tankActor !ChangeMovement( DOWN, KeyPressEvent.RELEASED)
+          case (KeyCode.SPACE) => tankActor ! Shoot( KeyPressEvent.RELEASED)
+          case (KeyCode.ESCAPE) => Main.exit()
           case _ => ()
         }
       }
