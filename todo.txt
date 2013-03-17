@@ -1,9 +1,8 @@
-(done) Make Map like actor. Use the same way as tank
-(inProgres - vil) unify GameControllerActor and TankActor to one KeyControlerActor
+(done) remove GameControllerActor
+(in progress - vil) Prototype of shooting
 (todo) Correct all tests
 (todo) Simplified MapGroup.movementNearTheEdge method
 (todo) Make simple gui (choose map and start new game)
-(plan) Shoots
 (plan) tank io
 
 TASK DESCRIPTION:
