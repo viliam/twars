@@ -1,6 +1,7 @@
 package sk.kave.tank.utils
 
 import sk.kave.tank._
+import actors.KeyPressEvent
 import fx._
 import scala.Some
 
@@ -37,6 +38,22 @@ case class Vector2D(value: (Option[Horizontal], Option[Vertical])) {
    * @return
    */
   def isDefined: Boolean = value._1.isDefined || value._2.isDefined
+
+  def updateDirection(direction: Direction, kpe: KeyPressEvent.Value): Vector2D = {
+
+      def setAction[T <: Direction](newDirection: T, oldDirection: Option[T], kpe: KeyPressEvent.Value): Option[T] = {
+        if (kpe == KeyPressEvent.RELEASED && oldDirection.isDefined && oldDirection.get == newDirection) {
+          None
+        } else {
+          Some(newDirection)
+        }
+      }
+
+      direction match {
+        case v: Vertical   => Vector2D( (horizontal, setAction(v, vertical, kpe)) )
+        case h: Horizontal => Vector2D( (setAction(h, horizontal, kpe), vertical) )
+      }
+    }
 
 }
 
