@@ -35,6 +35,7 @@ class TimelineActor extends Actor {
 
          timeline.play()
       }
+    case e @ _ => println("Unknown message : "  + e)
   }
 
 //  def runJfx( run : => Unit) =

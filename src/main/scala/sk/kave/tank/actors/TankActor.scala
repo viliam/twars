@@ -21,13 +21,7 @@ class TankActor extends Actor with Logger {
 
   def receive = {
     case NewDirection(newDirection: Vector2D) => move(newDirection)
-
-    case UnLock => //when one key si released, actor needs to continue
-      lock = false
-      if (tank.direction.isDefined) {
-        Main.controlerActor ! ContinueMovement
-      }
-
+    case UnLock => unlockMove()
     case m@AnyRef => warn("TankActor : Unknow message = " + m, All)
   }
 
@@ -44,6 +38,13 @@ class TankActor extends Actor with Logger {
     } else {
       debug("TankActor: message is ignoring " + direction, All)
     }
+  }
 
+  def unlockMove() {
+    debug("TankActor: unlock", Vilo)
+    lock = false
+    if (tank.direction.isDefined) {
+      Main.controlerActor ! ContinueMovement
+    }
   }
 }

@@ -9,16 +9,19 @@ import fx._
 import beans.{Tank, Game}
 import scala._
 import scalafx.scene.image.{Image, ImageView}
-import actors.{ContinueMovement, TimelineMessage}
+import actors.{TimelineActor, ContinueMovement, TimelineMessage}
 import scalafx.Includes._
 import scala.Some
 import utils.Logger
+import akka.actor.Props
 
 object MapGroup extends Group with Logger {
 
   val gContext = implicitly[Game]
   import gContext._
   import gContext.config._
+
+  private lazy val timelineActor = Main.system.actorOf(Props[TimelineActor])
 
   val mapView = new MapView[Rectangle](initRec)
 
@@ -152,7 +155,7 @@ object MapGroup extends Group with Logger {
 
     val (h, v) = e.direction
     val (dH, dV) = e.direction.getShift( itemSize)
-    Main.controlerActor ! TimelineMessage[Number](
+    timelineActor ! TimelineMessage[Number](
       tankMovementDuration,
       List(
         if (posH) (translateX, translateX() + dH) else (translateY, translateY() + dV),
@@ -177,7 +180,7 @@ object MapGroup extends Group with Logger {
 
   private def moveTank(e: TankMoveEvent, dirH: Option[Horizontal], dirV: Option[Vertical]) {
     val (dH, dV) = e.direction.getShift( itemSize)
-    Main.controlerActor ! TimelineMessage[Number](
+    timelineActor ! TimelineMessage[Number](
       tankMovementDuration,
       List(
         (tankNode.translateX, tankNode.translateX() - dH),
@@ -193,7 +196,7 @@ object MapGroup extends Group with Logger {
     val (h, v) = e.direction
     val (dH, dV) = e.direction.getShift( itemSize)
     if (canMapMove(e.direction)) {
-      Main.controlerActor ! TimelineMessage[Number](
+      timelineActor ! TimelineMessage[Number](
         tankMovementDuration,
         List((translateX, translateX() + dH),
           (translateY, translateY() + dV),
