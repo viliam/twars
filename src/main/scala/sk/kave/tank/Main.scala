@@ -1,6 +1,5 @@
 package sk.kave.tank
 
-import actors.GameControllerActor
 import fx.map.GameStage
 import scalafx.application.JFXApp
 import akka.actor.{Props, ActorSystem}
@@ -13,8 +12,7 @@ import utils.{LoggerObj, Logger}
  */
 object Main extends JFXApp with Logger {
 
-  val system = ActorSystem("ControllerSystem")
-  val controlerActor = system.actorOf(Props[GameControllerActor], name = "controller")
+  val system = ActorSystem("TankActorSystem")
 
   stage = GameStage
 
@@ -24,6 +22,8 @@ object Main extends JFXApp with Logger {
     super.main(args)
   }
 
-
+  def exit() {
+    system.shutdown()
+  }
 
 }

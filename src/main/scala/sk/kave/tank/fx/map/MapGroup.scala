@@ -93,12 +93,12 @@ object MapGroup extends Group with Logger {
   }
 
   private def rotateTank(e: TankRotationEvent) {
-    Main.controlerActor ! TimelineMessage[Number](
+    timelineActor ! TimelineMessage[Number](
     tankRotationDuration,
     List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldDirection , e.newDirection ))), ()=>{
       e.callback()
       if (tank.direction.isDefined){
-        Main.controlerActor ! ContinueMovement
+        tankActor ! ContinueMovement
       }
     }
     )

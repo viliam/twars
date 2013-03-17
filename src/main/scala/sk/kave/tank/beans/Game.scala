@@ -1,8 +1,9 @@
 package sk.kave.tank.beans
 
 import sk.kave.tank._
+import actors.TankActor
 import fx.UP
-import akka.actor.{TypedActor, TypedProps}
+import akka.actor.{Props, TypedActor, TypedProps}
 
 trait Game {
 
@@ -12,6 +13,7 @@ trait Game {
      def direction : Vector2D
   }
 
+  lazy val tankActor = Main.system.actorOf(Props[TankActor])
   lazy val map : Map = TypedActor( Main.system).typedActorOf( TypedProps( classOf[Map], Map()), "map")
   val (mapWidth, mapHeight) : (Int, Int) = Map.bound
 

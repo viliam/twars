@@ -37,10 +37,10 @@ object GameStage extends PrimaryStage {
     onKeyPressed =
       (e: KeyEvent) => {
         e.code match {
-          case (KeyCode.W) => Main.controlerActor ! UserMessage(UP, KeyPressEvent.PRESSED)
-          case (KeyCode.A) => Main.controlerActor ! UserMessage(LEFT, KeyPressEvent.PRESSED)
-          case (KeyCode.D) => Main.controlerActor ! UserMessage(RIGHT, KeyPressEvent.PRESSED)
-          case (KeyCode.S) => Main.controlerActor ! UserMessage(DOWN, KeyPressEvent.PRESSED)
+          case (KeyCode.W) => tankActor ! UserMessage(UP, KeyPressEvent.PRESSED)
+          case (KeyCode.A) => tankActor ! UserMessage(LEFT, KeyPressEvent.PRESSED)
+          case (KeyCode.D) => tankActor ! UserMessage(RIGHT, KeyPressEvent.PRESSED)
+          case (KeyCode.S) => tankActor ! UserMessage(DOWN, KeyPressEvent.PRESSED)
           case _ => ()
         }
       }
@@ -48,15 +48,15 @@ object GameStage extends PrimaryStage {
     onKeyReleased =
       (e: KeyEvent) => {
         e.code match {
-          case (KeyCode.W) => Main.controlerActor !UserMessage( UP, KeyPressEvent.RELEASED)
-          case (KeyCode.A) => Main.controlerActor !UserMessage( LEFT, KeyPressEvent.RELEASED)
-          case (KeyCode.D) => Main.controlerActor !UserMessage( RIGHT, KeyPressEvent.RELEASED)
-          case (KeyCode.S) => Main.controlerActor !UserMessage( DOWN, KeyPressEvent.RELEASED)
-          case (KeyCode.ESCAPE) => Main.controlerActor ! Exit
+          case (KeyCode.W) => tankActor !UserMessage( UP, KeyPressEvent.RELEASED)
+          case (KeyCode.A) => tankActor !UserMessage( LEFT, KeyPressEvent.RELEASED)
+          case (KeyCode.D) => tankActor !UserMessage( RIGHT, KeyPressEvent.RELEASED)
+          case (KeyCode.S) => tankActor !UserMessage( DOWN, KeyPressEvent.RELEASED)
+          case (KeyCode.ESCAPE) => tankActor ! Exit
           case _ => ()
         }
       }
   }
 
-  onHiding = (e: WindowEvent) =>  Main.controlerActor ! Exit
+  onHiding = (e: WindowEvent) =>  Main.exit
 }

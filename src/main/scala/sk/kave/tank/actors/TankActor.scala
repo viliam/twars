@@ -17,18 +17,32 @@ class TankActor extends Actor with Logger {
   import gContext._
 
   //private var direction: Vector2D = initG.direction
-  private var lock = false
+  private var lockMove = false
+
+  private var direction: Vector2D = (None, None)
 
   def receive = {
-    case NewDirection(newDirection: Vector2D) => move(newDirection)
+    case UserMessage(a, kpe) =>
+      if ( checkDirection( direction.updateDirection(a, kpe)) ) {
+        move(direction)
+      }
+    case ContinueMovement => move(direction)
     case UnLock => unlockMove()
     case m@AnyRef => warn("TankActor : Unknow message = " + m, All)
   }
 
+  private def checkDirection(newDirection: Vector2D): Boolean = {
+    if (direction!= newDirection) {
+      direction = newDirection
+      true
+    } else
+      false
+  }
+
   def move(direction : Vector2D) = {
-    if (!lock) {
+    if (direction.isDefined && !lockMove) {
       debug("TankActor:  lock", Vilo)
-      lock = true
+      lockMove = true
 
       if (direction != tank.direction) {
         tank.changeDirection(direction) {  () => { self ! UnLock } }
@@ -42,9 +56,9 @@ class TankActor extends Actor with Logger {
 
   def unlockMove() {
     debug("TankActor: unlock", Vilo)
-    lock = false
+    lockMove = false
     if (tank.direction.isDefined) {
-      Main.controlerActor ! ContinueMovement
+      move(direction)
     }
   }
 }

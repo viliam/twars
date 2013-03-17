@@ -18,5 +18,4 @@ case class UnLock() extends ActorMessage
 case class TimelineMessage[T]( duration : Duration,
                                trf : List[ (WritableValue[T], T) ],
                                callback : () => Unit ) extends ActorMessage
-case class NewDirection( direction : Vector2D) extends ActorMessage
-case class ContinueMovement extends ActorMessage
+case class ContinueMovement() extends ActorMessage

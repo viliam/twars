@@ -10,6 +10,9 @@ import javafx.beans.value.WritableValue
 import akka.actor.Actor
 import scalafx.application.Platform
 
+@Deprecated
+//I'm not sure, but we don't need new actor for timeline
+//I'm thinking, run timeline directly from jx-thread is save enough
 class TimelineActor extends Actor {
 
   override def preRestart(reason: Throwable, message: Option[Any]) {
