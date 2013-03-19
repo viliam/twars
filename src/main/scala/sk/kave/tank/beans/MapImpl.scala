@@ -5,7 +5,7 @@ import events.{ShootEvent, MapChangeEvent}
 import fx.{DOWN, UP, RIGHT, LEFT}
 import scala.Some
 
-private[beans] class MapImpl(val items: COLUMNS) extends Map {
+private[beans] class MapImpl(val items: COLUMNS)(implicit gContext : Game) extends Map {
 
   val maxCols: Int = items.size
   val maxRows: Int = items(0).size
@@ -50,8 +50,14 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
       result
     }
 
-  override def shoot(x : Int, y : Int, direction: Vector2D, callback: () => Unit) {
-    //todo, check map, maybe clean map
-    fireEvent(ShootEvent(x, y, direction, callback))
+  override def shoot(e : ShootEvent) {
+    //todo, check map, maybe clean map or some tank is shooted
+    val cb = () => {
+      val (xx,yy) = e.bullet.direction.getShift(e.x,e.y)
+      gContext.map.shoot( ShootEvent(xx, yy, e.bullet, e.callback ) )
+      e.callback()
+    }
+
+    fireEvent(ShootEvent(e.x, e.y, e.bullet, cb))
   }
 }

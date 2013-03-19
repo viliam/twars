@@ -1,7 +1,7 @@
 package sk.kave.tank.events
 
 import sk.kave.tank._
-import sk.kave.tank.beans.Items
+import beans.{Bullet, Items}
 
 /**
  * @author Igo & Vil
@@ -12,9 +12,9 @@ abstract class TankEvent extends Event
 abstract class MapEvent extends Event
 
 case class MapChangeEvent(col: Int, row: Int, newValue: Items) extends MapEvent
-case class ShootEvent(x: Int, y: Int, direction: Vector2D, callback: () => Unit) extends MapEvent {
+case class ShootEvent(x: Int, y: Int, bullet : Bullet, callback: () => Unit) extends MapEvent {
   override def toString:String={
-    "ShootEvent: x = " + x + ", y = " + y + ", direction = " + direction
+    "ShootEvent: x = " + x + ", y = " + y + ", direction = " + bullet.direction
   }
 }
 

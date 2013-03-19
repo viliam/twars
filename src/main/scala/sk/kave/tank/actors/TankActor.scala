@@ -58,7 +58,7 @@ class TankActor extends Actor with Logger {
   }
 
   def unlockMove() {
-    debug("TankActor: unlock", Vilo)
+    debug("TankActor: unlock move", Vilo)
     lockMove = false
     if (tank.direction.isDefined) {
       move(direction)
@@ -68,7 +68,7 @@ class TankActor extends Actor with Logger {
   def shoot() {
    if (!lockShoot) {
      lockShoot = false
-     tank.shoot  {  () => self ! UnLockMoving  }
+     tank.shoot  {  () => () } //todo: time locking between shoot events
    }
   }
 

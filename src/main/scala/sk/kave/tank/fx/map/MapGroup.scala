@@ -4,22 +4,19 @@ import scalafx.scene.Group
 import scalafx.scene.shape.Rectangle
 import sk.kave.tank._
 
-import actors.ContinueMovement
-import actors.TimelineMessage
 import events._
 import events.MapChangeEvent
 import events.TankMoveEvent
 import events.TankRotationEvent
 import fx._
-import beans.{Tank, Game}
+import sk.kave.tank.beans.{Bullet, Tank, Game}
 import scala._
 import scalafx.scene.image.{Image, ImageView}
 import actors.{TimelineActor, ContinueMovement, TimelineMessage}
-import scalafx.Includes._
-import scala.Some
 import utils.Logger
 import akka.actor.Props
 import scala.Some
+import scalafx.application.Platform
 
 object MapGroup extends Group with Logger {
 
@@ -38,6 +35,8 @@ object MapGroup extends Group with Logger {
     fitWidth = config.tankSize * config.itemSize
     fitHeight = config.tankSize * config.itemSize
   }
+
+  var bullets : Map[Bullet, ImageView] = Map()
 
 
   def init() {
@@ -115,6 +114,34 @@ object MapGroup extends Group with Logger {
 
   private def shoot(e : ShootEvent) {
     debug("Shoot: " + e, Vilo)
+    //ak strela neexistuje- vytvor strelu
+    val bullet = getBullet(e)
+    val (dH, dV) = e.bullet.direction.getShift( itemSize)
+    timelineActor ! TimelineMessage[Number](
+      bulletMovementDuration,
+      List(
+        (bullet.translateX, bullet.translateX() - dH),
+        (bullet.translateY, bullet.translateY() - dV)),
+      () => {
+        e.callback()
+      }
+    )
+  }
+
+  private def getBullet(e : ShootEvent) : ImageView = {
+    if (bullets.contains( e.bullet) ) bullets(e.bullet)
+    else {
+      val i = new ImageView {
+        image = new Image(GameStage.getClass.getResource("/bullet.png").toString)
+        x = e.x * itemSize
+        y = e.y * itemSize
+        fitWidth = config.itemSize
+        fitHeight =config.itemSize
+      }
+      Platform.runLater{ this.children.add( i); ()}
+      bullets = bullets + (e.bullet -> i)
+      i
+    }
   }
 
   private def handleMovement(e: TankMoveEvent) {

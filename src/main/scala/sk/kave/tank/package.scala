@@ -26,6 +26,7 @@ package object tank {
       def tankSize : Int
       def tankRotationDuration:Duration
       def tankMovementDuration:Duration
+      def bulletMovementDuration:Duration
   }
 
   object ConfigImpl extends Config {
@@ -36,6 +37,7 @@ package object tank {
     val tankSize = 3
     val tankRotationDuration = 130 ms
     val tankMovementDuration = 20 ms
+    val bulletMovementDuration = 150 ms
   }
 
   implicit object GameContext extends Game

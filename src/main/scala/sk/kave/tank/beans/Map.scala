@@ -7,7 +7,7 @@ package sk.kave.tank.beans
  */
 
 import sk.kave.tank._
-import events.{MapEvent, MapChangeEvent, EventListener}
+import events.{ShootEvent, MapEvent, MapChangeEvent, EventListener}
 import fx._
 import scala.Some
 import utils.Logger
@@ -35,5 +35,5 @@ trait Map extends EventListener[MapEvent] {
               bounds   : => (Int, Int),
               direction: => Vector2D): Boolean
 
-  def shoot(x : Int, y : Int, direction: Vector2D, callback: () => Unit)
+  def shoot(e : ShootEvent)
 }

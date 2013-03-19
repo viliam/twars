@@ -89,6 +89,6 @@ class TankImpl (
   }
 
   override def shoot(callback: () => Unit) {
-    map.shoot(this.x, this.y, direction, callback)
+    map.shoot ( ShootEvent(this.x, this.y, new Bullet( direction), callback) )
   }
 }

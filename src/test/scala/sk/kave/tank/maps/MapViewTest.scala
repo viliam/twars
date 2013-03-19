@@ -21,6 +21,7 @@ class MapViewTest {
     def tankSize = 2
     def tankRotationDuration:Duration = 10 ms
     def tankMovementDuration:Duration = 10 ms
+    def bulletMovementDuration : Duration = 10 ms
   }
 
   implicit val testGameContext = new Game {

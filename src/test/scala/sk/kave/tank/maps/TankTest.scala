@@ -24,6 +24,8 @@ class TankTest {
       def tankRotationDuration:Duration = 10 ms
 
       def tankMovementDuration:Duration = 10 ms
+
+      def bulletMovementDuration : Duration = 10 ms
     }
   }
 

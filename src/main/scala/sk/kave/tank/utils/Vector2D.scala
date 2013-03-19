@@ -18,7 +18,7 @@ case class Vector2D(value: (Option[Horizontal], Option[Vertical])) {
    * calculates shift of a object according to Vector2D value
    * @return
    */
-  def getShift(px : Int) =
+  def getShift(px : Int) : (Int, Int) =
     (
       value._1 match {
         case Some(LEFT)  => +px
@@ -29,6 +29,21 @@ case class Vector2D(value: (Option[Horizontal], Option[Vertical])) {
       value._2 match {
         case Some(UP)   => +px
         case Some(DOWN) => -px
+        case None => 0
+      }
+      )
+
+  def getShift( x: Int, y: Int) : (Int, Int) =
+    (
+      value._1 match {
+        case Some(LEFT)  => x +1
+        case Some(RIGHT) => x -1
+        case None => 0
+      }
+      ,
+      value._2 match {
+        case Some(UP)   => y-1
+        case Some(DOWN) => y+1
         case None => 0
       }
       )
