@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
  */
 
 @RunWith(classOf[JUnitRunner])
-class TanklTest extends FlatSpec with ShouldMatchers {
+class TankTest extends FlatSpec with ShouldMatchers {
 
   implicit val gTestContext = new GameTestContext
 
