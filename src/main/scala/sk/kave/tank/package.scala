@@ -37,7 +37,7 @@ package object tank {
     val tankSize = 3
     val tankRotationDuration = 130 ms
     val tankMovementDuration = 20 ms
-    val bulletMovementDuration = 150 ms
+    val bulletMovementDuration = 12 ms
   }
 
   implicit object GameContext extends Game

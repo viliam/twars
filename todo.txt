@@ -1,8 +1,13 @@
-(done) remove GameControllerActor
-(in progress - vil) Prototype of shooting
-(todo) Correct all tests
+------------------------------------------------SHOOTING
+(todo) event - bullet blowed
+(todo) clean ground and stone when bullet blowed
+(todo) bullet direction depends on tank direction
+------------------------------------------------REFACTORING
 (todo) Simplified MapGroup.movementNearTheEdge method
-(todo) Make simple gui (choose map and start new game)
+------------------------------------------------TEST
+(in progress - vil) Correct all tests
+------------------------------------------------FEATURES
+(todo) Make simple gui prototype (choose map and start new game)
 (plan) tank io
 
 TASK DESCRIPTION:
