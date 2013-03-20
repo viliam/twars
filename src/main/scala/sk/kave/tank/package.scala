@@ -40,7 +40,7 @@ package object tank {
     val bulletMovementDuration = 12 ms
   }
 
-  implicit object GameContext extends Game
+  implicit object GameContext extends GameContextImpl
   val map = GameContext.map
 
   implicit def convertVector(v:Vector2D):sk.kave.tank.utils.Vector2D= Vector2D(v)

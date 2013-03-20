@@ -5,7 +5,7 @@ import events.{ShootEvent, MapChangeEvent}
 import fx.{DOWN, UP, RIGHT, LEFT}
 import scala.Some
 
-private[beans] class MapImpl(val items: COLUMNS)(implicit gContext : Game) extends Map {
+private[beans] class MapImpl(val items: COLUMNS)(implicit gContext : GameContextImpl) extends Map {
 
   val maxCols: Int = items.size
   val maxRows: Int = items(0).size

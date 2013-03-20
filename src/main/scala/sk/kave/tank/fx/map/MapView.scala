@@ -1,7 +1,7 @@
 package sk.kave.tank.fx.map
 
 import sk.kave.tank._
-import beans.{Map, Items, Game}
+import beans.{IGameContext, Map, Items, GameContextImpl}
 import collection.mutable
 import sk.kave.tank.fx._
 import collection.immutable.IndexedSeq
@@ -17,7 +17,7 @@ import utils.Logger
  */
 
 class MapView[R](val initRec: (Option[R], Int, Int) => R)
-                (implicit gContext: Game) extends Logger{
+                (implicit gContext: IGameContext) extends Logger{
 
   import gContext._
   import gContext.config._
@@ -62,31 +62,31 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)
     
     d match {
       case Some(DOWN) => {
-        require(row >= 0 - BORDER_SIZE && row < mapHeight - 1 + BORDER_SIZE, "row = " + row + " maxRows = " + mapHeight)
-        require(col >= 0 - BORDER_SIZE && col < mapWidth + BORDER_SIZE, "col = " + col + " maxCols = " + mapWidth)
+        require(row >= 0 - BORDER_SIZE && row < Map.mapHeight - 1 + BORDER_SIZE, "row = " + row + " maxRows = " + Map.mapHeight)
+        require(col >= 0 - BORDER_SIZE && col < Map.mapWidth + BORDER_SIZE, "col = " + col + " maxCols = " + Map.mapWidth)
 
         moveVertical(row, rowMax + 1, DOWN)
 
         row = row + 1
       }
       case Some(UP) => {
-        require(row >= 1 - BORDER_SIZE && row < mapHeight + BORDER_SIZE, "row = " + row + " maxRows = " + mapHeight)
-        require(col >= 0 - BORDER_SIZE && col < mapWidth + BORDER_SIZE, "col = " + col + " maxCols = " + mapWidth)
+        require(row >= 1 - BORDER_SIZE && row < Map.mapHeight + BORDER_SIZE, "row = " + row + " maxRows = " + Map.mapHeight)
+        require(col >= 0 - BORDER_SIZE && col < Map.mapWidth + BORDER_SIZE, "col = " + col + " maxCols = " + Map.mapWidth)
 
         moveVertical(rowMax, row - 1, UP)
 
         row = row - 1
       }
       case Some(RIGHT) =>
-        require(row >= 0 - BORDER_SIZE && row < mapHeight + BORDER_SIZE, "row = " + row + " maxRows = " + mapHeight)
-        require(col >= 0 - BORDER_SIZE && col < mapWidth - 1 + BORDER_SIZE, "col = " + col + " maxCols = " + mapWidth)
+        require(row >= 0 - BORDER_SIZE && row < Map.mapHeight + BORDER_SIZE, "row = " + row + " maxRows = " + Map.mapHeight)
+        require(col >= 0 - BORDER_SIZE && col < Map.mapWidth - 1 + BORDER_SIZE, "col = " + col + " maxCols = " + Map.mapWidth)
 
         moveHorizontal(col, colMax + 1, RIGHT)
 
         col = col + 1
       case Some(LEFT) =>
-        require(row >= 0 - BORDER_SIZE && row < mapHeight + BORDER_SIZE, "row = " + row + " maxRows = " + mapHeight)
-        require(col >= 1 - BORDER_SIZE && col < mapWidth + BORDER_SIZE, "col = " + col + " maxCols = " + mapWidth)
+        require(row >= 0 - BORDER_SIZE && row < Map.mapHeight + BORDER_SIZE, "row = " + row + " maxRows = " + Map.mapHeight)
+        require(col >= 1 - BORDER_SIZE && col < Map.mapWidth + BORDER_SIZE, "col = " + col + " maxCols = " + Map.mapWidth)
 
         moveHorizontal(colMax, col - 1, LEFT)
 

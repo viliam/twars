@@ -1,6 +1,6 @@
 ------------------------------------------------SHOOTING
-(todo) event - bullet blowed
-(todo) clean ground and stone when bullet blowed
+(todo) event - bullet exploded
+(todo) clean ground and stone when bullet exploded
 (todo) bullet direction depends on tank direction
 ------------------------------------------------REFACTORING
 (todo) Simplified MapGroup.movementNearTheEdge method

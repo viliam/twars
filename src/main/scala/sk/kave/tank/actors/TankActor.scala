@@ -2,7 +2,7 @@ package sk.kave.tank.actors
 
 
 import sk.kave.tank._
-import beans.Game
+import beans.GameContextImpl
 import akka.actor.Actor
 import utils.Logger
 
@@ -13,7 +13,7 @@ import utils.Logger
  */
 class TankActor extends Actor with Logger {
 
-  val gContext = implicitly[Game]
+  val gContext = implicitly[GameContextImpl]
   import gContext._
 
   //private var direction: Vector2D = initG.direction

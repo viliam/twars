@@ -6,7 +6,7 @@ import scalafx.stage.WindowEvent
 
 import sk.kave.tank._
 import actors.{Shoot, ChangeMovement, KeyPressEvent}
-import beans.Game
+import beans.GameContextImpl
 import fx.{UP, DOWN, LEFT, RIGHT}
 import javafx.scene.paint.Color
 import scalafx.application.JFXApp.PrimaryStage
@@ -19,7 +19,7 @@ import scalafx.scene.Scene
  */
 object GameStage extends PrimaryStage {
 
-  val gContext = implicitly[Game]
+  val gContext = implicitly[GameContextImpl]
   import gContext._
   import gContext.config._
 

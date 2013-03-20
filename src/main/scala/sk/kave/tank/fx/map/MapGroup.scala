@@ -9,7 +9,7 @@ import events.MapChangeEvent
 import events.TankMoveEvent
 import events.TankRotationEvent
 import fx._
-import sk.kave.tank.beans.{Bullet, Tank, Game}
+import sk.kave.tank.beans.{Bullet, Tank, GameContextImpl}
 import scala._
 import scalafx.scene.image.{Image, ImageView}
 import actors.{TimelineActor, ContinueMovement, TimelineMessage}
@@ -20,7 +20,7 @@ import scalafx.application.Platform
 
 object MapGroup extends Group with Logger {
 
-  val gContext = implicitly[Game]
+  val gContext = implicitly[GameContextImpl]
   import gContext._
   import gContext.config._
 

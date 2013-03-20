@@ -12,7 +12,7 @@ import fx._
 import scala.Some
 import utils.Logger
 
-private[beans] object Map extends Logger {
+object Map extends Logger {
 
   val items = readMapFromFile("mapaGround.mapa")
   lazy val m: Map = new MapImpl( items)
@@ -20,6 +20,8 @@ private[beans] object Map extends Logger {
   def apply() = m
 
   def bound : (Int, Int) = ( items.size, items(0).size )
+
+  val (mapWidth, mapHeight) : (Int, Int) = Map.bound
 }
 
 trait Map extends EventListener[MapEvent] {

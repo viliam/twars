@@ -5,7 +5,7 @@ import sk.kave.tank.fx.map.MapView
 import sk.kave.tank.fx._
 import sk.kave.tank.Config
 import collection.mutable.ListBuffer
-import sk.kave.tank.beans.Game
+import sk.kave.tank.beans.GameContextImpl
 import javafx.util.Duration
 
 /**
@@ -24,7 +24,7 @@ class MapViewTest {
     def bulletMovementDuration : Duration = 10 ms
   }
 
-  implicit val testGameContext = new Game {
+  implicit val testGameContext = new GameContextImpl {
     override val config = testConfig
   }
 
@@ -40,7 +40,7 @@ class MapViewTest {
         x
       })
     mapView.init()
-    logg.debug(mapView.rows.mkString("\n"))
+    //logg.debug(mapView.rows.mkString("\n"))
   }
 
   @Test
