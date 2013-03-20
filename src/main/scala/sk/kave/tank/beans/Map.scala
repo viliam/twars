@@ -7,10 +7,11 @@ package sk.kave.tank.beans
  */
 
 import sk.kave.tank._
-import events.{ShootEvent, MapEvent, MapChangeEvent, EventListener}
+import events.{ShootEvent, MapEvent,  EventListener}
 import fx._
-import scala.Some
 import utils.Logger
+import java.io.{BufferedReader, File, FileReader}
+import collection.mutable.ArrayBuffer
 
 object Map extends Logger {
 
@@ -22,6 +23,19 @@ object Map extends Logger {
   def bound : (Int, Int) = ( items.size, items(0).size )
 
   val (mapWidth, mapHeight) : (Int, Int) = Map.bound
+
+  private def readMapFromFile( fileName : String ) : COLUMNS = {
+    val fileReader: FileReader = new FileReader(new File( fileName))
+    val buffReader: BufferedReader = new BufferedReader(fileReader)
+
+    var s: String = null
+    val li: ArrayBuffer[Array[Items]] = new ArrayBuffer[Array[Items]]
+    while ({s = buffReader.readLine; s} != null) {
+      li += (for (a <- s) yield Items(a)).toArray
+    }
+
+    li.toArray
+  }
 }
 
 trait Map extends EventListener[MapEvent] {

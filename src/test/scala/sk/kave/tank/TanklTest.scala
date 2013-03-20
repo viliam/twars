@@ -11,7 +11,7 @@ import org.junit.runner.RunWith
  */
 
 @RunWith(classOf[JUnitRunner])
-class TankUitlTest extends FlatSpec with ShouldMatchers {
+class TanklTest extends FlatSpec with ShouldMatchers {
 
   implicit val gTestContext = new GameTestContext
 
@@ -35,7 +35,7 @@ class TankUitlTest extends FlatSpec with ShouldMatchers {
     }
   }
 
-  it should " inspect in position" in {
+  it should " inspect if it is in position" in {
     Tank.isInPosition(5, 5)  (gTestContext) should equal ((true,  true))
     Tank.isInPosition(799, 5)(gTestContext) should equal ((false, true))
     Tank.isInPosition(2, 5)  (gTestContext) should equal ((false, true))

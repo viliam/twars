@@ -47,16 +47,4 @@ package object tank {
   implicit def convertVector(v:sk.kave.tank.utils.Vector2D):Vector2D= v()
 
 
-  def readMapFromFile( fileName : String ) : COLUMNS = {
-    val fileReader: FileReader = new FileReader(new File( fileName))
-    val buffReader: BufferedReader = new BufferedReader(fileReader)
-
-    var s: String = null
-    val li: ArrayBuffer[Array[Items]] = new ArrayBuffer[Array[Items]]
-    while ({s = buffReader.readLine; s} != null) {
-      li += (for (a <- s) yield Items(a)).toArray
-    }
-
-    li.toArray
-  }
 }
