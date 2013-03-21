@@ -89,6 +89,9 @@ class TankImpl (
   }
 
   override def shoot(callback: () => Unit) {
-    map.shoot ( ShootEvent(this.x, this.y, new Bullet( direction), callback) )
+    val tankCenter = (this.x + tankSize/2, this.y + tankSize/2)
+    val bulletPos = Bullet.getInitPosition(direction,tankCenter,tankSize)
+
+    map.shoot ( ShootEvent(bulletPos._1,bulletPos._2, new Bullet( direction), callback) )
   }
 }

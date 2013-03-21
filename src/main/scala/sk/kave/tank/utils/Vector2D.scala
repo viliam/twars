@@ -33,7 +33,7 @@ case class Vector2D(value: (Option[Horizontal], Option[Vertical])) {
       }
       )
 
-  def getShift( x: Int, y: Int) : (Int, Int) =
+  def getShift( x: Double, y: Double) : (Double, Double) =
     (
       value._1 match {
         case Some(LEFT)  => x +1

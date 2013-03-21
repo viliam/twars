@@ -54,10 +54,27 @@ private[beans] class MapImpl(val items: COLUMNS)(implicit gContext : GameContext
     //todo, check map, maybe clean map or some tank is shooted
     val cb = () => {
       val (xx,yy) = e.bullet.direction.getShift(e.x,e.y)
-      gContext.map.shoot( ShootEvent(xx, yy, e.bullet, e.callback ) )
+      if (canBulletMove(xx.toInt,yy.toInt,e.bullet.direction)) //todo xx and yy are both Double, bullet can move between the grid - canBulletMove should check also neigbor items
+        gContext.map.shoot( ShootEvent(xx, yy, e.bullet, e.callback ) )
       e.callback()
     }
 
     fireEvent(ShootEvent(e.x, e.y, e.bullet, cb))
+  }
+
+  /**
+   * bullet CANNOT move, when there is end of map, stone or another tank at the position
+   */
+  private def canBulletMove(x:Int,y:Int, dir:Vector2D):Boolean={
+    //end of map
+    if (!canMove((x,y),(gContext.config.itemSize,gContext.config.itemSize),dir)) return false
+    debug("map end ok",Igor)
+    //stone
+    if (map(x,y)==Stone) return false
+    debug("map stone ok",Igor)
+    //another tank
+    //todo bullet stops when there is another tank in the way
+
+    true
   }
 }
