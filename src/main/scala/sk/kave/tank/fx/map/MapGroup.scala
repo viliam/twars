@@ -113,7 +113,7 @@ object MapGroup extends Group with Logger {
   }
 
   private def shoot(e : ShootEvent) {
-    debug("Shoot: " + e, Vilo, Igor)
+    debug("Shoot: " + e, Vilo)
     //ak strela neexistuje- vytvor strelu
     val bullet = getBullet(e)
     val (dH, dV) = e.bullet.direction.getShift( itemSize)

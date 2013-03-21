@@ -38,13 +38,13 @@ case class Vector2D(value: (Option[Horizontal], Option[Vertical])) {
       value._1 match {
         case Some(LEFT)  => x +1
         case Some(RIGHT) => x -1
-        case None => 0
+        case None => x
       }
       ,
       value._2 match {
         case Some(UP)   => y-1
         case Some(DOWN) => y+1
-        case None => 0
+        case None => y
       }
       )
 

@@ -54,7 +54,7 @@ private[beans] class MapImpl(val items: COLUMNS)(implicit gContext : GameContext
     //todo, check map, maybe clean map or some tank is shooted
     val cb = () => {
       val (xx,yy) = e.bullet.direction.getShift(e.x,e.y)
-      if (canBulletMove(xx.toInt,yy.toInt,e.bullet.direction)) //todo xx and yy are both Double, bullet can move between the grid - canBulletMove should check also neigbor items
+      if (canBulletMove(xx,yy,e.bullet.direction))
         gContext.map.shoot( ShootEvent(xx, yy, e.bullet, e.callback ) )
       e.callback()
     }
@@ -65,16 +65,34 @@ private[beans] class MapImpl(val items: COLUMNS)(implicit gContext : GameContext
   /**
    * bullet CANNOT move, when there is end of map, stone or another tank at the position
    */
-  private def canBulletMove(x:Int,y:Int, dir:Vector2D):Boolean={
-    //end of map
-    if (!canMove((x,y),(gContext.config.itemSize,gContext.config.itemSize),dir)) return false
-    debug("map end ok",Igor)
-    //stone
-    if (map(x,y)==Stone) return false
-    debug("map stone ok",Igor)
-    //another tank
-    //todo bullet stops when there is another tank in the way
+  private def canBulletMove(xD: Double, yD: Double, dir: Vector2D): Boolean = {
+    for ((x, y) <- getNeighbourItems(xD, yD)) {
+      //end of map
+      if (!canMove((x, y), (gContext.config.itemSize, gContext.config.itemSize), dir)){
+        debug("bullet stops - map end", Igor)
+        return false
+      }
 
+      //stone
+      if (map(x,y) == Stone){
+        debug("bullet stops - stone ahead", Igor)
+        return false
+      }
+      //another tank
+      //todo bullet stops when there is another tank in the way
+    }
     true
   }
+
+  /**
+   * takes x and y (both Double) and returns all Items' positions
+   */
+  private def getNeighbourItems(x: Double, y: Double): Array[(Int,Int)] = {
+     val x_es = Array(math.floor(x).toInt, math.ceil(x).toInt)
+     val y_es = Array(math.floor(y).toInt, math.ceil(y).toInt)
+
+     for (i <- x_es; j <- y_es) yield {
+       (i, j)
+     }
+   }
 }
