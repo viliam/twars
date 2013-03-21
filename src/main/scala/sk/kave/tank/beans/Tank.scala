@@ -43,8 +43,8 @@ object Tank {
     import gContext.config._
 
 
-    val h = if ((x > Map.mapWidth- width / 2)  || (x < width / 2)) false else true
-    val v = if ((y > Map.mapHeight - height / 2) || (y < height / 2)) false else true
+    val h = if ((x > mapWidth- width / 2)  || (x < width / 2)) false else true
+    val v = if ((y > mapHeight - height / 2) || (y < height / 2)) false else true
 
     (h, v)
   }

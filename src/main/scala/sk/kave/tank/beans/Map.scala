@@ -15,14 +15,14 @@ import collection.mutable.ArrayBuffer
 
 object Map extends Logger {
 
-  val items = readMapFromFile("mapaGround.mapa")
-  lazy val m: Map = new MapImpl( items)
+//  val items = readMapFromFile("mapaGround.mapa")
+//  lazy val m: Map = new MapImpl( items)
 
-  def apply() = m
+  def apply(fileName :String) = {
+    val items = readMapFromFile(fileName)
+    new MapImpl( items)
+  }
 
-  def bound : (Int, Int) = ( items.size, items(0).size )
-
-  val (mapWidth, mapHeight) : (Int, Int) = Map.bound
 
   private def readMapFromFile( fileName : String ) : COLUMNS = {
     val fileReader: FileReader = new FileReader(new File( fileName))
@@ -40,6 +40,8 @@ object Map extends Logger {
 
 trait Map extends EventListener[MapEvent] {
 
+  def bound : (Int, Int)
+
   def apply(c: Int, r: Int): Items
 
   def update(c: Int, r: Int,  newValue: Items)
@@ -51,5 +53,6 @@ trait Map extends EventListener[MapEvent] {
               bounds   : => (Int, Int),
               direction: => Vector2D): Boolean
 
-  def shoot(e : ShootEvent)
+  def shoot(e : ShootEvent)(implicit gContext : GameContextImpl)
+
 }

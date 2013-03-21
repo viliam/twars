@@ -1,3 +1,8 @@
+------------------------------------------------TANK
+(todo) tank power & live energy
+------------------------------------------------MAP
+(todo) make header to map file, containing position of tanks, tank hangars,..
+(todo) tank hangar
 ------------------------------------------------SHOOTING
 (todo) event - bullet exploded
 (in progress - igor) clean ground and stone when bullet exploded
@@ -6,7 +11,8 @@
 ------------------------------------------------REFACTORING
 (todo) Simplified MapGroup.movementNearTheEdge method
 ------------------------------------------------TEST
-(in progress - vil) Correct all tests
+(todo) fix MapViewTest.testMoveLeft
+(todo) refactor MapGroupTest to scala test and than move it to fx.map package
 ------------------------------------------------FEATURES
 (todo) Make simple gui prototype (choose map and start new game)
 (plan) tank io

@@ -24,20 +24,19 @@ package object tank {
       def height : Int
       def itemSize : Int
       def tankSize : Int
-      def tankRotationDuration:Duration
-      def tankMovementDuration:Duration
-      def bulletMovementDuration:Duration
+      def tankRotationDuration:Duration   = 0 ms
+      def tankMovementDuration:Duration   = 0 ms
+      def bulletMovementDuration:Duration = 0 ms
   }
 
   object ConfigImpl extends Config {
     val width = 30
     val height = 30
     val itemSize = 10
-
     val tankSize = 3
-    val tankRotationDuration = 130 ms
-    val tankMovementDuration = 20 ms
-    val bulletMovementDuration = 12 ms
+    override val tankRotationDuration = 130 ms
+    override val tankMovementDuration = 20 ms
+    override val bulletMovementDuration = 12 ms
   }
 
   implicit object GameContext extends GameContextImpl

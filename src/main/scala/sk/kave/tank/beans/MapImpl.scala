@@ -4,11 +4,14 @@ import sk.kave.tank._
 import events.{ShootEvent, MapChangeEvent}
 import fx.{DOWN, UP, RIGHT, LEFT}
 import scala.Some
+import akka.actor.TypedActor
 
-private[beans] class MapImpl(val items: COLUMNS)(implicit gContext : GameContextImpl) extends Map {
+private[beans] class MapImpl(val items: COLUMNS) extends Map {
 
   val maxCols: Int = items.size
   val maxRows: Int = items(0).size
+
+  def bound : (Int, Int) = ( maxCols, maxRows)
 
   override def apply(c: Int, r: Int): Items = {
     if (r >= maxRows || r < 0 || c >= maxCols || c < 0) {
@@ -50,7 +53,7 @@ private[beans] class MapImpl(val items: COLUMNS)(implicit gContext : GameContext
       result
     }
 
-  override def shoot(e : ShootEvent) {
+  override def shoot(e : ShootEvent)(implicit gContext : GameContextImpl) {
     //todo, check map, maybe clean map or some tank is shooted
     val cb = () => {
       val (xx,yy) = e.bullet.direction.getShift(e.x,e.y)

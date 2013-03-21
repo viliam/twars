@@ -13,31 +13,22 @@ import sk.kave.tank.Config
 class GameTestContext extends IGameContext {
 
   override lazy val tankActor = null //Main.system.actorOf(Props[TankActor])
-  override lazy val map : Map = Map()
+  override lazy val map : Map = Map("mapaGround.mapa")
   override lazy val tank : Tank = null
 
-  //override val (mapWidth, mapHeight) : (Int, Int) = Map.bound
+  override val (mapWidth, mapHeight) : (Int, Int) = map.bound
 
   override val initG : IGameInit = new IGameInit {
-    override val tankX = Map.mapWidth /2
-    override val tankY = Map.mapHeight /2
+    override val tankX = mapWidth /2
+    override val tankY = mapHeight /2
     override val direction = (None, Some(UP))
   }
 
   override val config :Config = new Config() {
-    def width = 10
-
-    def height = 10
-
-    def itemSize = 1
-
-    def tankSize = 2
-
-    def tankRotationDuration:Duration = 10 ms
-
-    def tankMovementDuration:Duration = 10 ms
-
-    def bulletMovementDuration : Duration = 10 ms
+    val width = 10
+    val height = 10
+    val itemSize = 1
+    val tankSize = 2
   }
 
 }

@@ -18,7 +18,8 @@ trait IGameContext {
   def tankActor : ActorRef
   def map : Map
 
-//  val (mapWidth, mapHeight) : (Int, Int) = Map.bound  //not nice :((
+  def mapWidth : Int
+  def mapHeight: Int
 
   def initG : IGameInit
 
