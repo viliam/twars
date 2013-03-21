@@ -1,7 +1,8 @@
 ------------------------------------------------SHOOTING
 (todo) event - bullet exploded
-(todo) clean ground and stone when bullet exploded
-(todo) bullet direction depends on tank direction
+(in progress - igor) clean ground and stone when bullet exploded
+(done) bullet direction depends on tank direction
+(todo) delay between bullets
 ------------------------------------------------REFACTORING
 (todo) Simplified MapGroup.movementNearTheEdge method
 ------------------------------------------------TEST

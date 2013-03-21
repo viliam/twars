@@ -28,6 +28,16 @@ object Tank {
     }
   }
 
+  /**
+   * calculates full angle
+   */
+  def getAngleFull(from: Vector2D, to: Vector2D): Double = {
+    val i1 = transformation.indexOf(from)
+    val i2 = transformation.indexOf(to)
+
+    (i1 - i2) * 45
+  }
+
   def isInPosition(x: Int, y: Int)(implicit gContext: IGameContext): (Boolean, Boolean) = {
     import gContext._
     import gContext.config._

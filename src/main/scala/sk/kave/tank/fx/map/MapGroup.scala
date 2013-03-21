@@ -131,10 +131,13 @@ object MapGroup extends Group with Logger {
   private def getBullet(e : ShootEvent) : ImageView = {
     if (bullets.contains( e.bullet) ) bullets(e.bullet)
     else {
+      val bulletShift = calculateBulletShift(Tank.getAngleFull((Some(RIGHT), None),tank.direction))
+      val tankCenter = (e.x + tankSize/2, e.y + tankSize/2)
+
       val i = new ImageView {
         image = new Image(GameStage.getClass.getResource("/bullet.png").toString)
-        x = e.x * itemSize
-        y = e.y * itemSize
+        x = tankCenter._1 * itemSize + bulletShift._1
+        y = tankCenter._2 * itemSize + bulletShift._2
         fitWidth = config.itemSize
         fitHeight =config.itemSize
       }
@@ -142,6 +145,17 @@ object MapGroup extends Group with Logger {
       bullets = bullets + (e.bullet -> i)
       i
     }
+  }
+
+  /**
+   * calculates bullet shift according to tank rotation
+   * this will create an effect of shooting from the tank's barrel
+   */
+  private def calculateBulletShift(tankAngle:Double):(Double,Double)={
+    val x = tankSize/2 * math.cos(math.toRadians(tankAngle))
+
+    val y = tankSize/2 * math.sin(math.toRadians(tankAngle))
+    (math.signum(math.round(x))* itemSize/2, math.signum(math.round(y))* itemSize/2)
   }
 
   private def handleMovement(e: TankMoveEvent) {
