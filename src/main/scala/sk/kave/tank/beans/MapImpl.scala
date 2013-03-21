@@ -68,7 +68,7 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
   /**
    * bullet CANNOT move, when there is end of map, stone or another tank at the position
    */
-  private def canBulletMove(xD: Double, yD: Double, dir: Vector2D): Boolean = {
+  private def canBulletMove(xD: Double, yD: Double, dir: Vector2D)(implicit gContext : GameContextImpl): Boolean = {
     for ((x, y) <- getNeighbourItems(xD, yD)) {
       //end of map
       if (!canMove((x, y), (gContext.config.itemSize, gContext.config.itemSize), dir)){
