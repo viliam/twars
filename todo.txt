@@ -12,7 +12,8 @@
 (todo) Simplified MapGroup.movementNearTheEdge method
 ------------------------------------------------TEST
 (todo) fix MapViewTest.testMoveLeft
-(todo) refactor MapGroupTest to scala test and than move it to fx.map package
+(in progress - vilo) refactor MapGroupTest to scala test and than move it to fx.map package
+(in progress - vilo) make task and test strategy for missing test
 ------------------------------------------------FEATURES
 (todo) Make simple gui prototype (choose map and start new game)
 (plan) tank io
