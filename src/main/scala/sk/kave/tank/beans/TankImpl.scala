@@ -13,7 +13,7 @@ class TankImpl (
             @volatile private var _y: Int,
             @volatile private var _direction : Vector2D = (None, Some(UP)))
           (implicit gContext : IGameContext) extends Tank {
-                            +
+
   import gContext._
   import gContext.config._
 

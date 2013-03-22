@@ -1,11 +1,16 @@
-package sk.kave.tank
+package sk.kave.tank.beans
 
-import beans.{GameTestContext, Tank}
-import fx.{RIGHT, LEFT, UP}
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest._
 import junit.JUnitRunner
 import org.junit.runner.RunWith
+import scala.Predef._
+import sk.kave.tank.beans.Map
+import scala.Some
+import sk.kave.tank._
+import fx.{RIGHT, LEFT, UP}
+import scala.Some
+
 /**
  * @autor : wilo
  */
@@ -15,7 +20,7 @@ class TankTest extends FlatSpec with ShouldMatchers {
 
   implicit val gTestContext = new GameTestContext
 
-  "A tank " should "rotate" in {
+  "A tank " should " calculate shortest rotation" in {
     val testData : Map[ (Vector2D, Vector2D), Int] = Map(
 
       ((None, Some(UP)), (Some(LEFT), Some(UP))) -> -45,
@@ -33,6 +38,10 @@ class TankTest extends FlatSpec with ShouldMatchers {
        val (f,t) = d
        Tank.getAngle(f, t).toInt should equal(testData(d))
     }
+  }
+
+  it should " calculate full rotation " in {
+     //todo: Tank.getFullAngle
   }
 
   it should " inspect if it is in position" in {
