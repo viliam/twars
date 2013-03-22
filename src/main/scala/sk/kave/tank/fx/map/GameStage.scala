@@ -25,7 +25,7 @@ object GameStage extends PrimaryStage {
 
   title = "ScalaFX Tetris"
 
-  val mapGroup = MapGroup
+  val mapGroup = new MapGroup
   mapGroup.init()
 
   scene = new Scene(config.width * itemSize, config.height * itemSize) {

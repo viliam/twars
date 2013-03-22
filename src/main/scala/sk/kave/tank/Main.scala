@@ -12,7 +12,7 @@ import utils.{LoggerObj, Logger}
  */
 object Main extends JFXApp with Logger {
 
-  val system = ActorSystem("TankActorSystem")
+  lazy val system = ActorSystem("TankActorSystem")
 
   stage = GameStage
 

@@ -14,7 +14,6 @@ class GameTestContext extends IGameContext {
 
   override lazy val tankActor = null //Main.system.actorOf(Props[TankActor])
   override lazy val map : Map = Map("mapaGround.mapa")
-  override lazy val tank : Tank = null
 
   override val (mapWidth, mapHeight) : (Int, Int) = map.bound
 
@@ -23,6 +22,8 @@ class GameTestContext extends IGameContext {
     override val tankY = mapHeight /2
     override val direction = (None, Some(UP))
   }
+
+  override lazy val tank : Tank = new TankImpl(initG.tankX,initG.tankY)
 
   override val config :Config = new Config() {
     val width = 10

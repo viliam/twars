@@ -9,7 +9,7 @@ import events.MapChangeEvent
 import events.TankMoveEvent
 import events.TankRotationEvent
 import fx._
-import sk.kave.tank.beans.{Bullet, Tank, GameContextImpl}
+import sk.kave.tank.beans.{IGameContext, Bullet, Tank, GameContextImpl}
 import scala._
 import scalafx.scene.image.{Image, ImageView}
 import actors.{TimelineActor, ContinueMovement, TimelineMessage}
@@ -18,20 +18,21 @@ import akka.actor.Props
 import scala.Some
 import scalafx.application.Platform
 
-object MapGroup extends Group with Logger {
+object MapGroup {}
 
-  val gContext = implicitly[GameContextImpl]
+class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
+
   import gContext._
   import gContext.config._
 
   private lazy val timelineActor = Main.system.actorOf(Props[TimelineActor])
 
-  val mapView = new MapView[Rectangle](initRec)
+  val mapView = new MapView[Rectangle](initRec)(gContext)
 
   val tankNode = new ImageView {
-    image = new Image(GameStage.getClass.getResource("/tank.png").toString)
-    x = initG.tankX * itemSize + MapGroup.layoutX.intValue()
-    y = initG.tankY * itemSize + MapGroup.layoutY.intValue()
+    image = new Image(MapGroup.getClass.getResource("/tank.png").toString)
+    x = initG.tankX * itemSize + layoutX.intValue()
+    y = initG.tankY * itemSize + layoutY.intValue()
     fitWidth = config.tankSize * config.itemSize
     fitHeight = config.tankSize * config.itemSize
   }
@@ -206,11 +207,11 @@ object MapGroup extends Group with Logger {
 
         if (posH) {
           if (canMapMove(h, None)) {
-            MapGroup.moveMap(h)
+            moveMap(h)
           }
         } else {
           if (canMapMove(None, v)) {
-            MapGroup.moveMap(v)
+            moveMap(v)
           }
         }
 
@@ -244,8 +245,8 @@ object MapGroup extends Group with Logger {
           (tankNode.translateX, tankNode.translateX() - dH),
           (tankNode.translateY, tankNode.translateY() - dV)),
         () => {
-          MapGroup.moveMap(v)
-          MapGroup.moveMap(h)
+          moveMap(v)
+          moveMap(h)
 
           e.callback()
         }

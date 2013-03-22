@@ -7,7 +7,7 @@ import org.scalatest._
 import junit.JUnitRunner
 import org.junit.runner.RunWith
 /**
- * User: wilo
+ * @autor : wilo
  */
 
 @RunWith(classOf[JUnitRunner])

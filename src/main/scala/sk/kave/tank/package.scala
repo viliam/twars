@@ -40,7 +40,6 @@ package object tank {
   }
 
   implicit object GameContext extends GameContextImpl
-  val map = GameContext.map
 
   implicit def convertVector(v:Vector2D):sk.kave.tank.utils.Vector2D= Vector2D(v)
   implicit def convertVector(v:sk.kave.tank.utils.Vector2D):Vector2D= v()

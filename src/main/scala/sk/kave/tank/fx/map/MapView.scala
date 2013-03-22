@@ -35,7 +35,7 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)
   val cols = mutable.Map() ++ (for (i <- col to colMax) yield {
     (i, new ListBuffer[R]())
   })
-  val rows = mutable.Map() ++ (for (i <- row to rowMax) yield {
+  val  rows = mutable.Map() ++ (for (i <- row to rowMax) yield {
     (i, new ListBuffer[R]())
   })
 

@@ -12,7 +12,7 @@ import sk.kave.tank.utils.Logger
 
 
 /**
- * User: wilo
+ * @autor: igor & vilo
  */
 //@RunWith(classOf[JUnitRunner])
 class MapViewTest extends JUnitSuite with ShouldMatchersForJUnit with Logger {

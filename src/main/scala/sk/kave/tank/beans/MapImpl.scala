@@ -77,7 +77,7 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
       }
 
       //stone
-      if (map(x,y) == Stone){
+      if (gContext.map(x,y) == Stone){
         debug("bullet stops - stone ahead", Igor)
         return false
       }
