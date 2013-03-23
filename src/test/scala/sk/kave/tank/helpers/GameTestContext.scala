@@ -1,11 +1,11 @@
-package sk.kave.tank.beans
+package sk.kave.tank.helpers
 
-import akka.actor.{TypedProps, Props}
-import javafx.util.Duration
 import scala.Predef._
 import scala.Some
+import sk.kave.tank.beans.Map
 import sk.kave.tank.fx.UP
 import sk.kave.tank.Config
+import sk.kave.tank.beans.{TankImpl, Tank, IGameContext}
 
 /**
  * User: wilo

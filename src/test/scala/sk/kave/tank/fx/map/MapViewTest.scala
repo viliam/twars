@@ -4,11 +4,11 @@ import collection._
 import org.scalatest.junit.{ShouldMatchersForJUnit, JUnitSuite, JUnitRunner}
 import org.junit.{Assert, Test, Before}
 import collection.mutable.ListBuffer
-import sk.kave.tank.beans.GameTestContext
 import sk.kave.tank.Config
 import sk.kave.tank.fx.{LEFT, RIGHT, UP, DOWN}
 import scala.Some
 import sk.kave.tank.utils.Logger
+import sk.kave.tank.helpers.GameTestContext
 
 
 /**

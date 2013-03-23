@@ -7,6 +7,7 @@ import org.junit.runner.RunWith
 import scala.Predef._
 import sk.kave.tank._
 import fx.{RIGHT, LEFT, UP}
+import helpers.GameTestContext
 import scala.Some
 
 /**
