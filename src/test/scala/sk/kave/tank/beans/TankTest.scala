@@ -5,8 +5,6 @@ import org.scalatest._
 import junit.JUnitRunner
 import org.junit.runner.RunWith
 import scala.Predef._
-import sk.kave.tank.beans.Map
-import scala.Some
 import sk.kave.tank._
 import fx.{RIGHT, LEFT, UP}
 import scala.Some
@@ -21,6 +19,7 @@ class TankTest extends FlatSpec with ShouldMatchers {
   implicit val gTestContext = new GameTestContext
 
   "A tank " should " calculate shortest rotation" in {
+    import scala.collection.immutable.Map
     val testData : Map[ (Vector2D, Vector2D), Int] = Map(
 
       ((None, Some(UP)), (Some(LEFT), Some(UP))) -> -45,
