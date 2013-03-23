@@ -14,10 +14,12 @@
 (todo) fix MapViewTest.testMoveLeft
 (done) refactor MapGroupTest to scala test and than move it to fx.map package
 (mark) I believe, it will be possible mix tankImpl and mapImpl with some kind of mock EvetListener, witch override the existing
-(todo) tank - test coverage
+(in progress - vilo) tank - test coverage
 (todo) map - test coverage
 (todo) bullet - test coverage
 (plan) integration tests
+------------------------------------------------BUGS
+...
 ------------------------------------------------FEATURES
 (todo) Make simple gui prototype (choose map and start new game)
 (plan) tank io
