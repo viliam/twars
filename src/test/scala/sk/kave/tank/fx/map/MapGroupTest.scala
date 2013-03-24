@@ -18,7 +18,9 @@ class MapGroupTest extends FlatSpec with ShouldMatchers {
 
   implicit object gC extends GameTestContext
 
-  //!!! this is not unit test, but integration
+  //todo!!! this is not unit test, but integration
+  //what are you testing here? mapGroup? mapView or map?
+  //choose one and from another make mock objects
   "A mapGroup " should " react of map change event " in {
     val newItem = NoMap
 
