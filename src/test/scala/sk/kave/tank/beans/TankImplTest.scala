@@ -7,12 +7,14 @@ import sk.kave.tank._
 import events.{TankEvent, TankRotationEvent}
 import fx.UP
 import scala.Some
-import org.scalamock.scalatest.MockFactory
+import org.scalatest.mock.MockitoSugar
+import org.mockito.Mockito._
+
 
 /**
  * @autor : vilo
 **/
-class TankImplTest extends FlatSpec with MockFactory with ShouldMatchers  {
+class TankImplTest extends FlatSpec with MockitoSugar with ShouldMatchers  {
 
 //  implicit val gTestContext = new GameTestContext
 
@@ -36,17 +38,20 @@ class TankImplTest extends FlatSpec with MockFactory with ShouldMatchers  {
   }
 
   it should " clean ground " in {
-//    val map = mock[Map]
-//    map expects 'apply withArgs args(0,0) returning Ground
-//    map expects 'apply withArgs args(0,1) returning Grass
-//    map expects 'apply withArgs args(1,0) returning Grass
-//    map expects 'apply withArgs args(1,1) returning Ground
-//
-//    map expects 'update withArgs args(0,0, Grass)
-//    map expects 'update withArgs args(1,1, Grass)
-//
-//    val tank = new TankImpl(10,10)( new GameTestContext)
-//    tank.clearGroup should equal (2)
+    val mapMock = mock[Map]
+    when(mapMock.bound).thenReturn( (2,2))
+    when(mapMock(0,0)).thenReturn(Ground)
+    when(mapMock(0,1)).thenReturn(Grass)
+    when(mapMock(1,0)).thenReturn(Grass)
+    when(mapMock(1,1)).thenReturn(Ground)
+
+    val tank = new TankImpl(0,0)( new GameTestContext() {
+      override lazy val map = mapMock
+    })
+    tank.cleanGround() should equal (2)
+
+    verify(mapMock).update(0,0, Grass)
+    verify(mapMock).update(1,1, Grass)
   }
 
 }
