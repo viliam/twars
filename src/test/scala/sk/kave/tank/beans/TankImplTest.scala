@@ -5,10 +5,12 @@ import org.scalatest.matchers.ShouldMatchers
 import sk.kave.tank.helpers.{EventOccurredException, TestEventListener, GameTestContext}
 import sk.kave.tank._
 import events.{TankEvent, TankRotationEvent}
-import fx.UP
+import fx.{RIGHT, DOWN, UP}
 import scala.Some
 import org.scalatest.mock.MockitoSugar
 import org.mockito.Mockito._
+import org.scalatest.PrivateMethodTester.PrivateMethod
+import org.scalatest.PrivateMethodTester._
 
 
 /**
@@ -39,7 +41,6 @@ class TankImplTest extends FlatSpec with MockitoSugar with ShouldMatchers  {
 
   it should " clean ground " in {
     val mapMock = mock[Map]
-    when(mapMock.bound).thenReturn( (2,2))
     when(mapMock(0,0)).thenReturn(Ground)
     when(mapMock(0,1)).thenReturn(Grass)
     when(mapMock(1,0)).thenReturn(Grass)
@@ -54,4 +55,24 @@ class TankImplTest extends FlatSpec with MockitoSugar with ShouldMatchers  {
     verify(mapMock).update(1,1, Grass)
   }
 
+  it should " recognize if stone is stone a head " in {
+    val mapMock = mock[Map]
+    when(mapMock(2,1)).thenReturn(Grass,Stone)
+    when(mapMock(2,2)).thenReturn(Ground)
+    when(mapMock(1,2)).thenReturn(Ground)
+    when(mapMock(1,1)).thenReturn(Ground)
+
+    val tank = new TankImpl(0,0, (Some(RIGHT), Some(DOWN)))( new GameTestContext() {
+      override lazy val map = mapMock
+    })
+
+    val decorateIsStoneAhead = PrivateMethod[Boolean]('isStoneAhead)
+    assert( ! (tank invokePrivate decorateIsStoneAhead( (Some(RIGHT), Some(DOWN)))) )
+    assert(   (tank invokePrivate decorateIsStoneAhead( (Some(RIGHT), Some(DOWN)))) )
+  }
+
+  it should " shoot a bullet " in {
+     //I am not sure, if it necessary to test this method
+    // I must to look before, how to mock scala objects
+  }
 }

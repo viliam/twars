@@ -15,7 +15,7 @@ class GameTestContext extends IGameContext {
   override lazy val tankActor = null //Main.system.actorOf(Props[TankActor])
   override lazy val map : Map = Map("mapaGround.mapa")
 
-  override val (mapWidth, mapHeight) : (Int, Int) = map.bound
+  override val (mapWidth, mapHeight) : (Int, Int) = (10,10)
 
   override val initG : IGameInit = new IGameInit {
     override val tankX = mapWidth /2
