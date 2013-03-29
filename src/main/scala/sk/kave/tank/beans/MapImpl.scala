@@ -71,7 +71,7 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
   private def canBulletMove(xD: Double, yD: Double, dir: Vector2D)(implicit gContext : GameContextImpl): Boolean = {
     for ((x, y) <- getNeighbourItems(xD, yD)) {
       //end of map
-      if (!canMove((x, y), (gContext.config.itemSize, gContext.config.itemSize), dir)){
+      if (!canMove((x, y), (1,1), dir)){
         debug("bullet stops - map end", Igor)
         return false
       }

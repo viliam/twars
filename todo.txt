@@ -5,11 +5,11 @@
 (todo) tank hangar
 ------------------------------------------------SHOOTING
 (todo) event - bullet exploded
-(in progress - igor) clean ground and stone when bullet exploded
-(done) bullet direction depends on tank direction
+(todo) clean ground and stone when bullet exploded
+(todo) bullet should move on the grid - replace Double with Int
 (todo) delay between bullets
 ------------------------------------------------REFACTORING
-(todo) Simplified MapGroup.movementNearTheEdge method
+(done) Simplified MapGroup.movementNearTheEdge method
 ------------------------------------------------TEST
 (todo) fix MapViewTest.testMoveLeft
 (todo) mapGroup test

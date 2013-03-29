@@ -9,11 +9,11 @@ import events.MapChangeEvent
 import events.TankMoveEvent
 import events.TankRotationEvent
 import fx._
-import sk.kave.tank.beans.{IGameContext, Bullet, Tank, GameContextImpl}
+import sk.kave.tank.beans.{IGameContext, Bullet, Tank}
 import scala._
 import scalafx.scene.image.{Image, ImageView}
 import actors.{TimelineActor, ContinueMovement, TimelineMessage}
-import utils.Logger
+import utils.{Vector2D, Logger}
 import akka.actor.Props
 import scala.Some
 import scalafx.application.Platform
@@ -59,7 +59,7 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
     mapView.move(dir)
   }
 
-  def canMapMove(tuple: (Option[Horizontal], Option[Vertical])): Boolean = {
+  def canMapMove(tuple: Vector2D): Boolean = {
     mapView.canMove(tuple)
   }
 
@@ -147,11 +147,12 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
   }
 
   private def handleMovement(e: TankMoveEvent) {
-    val (posH, posV) = Tank.isInPosition(e.x, e.y)
-    if (canMapMove(e.direction) && ((posH, posV).equals(true, true))) {
+    val (inPositionH, inPositionV) = Tank.isInPosition(e.x, e.y)
+    if (canMapMove(e.direction) && ((inPositionH, inPositionV).equals(true, true))) {
+      //it is possible to move map without tank involved and tank is in its position
       moveMap(e)
     } else {
-      movementNearTheEdge(posH, posV, e)
+      movementNearTheEdge(inPositionH, inPositionV, e)
     }
   }
 
@@ -164,33 +165,37 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
       return
     }
 
-    def movement(canMove: Boolean, inPosition: Boolean, event: TankMoveEvent, dirNew:Vector2D) {
-      if (canMove) {
-        if (inPosition) {
-          //move the map if possible
-          if (canMapMove(dirNew.horizontal, dirNew.vertical)) {
-            moveMap(event)
-          } else {
-            e.callback()
-          }
-        } else {
-          //move the tank if possible
-          if (canTankMove(dirNew.horizontal, dirNew.vertical)) {
-            moveTank(event, dirNew.horizontal, dirNew.vertical)
-          } else {
-            e.callback()
-          }
-        }
+    //handle horizontal and vertical movement separately, this allows to move tank AND map together
+    //horizontal movement
+    if (dirH.isDefined) {
+      val tankMoveEventH = TankMoveEvent(e.x, e.y, (dirH, None): Vector2D, () => e.callback())
+      movement(posH, tankMoveEventH, (dirH, None))
+    }
+
+    //vertical movement
+    if (dirV.isDefined) {
+      val tankMoveEventV = TankMoveEvent(e.x, e.y, (None, dirV): Vector2D, () => e.callback())
+      movement(posV, tankMoveEventV, (None, dirV))
+    }
+
+    //--------methods
+    def movement(inPosition: Boolean, event: TankMoveEvent, dirNew: Vector2D) {
+      if (inPosition) {
+        //move the map if possible
+        move(event, dirNew, canMapMove, moveMap)
+      } else {
+        //move the tank if possible
+        move(event, dirNew, canTankMove, moveTank)
       }
     }
 
-    val evH = TankMoveEvent(e.x, e.y, (dirH, None): Vector2D, () => e.callback())
-    val evV = TankMoveEvent(e.x, e.y, (None, dirV): Vector2D, () => e.callback())
-
-    //horizontal movement
-    movement(dirH.isDefined, posH, evH, (dirH, None))
-    //vertical movement
-    movement(dirV.isDefined, posV, evV, (None, dirV))
+    def move(moveEvent: TankMoveEvent, dir: Vector2D, canMoveFunction: (Vector2D => Boolean), performMovementFunction: (TankMoveEvent) => Unit) {
+      if (canMoveFunction(dir)) {
+        performMovementFunction(moveEvent)
+      } else {
+        moveEvent.callback()
+      }
+    }
   }
 
   private def moveTankAndMap(e: TankMoveEvent, posH: Boolean, posV: Boolean) {
@@ -220,7 +225,7 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
     )
   }
 
-  private def moveTank(e: TankMoveEvent, dirH: Option[Horizontal], dirV: Option[Vertical]) {
+  private def moveTank(e: TankMoveEvent) {
     val (dH, dV) = e.direction.getShift( itemSize)
     timelineActor ! TimelineMessage[Number](
       tankMovementDuration,
