@@ -11,7 +11,7 @@
 ------------------------------------------------REFACTORING
 (done) Simplified MapGroup.movementNearTheEdge method
 ------------------------------------------------TEST
-(todo) fix MapViewTest.testMoveLeft
+(done) fix MapViewTest.testMoveLeft
 (todo) mapGroup test
 (todo) mapView test
 (todo) ? refactor logic around calculate bullet start position to tank and then test it

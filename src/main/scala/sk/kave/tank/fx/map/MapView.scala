@@ -101,7 +101,7 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)
 
     val list = li.get
     for (i <- 0 until list.size) {
-      initRec(Some(list(i)), to, row + i)
+      initRec(Some(list(i)), to, row + i) //not very nice, because I am relying on the fact, that Rec is mutable, but this way I modify item in both maps: rows and cols
     }
   }
 
@@ -112,7 +112,7 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)
 
     val list = li.get
     for (i <- 0 until list.size) {
-      initRec(Some(list(i)), col + i, to)
+      initRec(Some(list(i)), col + i, to)   //not very nice, because I am relying on the fact, that Rec is mutable, but this way I modify item in both maps: rows and cols
     }
   }
 
