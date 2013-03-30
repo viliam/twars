@@ -19,6 +19,7 @@ import utils.Logger
 class MapView[R](val initRec: (Option[R], Int, Int) => R)
                 (implicit gContext: IGameContext) extends Logger{
 
+
   import gContext._
   import gContext.config._
 
@@ -140,8 +141,8 @@ class MapView[R](val initRec: (Option[R], Int, Int) => R)
     }
   }
 
-  def updateRec(uCol : Int, uRow: Int, newItem: Items) {
-    if (row >= uRow && col >= uCol && row < rowMax && col < colMax) return
+  def updateRec(uCol : Int, uRow: Int) {
+    if ((row >= uRow || col >= uCol || uRow > rowMax || uCol > colMax)) return
     var r = rows(uRow)(uCol - col)
 
     //update JFX

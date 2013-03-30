@@ -40,18 +40,26 @@ class MapViewTest extends JUnitSuite with ShouldMatchersForJUnit with Logger {
 
   def BORDER_SIZE = mapView.BORDER_SIZE
 
+  var rectValue: Option[Int] = None
+
 
   @Before def before() {
     mapView = new MapView[MutableInt](
-      (oI: Option[MutableInt], x: Int, y: Int) =>
+      (oI: Option[MutableInt], x: Int, y: Int) => {
+        val newVal: Int = if (rectValue.isDefined) rectValue.get else x //simple hack to influence initRec function; mocking is very difficult and reflection is extremly difficult
         oI match {
           case Some(mutableI) =>
-            mutableI.value = x
+            mutableI.value = newVal
             mutableI
-          case _ => MutableInt(x)
+          case _ =>
+            MutableInt(newVal)
         }
+      }
 
     )
+
+    rectValue = None
+
     mapView.init()
     debug(mapView.rows.mkString("\n"), All)
   }
@@ -106,7 +114,72 @@ class MapViewTest extends JUnitSuite with ShouldMatchersForJUnit with Logger {
     assertMap
   }
 
+  /**
+   * map update should not happen, when updating outside MapView boundaries
+   * map consists of Ints (MutableInts, to be precise) -> so to test if there was any map change (update),
+   * I simply calculate sum of all these Ints before and after map update
+   * if they are the same, no update happened and that is OK
+   */
+  @Test
+  def testUpdateMap_boundaries() {
+
+    val row = mapView.row
+    val col = mapView.col
+    val rowMax = mapView.rowMax
+    val colMax = mapView.colMax
+    val originalRowsSum = rows.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum)
+    val originalColsSum = cols.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum)
+
+    rectValue = Some(99)
+
+    mapView.updateRec(col - 1, row)
+
+    originalRowsSum should equal(rows.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+    originalColsSum should equal(cols.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+
+    mapView.updateRec(col, row - 1)
+
+    originalRowsSum should equal(rows.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+    originalColsSum should equal(cols.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+
+    mapView.updateRec(colMax+1, row)
+
+    originalRowsSum should equal(rows.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+    originalColsSum should equal(cols.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+
+    mapView.updateRec(col, rowMax+1)
+
+    originalRowsSum should equal(rows.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+    originalColsSum should equal(cols.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+  }
+
+
+  @Test
+  def testUpdateMap() {
+
+    val row = mapView.row
+    val col = mapView.col
+    val rowMax = mapView.rowMax
+    val colMax = mapView.colMax
+    val originalRowsSum = rows.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum)
+    val originalColsSum = cols.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum)
+
+    rectValue = Some(99)
+    //only checking if everything is initialized correctly
+    mapView.rows(row + 1)(col + 1 - col) should not equal (MutableInt(rectValue.get))
+    mapView.cols(col + 1)(row + 1 - row) should not equal (MutableInt(rectValue.get))
+
+    mapView.updateRec(col + 1, row + 1)
+
+    mapView.rows(row + 1)(col + 1 - col) should equal(MutableInt(rectValue.get))
+    mapView.cols(col + 1)(row + 1 - row) should equal(MutableInt(rectValue.get))
+    originalRowsSum should not equal (rows.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+    originalColsSum should not equal (cols.foldLeft(0)((sum, values) => sum + values._2.map(convertToInt).sum))
+  }
+
   private implicit def convertToInt(mutableI: MutableInt): Int = mutableI.value
+
+  private implicit def convertToMutableInt(i: Int): MutableInt = MutableInt(i)
 
   private implicit def convertToIntArray(mutableIArray: Array[MutableInt]): Array[Int] = mutableIArray.map(convertToInt)
 

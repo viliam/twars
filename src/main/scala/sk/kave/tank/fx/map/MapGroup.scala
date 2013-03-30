@@ -89,7 +89,7 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
 
   def eventOccured(event: MapEvent) {
     event match {
-      case e: MapChangeEvent => mapView.updateRec(e.col, e.row, e.newValue)
+      case e: MapChangeEvent => mapView.updateRec(e.col, e.row)
       case e: ShootEvent => shoot(e)
     }
   }

@@ -13,7 +13,7 @@
 ------------------------------------------------TEST
 (done) fix MapViewTest.testMoveLeft
 (todo) mapGroup test
-(todo) mapView test
+(done) mapView test
 (todo) ? refactor logic around calculate bullet start position to tank and then test it
 (todo) map - test coverage
 (todo) bullet - test coverage
@@ -21,7 +21,7 @@
 ------------------------------------------------BUGS
 ...
 ------------------------------------------------FEATURES
-(todo) Make simple gui prototype (choose map and start new game)
+(todo) Make simple gui prototype (choose map and start new game) - make it as a separate module, so it can be switched to Android GUI easily
 (plan) tank io
 
 TASK DESCRIPTION:
