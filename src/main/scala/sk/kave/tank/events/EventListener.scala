@@ -17,6 +17,7 @@ trait EventListener[E <: Event] extends Logger {
         case e : E => callback(e)
       }
     }))
+    require(!listenerMap.contains(listener))
     listenerMap += (listener -> listenerActor)
   }
 
