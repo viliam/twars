@@ -11,11 +11,8 @@
 ------------------------------------------------REFACTORING
 (done) Simplified MapGroup.movementNearTheEdge method
 ------------------------------------------------TEST
-(done) fix MapViewTest.testMoveLeft
 (todo) mapGroup test
-(done) mapView test
 (todo) ? refactor logic around calculate bullet start position to tank and then test it
-(done) map - test coverage
 (todo) bullet - test coverage -> also MapImpl.canBulletMove in MapImplTest
 (plan) integration tests
 ------------------------------------------------BUGS
