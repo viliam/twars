@@ -19,15 +19,17 @@ package sk.kave.tank.beans
 
 import org.scalatest.FlatSpec
 import org.scalatest.matchers.ShouldMatchers
-import sk.kave.tank.helpers.{EventOccurredException, TestEventListener, GameTestContext}
 import sk.kave.tank._
-import events.{TankEvent, TankRotationEvent}
+import helpers.{TestException, EventOccurredException, TestEventListener, GameTestContext}
+import events.{ShootEvent, TankEvent, TankRotationEvent}
 import fx.{RIGHT, DOWN, UP}
 import scala.Some
 import org.scalatest.mock.MockitoSugar
 import org.mockito.Mockito._
-import org.scalatest.PrivateMethodTester.PrivateMethod
 import org.scalatest.PrivateMethodTester._
+import org.mockito.Matchers._
+import org.mockito.stubbing.Answer
+import org.mockito.invocation.InvocationOnMock
 
 
 /**
@@ -89,8 +91,28 @@ class TankImplTest extends FlatSpec with MockitoSugar with ShouldMatchers  {
   }
 
   it should " shoot a bullet " in {
-     //I am not sure, if it necessary to test this method
-    // I must to look before, how to mock scala objects
+    val callback = () => { }
+    val mapMock = mock[Map]
+    when( mapMock.shoot( anyObject() )(anyObject()) ).thenAnswer( new Answer[Unit] {
+       override def answer(invocation : InvocationOnMock)  {
+         val e : ShootEvent = invocation.getArguments()(0).asInstanceOf[ShootEvent]
+         e.x should equal (0)
+         e.y should equal (0)
+         e.bullet.direction should equal ( utils.Vector2D((None, Some(UP))))   //default tank direction
+         e.callback should equal (callback )
+
+       }
+    })
+
+    val tank = new TankImpl(0,0)( new GameTestContext() {
+        override lazy val map = mapMock
+    }){
+      override def getInitBulletPosition():(Double,Double)= (0,0)
+    }
+
+    tank.shoot( callback )
+
+    verify( mapMock, times(1)).shoot( anyObject())(anyObject())
   }
 
   it should " calculate initial position of bullet " in {

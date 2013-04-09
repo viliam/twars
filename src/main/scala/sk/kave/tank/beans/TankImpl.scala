@@ -110,7 +110,7 @@ class TankImpl (
     map.shoot ( ShootEvent(bulletPos._1,bulletPos._2, new Bullet( direction), callback) )
   }
 
-  private def getInitBulletPosition():(Double,Double)={
+  protected def getInitBulletPosition():(Double,Double)={
 
     /**
      * calculates bullet shift according to tank rotation
