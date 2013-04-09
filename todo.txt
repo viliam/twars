@@ -12,8 +12,10 @@
 (todo) extract all logic of movement form MapGroup to another helper class or trait
 ------------------------------------------------TEST
 (todo) mapGroup test
-(inProgres - vilo) ? refactor logic around calculate bullet start position to tank and then test it
-(inProgres - vilo) bullet - test coverage -> also MapImpl.canBulletMove in MapImplTest
+(done) ? refactor logic around calculate bullet start position to tank and then test it
+(todo) bullet - TankImpl.shoot
+(todo) bullet - TankImpl.getInitBulletPosition
+(todo) bullet - MapImpl.canBulletMove
 (plan) integration tests
 ------------------------------------------------BUGS
 ...

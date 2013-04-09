@@ -23,7 +23,6 @@ import events.TankMoveEvent
 import events.TankRotationEvent
 import sk.kave.tank.fx._
 import scala.Some
-import scala.Some
 
 class TankImpl (
             @volatile private var _x: Int,
@@ -106,9 +105,26 @@ class TankImpl (
   }
 
   override def shoot(callback: () => Unit) {
-    val tankCenter = (this.x + tankSize/2, this.y + tankSize/2)
-    val bulletPos = Bullet.getInitPosition(direction,tankCenter,tankSize)
+    val bulletPos = getInitBulletPosition()
 
     map.shoot ( ShootEvent(bulletPos._1,bulletPos._2, new Bullet( direction), callback) )
+  }
+
+  private def getInitBulletPosition():(Double,Double)={
+
+    /**
+     * calculates bullet shift according to tank rotation
+     * this will create an effect of shooting from the tank's barrel
+     */
+    def calculateBulletShift(tankAngle:Double):(Double,Double)={
+      val x = tankSize/2 * math.cos(math.toRadians(tankAngle))
+      val y = tankSize/2 * math.sin(math.toRadians(tankAngle))
+      (math.signum(math.round(x)), math.signum(math.round(y)))
+    }
+
+    val tankCenter = (this.x + tankSize/2, this.y + tankSize/2)
+    val bulletShift = calculateBulletShift(Tank.getAngleFull((Some(RIGHT), None),direction))
+
+    (tankCenter._1 + bulletShift._1/2,tankCenter._2 + bulletShift._2/2)
   }
 }

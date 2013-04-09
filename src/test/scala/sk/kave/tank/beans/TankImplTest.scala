@@ -92,4 +92,8 @@ class TankImplTest extends FlatSpec with MockitoSugar with ShouldMatchers  {
      //I am not sure, if it necessary to test this method
     // I must to look before, how to mock scala objects
   }
+
+  it should " calculate initial position of bullet " in {
+
+  }
 }
