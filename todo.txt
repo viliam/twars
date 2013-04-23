@@ -4,7 +4,7 @@
 (todo) make header to map file, containing position of tanks, tank hangars,..
 (todo) tank hangar
 ------------------------------------------------SHOOTING
-(todo) event - bullet exploded
+(inProgress - Igor) event - bullet exploded
 (todo) clean ground and stone when bullet exploded
 (done) bullet should move on the grid - replace Double with Int
 (todo) delay between bullets
