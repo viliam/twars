@@ -76,7 +76,7 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
       if (canBulletMove(xx, yy, e.bullet.direction)) {
         gContext.map.shoot(ShootEvent(xx, yy, e.bullet, e.callback))
       } else {
-        gContext.map.groundExplode(e.x, e.y)
+        gContext.map.groundExplode(xx, yy, 2)
       }
       e.callback()
     }
@@ -87,9 +87,8 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
   /**
    * removes ground around point defined as (x,y)
    */
-  def groundExplode(x: Int, y: Int) {
-    val RADIUS = 4
-    for (row <- x - RADIUS until x + RADIUS; col <- y - RADIUS until y + RADIUS) {
+  def groundExplode(x: Int, y: Int, radius:Int) {
+    for (row <- x - radius until x + radius + 1; col <- y - radius until y + radius + 1) {
       if (math.random > 0.7) {
         //with 30% probability the map will explode at this position
         removeGround(row, col)
@@ -119,6 +118,13 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
       debug("bullet stops - stone ahead x =" + x + " y = " + y, Igor)
       return false
     }
+
+      //stone
+    if (gContext.map(x, y) == Ground) {
+      debug("bullet stops - ground ahead x =" + x + " y = " + y, Igor)
+      return false
+    }
+
     //another tank
     //todo bullet stops when there is another tank in the way
     true

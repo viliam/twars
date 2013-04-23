@@ -72,6 +72,6 @@ trait Map extends EventListener[MapEvent] {
 
   def shoot(e : ShootEvent)(implicit gContext : GameContextImpl)
 
-  def groundExplode(x:Int,y:Int)
+  def groundExplode(x:Int,y:Int, radius:Int)
 
 }
