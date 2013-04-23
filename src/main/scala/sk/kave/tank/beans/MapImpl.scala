@@ -85,8 +85,7 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
   /**
    * bullet CANNOT move, when there is end of map, stone or another tank at the position
    */
-  private def canBulletMove(xD: Double, yD: Double, dir: Vector2D)(implicit gContext : GameContextImpl): Boolean = {
-    for ((x, y) <- getNeighbourItems(xD, yD)) {
+  private def canBulletMove(x: Int, y: Int, dir: Vector2D)(implicit gContext : GameContextImpl): Boolean = {
       //end of map
       if (!canMove((x, y), (1,1), dir)){
         debug("bullet stops - map end", Igor)
@@ -95,24 +94,11 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
 
       //stone
       if (gContext.map(x,y) == Stone){
-        debug("bullet stops - stone ahead", Igor)
+        debug("bullet stops - stone ahead x =" + x + " y = " + y, Igor)
         return false
       }
       //another tank
       //todo bullet stops when there is another tank in the way
-    }
     true
   }
-
-  /**
-   * takes x and y (both Double) and returns all Items' positions
-   */
-  private def getNeighbourItems(x: Double, y: Double): Array[(Int,Int)] = {
-     val x_es = Array(math.floor(x).toInt, math.ceil(x).toInt)
-     val y_es = Array(math.floor(y).toInt, math.ceil(y).toInt)
-
-     for (i <- x_es; j <- y_es) yield {
-       (i, j)
-     }
-   }
 }

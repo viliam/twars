@@ -24,16 +24,17 @@ import events.TankRotationEvent
 import sk.kave.tank.fx._
 import scala.Some
 
-class TankImpl (
-            @volatile private var _x: Int,
-            @volatile private var _y: Int,
-            @volatile private var _direction : Vector2D = (None, Some(UP)))
-          (implicit gContext : IGameContext) extends Tank {
+class TankImpl(
+                @volatile private var _x: Int,
+                @volatile private var _y: Int,
+                @volatile private var _direction: Vector2D = (None, Some(UP)))
+              (implicit gContext: IGameContext) extends Tank {
 
   import gContext._
   import gContext.config._
 
   def x = _x
+
   def y = _y
 
 
@@ -105,26 +106,27 @@ class TankImpl (
   }
 
   override def shoot(callback: () => Unit) {
-    val bulletPos = getInitBulletPosition()
+    val bulletPos = getInitBulletPosition
 
-    map.shoot ( ShootEvent(bulletPos._1,bulletPos._2, new Bullet( direction), callback) )
+    map.shoot(ShootEvent(bulletPos._1, bulletPos._2, new Bullet(direction), callback))
   }
 
-  protected def getInitBulletPosition():(Double,Double)={
+  protected def getInitBulletPosition: (Int, Int) = {
 
     /**
      * calculates bullet shift according to tank rotation
      * this will create an effect of shooting from the tank's barrel
      */
-    def calculateBulletShift(tankAngle:Double):(Double,Double)={
-      val x = tankSize/2 * math.cos(math.toRadians(tankAngle))
-      val y = tankSize/2 * math.sin(math.toRadians(tankAngle))
-      (math.signum(math.round(x)), math.signum(math.round(y)))
+    def calculateBulletShift(tankAngle: Double): (Int, Int) = {
+      val x = tankSize / 2 * math.cos(math.toRadians(tankAngle))
+      val y = tankSize / 2 * math.sin(math.toRadians(tankAngle))
+      (math.signum(math.round(x)).toInt, math.signum(math.round(y)).toInt)
     }
 
-    val tankCenter = (this.x + tankSize/2, this.y + tankSize/2)
-    val bulletShift = calculateBulletShift(Tank.getAngleFull((Some(RIGHT), None),direction))
+    val tankCenter = (this.x + tankSize / 2, this.y + tankSize / 2)
+    val bulletShift = calculateBulletShift(Tank.getAngleFull((Some(RIGHT), None), direction))
 
-    (tankCenter._1 + bulletShift._1/2,tankCenter._2 + bulletShift._2/2)
+    val r = (tankCenter._1 + bulletShift._1 / 2, tankCenter._2 + bulletShift._2 / 2)
+    r
   }
 }

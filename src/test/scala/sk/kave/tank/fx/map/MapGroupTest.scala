@@ -17,23 +17,56 @@
 
 package sk.kave.tank.fx.map
 
-import org.junit.runner.RunWith
-import org.scalatest.junit.JUnitRunner
-import org.scalatest.FlatSpec
+import org.scalatest.{BeforeAndAfterEach, FlatSpec}
 import org.scalatest.matchers.ShouldMatchers
-import sk.kave.tank.beans.{NoMap}
-import sk.kave.tank.GameContext
-import sk.kave.tank.events.MapEvent
-import sk.kave.tank.helpers.GameTestContext
+import sk.kave.tank.helpers.{ReflectionHelper, GameTestContext}
+import org.scalatest.mock.MockitoSugar
+import sk.kave.tank.fx.{DOWN, LEFT}
+import sk.kave.tank._
+import events.TankMoveEvent
+import scala.Some
+import org.specs2.mock.Mockito
+
 
 /**
  * @autor vilo & igor
  */
 
-@RunWith(classOf[JUnitRunner])
-class MapGroupTest extends FlatSpec with ShouldMatchers {
+class MapGroupTest extends FlatSpec with MockitoSugar with ShouldMatchers with ReflectionHelper with BeforeAndAfterEach with Mockito {
 
- // implicit object gC extends GameTestContext
+  implicit object gC extends GameTestContext
+
+  var mapGroup: MapGroup = null
+
+  override def beforeEach() {
+    //    val mapGroup = spy(new MapGroup())
+    //    mapGroup.canMapMove((Some(LEFT),Some(DOWN))) returns(true)
+
+//    mapGroup = new MapGroup() with TestMapMovement
 
 
+
+//    mapGroup.setPrivateVar("timelineActor", mock)
+  }
+
+
+  "Only map " should " move" in {
+    //    val mapGroup = mock[MapGroup]
+    //      when(mapGroup. (0,0)).thenReturn(Ground)
+    val e = TankMoveEvent(2, 3, (Some(LEFT), Some(DOWN)), () => {})
+    mapGroup.callPrivateMethod("moveMap", e)
+  }
+//}
+//
+//trait TestMapMovement extends MapGroup {
+//
+//  override def canMapMove(tuple: Vector2D): Boolean = true
+//
+//  override lazy val timelineActor: ActorRef = {
+//    implicit val actorSystem = ActorSystem("TankActorSystem")
+//    val probe = TestProbe()
+//    probe.expectMsgClass(classOf[TimelineMessage[Number]])
+//
+//     probe.ref
+//  }
 }

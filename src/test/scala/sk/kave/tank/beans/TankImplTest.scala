@@ -107,7 +107,7 @@ class TankImplTest extends FlatSpec with MockitoSugar with ShouldMatchers  {
     val tank = new TankImpl(0,0)( new GameTestContext() {
         override lazy val map = mapMock
     }){
-      override def getInitBulletPosition():(Double,Double)= (0,0)
+      override def getInitBulletPosition:(Int,Int)= (0,0)
     }
 
     tank.shoot( callback )

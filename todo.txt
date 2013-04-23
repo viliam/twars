@@ -6,10 +6,11 @@
 ------------------------------------------------SHOOTING
 (todo) event - bullet exploded
 (todo) clean ground and stone when bullet exploded
-(todo) bullet should move on the grid - replace Double with Int
+(done) bullet should move on the grid - replace Double with Int
 (todo) delay between bullets
 ------------------------------------------------REFACTORING
 (todo) extract all logic of movement form MapGroup to another helper class or trait
+(todo) TimelineActor should not be Actor - then there can be tests made in MapGroup
 ------------------------------------------------TEST
 (todo) mapGroup test
 (done) ? refactor logic around calculate bullet start position to tank and then test it

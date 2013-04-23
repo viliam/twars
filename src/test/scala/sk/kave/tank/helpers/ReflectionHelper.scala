@@ -46,7 +46,16 @@ trait ReflectionHelper {
       method.invoke(ref, args.asInstanceOf[AnyRef])
     }
 
-    def callPrivateMethod(name: String, args: Any) {
+    def setPrivateVar(name: String, args: Any) = {
+         val methodOption = ref.getClass.getDeclaredFields.find(m => m.getName == name)
+         require(methodOption.isDefined, "Could not find field named: " + name)
+
+         val method = methodOption.get
+         method.setAccessible(true)
+         method.set(ref, args.asInstanceOf[AnyRef])
+       }
+
+    def callPrivateMethod(name: String, args: AnyRef) {
       val methodOption = ref.getClass.getMethods.find(m => m.getName == name || m.getName.endsWith("$$" + name))
       require(methodOption.isDefined, "Could not find method named: " + name)
 
