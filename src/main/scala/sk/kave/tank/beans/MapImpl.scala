@@ -21,14 +21,13 @@ import sk.kave.tank._
 import events.{ShootEvent, MapChangeEvent}
 import fx.{DOWN, UP, RIGHT, LEFT}
 import scala.Some
-import akka.actor.TypedActor
 
 private[beans] class MapImpl(val items: COLUMNS) extends Map {
 
   val maxCols: Int = items.size
   val maxRows: Int = items(0).size
 
-  def bound : (Int, Int) = ( maxCols, maxRows)
+  def bound: (Int, Int) = (maxCols, maxRows)
 
   override def apply(c: Int, r: Int): Items = {
     if (r >= maxRows || r < 0 || c >= maxCols || c < 0) {
@@ -37,45 +36,48 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
     items(c)(r)
   }
 
-  override def update(c: Int, r: Int,  newValue: Items) {
+  override def update(c: Int, r: Int, newValue: Items) {
     items(c)(r) = newValue
-    fireEvent( MapChangeEvent( c, r, newValue))
+    fireEvent(MapChangeEvent(c, r, newValue))
   }
 
 
   /*
   For given position and bounds return if is posible move to specific direction
    */
-  override def canMove(position : => (Int, Int),
-              bounds   : => (Int, Int),
-              direction: => Vector2D): Boolean = {
-      val (col,row) = position
-      val (width,height) = bounds
-      val (horizontal, vertical) = direction
-      val result =
-        (horizontal match {
-          case Some(LEFT)  if (col <= 0) =>   false
-          case Some(RIGHT) if (col >= maxCols - width) =>  false
+  override def canMove(position: => (Int, Int),
+                       bounds: => (Int, Int),
+                       direction: => Vector2D): Boolean = {
+    val (col, row) = position
+    val (width, height) = bounds
+    val (horizontal, vertical) = direction
+    val result =
+      (horizontal match {
+        case Some(LEFT) if (col <= 0) => false
+        case Some(RIGHT) if (col >= maxCols - width) => false
+        case _ => true
+      }) &&
+        (vertical match {
+          case Some(UP) if (row <= 0) => false
+          case Some(DOWN) if (row >= maxRows - height) => false
           case _ => true
-        })&&
-          (vertical match {
-            case Some(UP)   if (row <= 0) => false
-            case Some(DOWN) if (row >= maxRows - height) => false
-            case _ => true
-          })
-      if (!result) {
-        debug("cannot move",All)
-      }
-
-      result
+        })
+    if (!result) {
+      debug("cannot move", All)
     }
 
-  override def shoot(e : ShootEvent)(implicit gContext : GameContextImpl) {
+    result
+  }
+
+  override def shoot(e: ShootEvent)(implicit gContext: GameContextImpl) {
     //todo, check map, maybe clean map or some tank is shooted
     val cb = () => {
-      val (xx,yy) = e.bullet.direction.getShift(e.x,e.y)
-      if (canBulletMove(xx,yy,e.bullet.direction))
-        gContext.map.shoot( ShootEvent(xx, yy, e.bullet, e.callback ) )
+      val (xx, yy) = e.bullet.direction.getShift(e.x, e.y)
+      if (canBulletMove(xx, yy, e.bullet.direction)) {
+        gContext.map.shoot(ShootEvent(xx, yy, e.bullet, e.callback))
+      } else {
+        gContext.map.groundExplode(e.x, e.y)
+      }
       e.callback()
     }
 
@@ -83,22 +85,42 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
   }
 
   /**
+   * removes ground around point defined as (x,y)
+   */
+  def groundExplode(x: Int, y: Int) {
+    val RADIUS = 4
+    for (row <- x - RADIUS until x + RADIUS; col <- y - RADIUS until y + RADIUS) {
+      if (math.random > 0.7) {
+        //with 30% probability the map will explode at this position
+        removeGround(row, col)
+      }
+    }
+
+    def removeGround(x: Int, y: Int)(implicit gContext: GameContextImpl) {
+      //only Ground can explode
+      if (this.apply(x, y) == Ground) {
+        this.update(x, y, Grass)
+      }
+    }
+  }
+
+  /**
    * bullet CANNOT move, when there is end of map, stone or another tank at the position
    */
-  private def canBulletMove(x: Int, y: Int, dir: Vector2D)(implicit gContext : GameContextImpl): Boolean = {
-      //end of map
-      if (!canMove((x, y), (1,1), dir)){
-        debug("bullet stops - map end", Igor)
-        return false
-      }
+  private def canBulletMove(x: Int, y: Int, dir: Vector2D)(implicit gContext: GameContextImpl): Boolean = {
+    //end of map
+    if (!canMove((x, y), (1, 1), dir)) {
+      debug("bullet stops - map end", Igor)
+      return false
+    }
 
-      //stone
-      if (gContext.map(x,y) == Stone){
-        debug("bullet stops - stone ahead x =" + x + " y = " + y, Igor)
-        return false
-      }
-      //another tank
-      //todo bullet stops when there is another tank in the way
+    //stone
+    if (gContext.map(x, y) == Stone) {
+      debug("bullet stops - stone ahead x =" + x + " y = " + y, Igor)
+      return false
+    }
+    //another tank
+    //todo bullet stops when there is another tank in the way
     true
   }
 }
