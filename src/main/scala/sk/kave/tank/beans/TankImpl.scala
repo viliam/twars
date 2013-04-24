@@ -40,6 +40,8 @@ class TankImpl(
 
   def direction = _direction
 
+  var lastCreatedBullet:Option[Bullet] = None
+
   def changeDirection(direction: Vector2D)(callBack: () => Unit) {
     val oldDirection = this.direction
     this._direction = direction
@@ -107,7 +109,7 @@ class TankImpl(
 
   override def shoot(callback: () => Unit) {
     val bulletPos = getInitBulletPosition
-
+    debug("---------------shootTank",Igor)
     map.shoot(ShootEvent(bulletPos._1, bulletPos._2, new Bullet(direction), callback))
   }
 

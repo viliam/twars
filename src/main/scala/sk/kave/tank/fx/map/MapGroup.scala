@@ -29,11 +29,21 @@ import fx._
 import sk.kave.tank.beans.{IGameContext, Bullet, Tank}
 import scala._
 import scalafx.scene.image.{Image, ImageView}
-import actors.{TimelineActor, ContinueMovement, TimelineMessage}
+import sk.kave.tank.actors._
 import utils.{Vector2D, Logger}
 import akka.actor.Props
 import scala.Some
 import scalafx.application.Platform
+import sk.kave.tank.actors.Shoot
+import sk.kave.tank.events.BulletExplodedEvent
+import sk.kave.tank.events.MapChangeEvent
+import scala.Some
+import sk.kave.tank.actors.TimelineMessage
+import sk.kave.tank.events.TankMoveEvent
+import sk.kave.tank.events.ShootEvent
+import sk.kave.tank.utils.Vector2D
+import sk.kave.tank.events.TankRotationEvent
+import sk.kave.tank.actors.ContinueMovement
 
 object MapGroup {}
 
@@ -108,7 +118,13 @@ class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
     event match {
       case e: MapChangeEvent => mapView.updateRec(e.col, e.row)
       case e: ShootEvent => shoot(e)
-      case e: BulletExplodedEvent => hideBullet(e.bullet)
+      case e: BulletExplodedEvent => {
+        hideBullet(e.bullet)
+        //when bullet explodes too close to the tank, new bullet should be created (if player is still shooting)
+        if (e.bullet.distanceFromSource<Bullet.BULLET_DIFFERENCE){
+          tankActor ! CreateNewBullet(()=>())
+        }
+      }
     }
   }
 
@@ -132,7 +148,7 @@ class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
   }
 
   private def shoot(e: ShootEvent) {
-    debug("Shoot: " + e, Vilo)
+    debug("Shoot: " + e, Vilo, Igor)
     //ak strela neexistuje- vytvor strelu
     val bullet = getBullet(e)
     val (dH, dV) = e.bullet.direction.getShift(itemSize)
@@ -143,6 +159,10 @@ class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
         (bullet.translateY, bullet.translateY() - dV)),
       () => {
         e.callback()
+        //ask if new bullet can be created
+        if (tank.lastCreatedBullet.isDefined && tank.lastCreatedBullet.get.canCreateNewBullet){
+          tankActor ! CreateNewBullet(()=>())
+        }
       }
     )
   }

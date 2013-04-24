@@ -7,7 +7,7 @@
 (done) event - bullet exploded
 (done) clean ground and stone when bullet exploded
 (done) bullet should move on the grid - replace Double with Int
-(todo) delay between bullets
+(done) delay between bullets
 ------------------------------------------------REFACTORING
 (todo) extract all logic of movement form MapGroup to another helper class or trait
 (todo) TimelineActor should not be Actor - then there can be tests made in MapGroup
@@ -19,7 +19,7 @@
 (todo) bullet - MapImpl.canBulletMove
 (plan) integration tests
 ------------------------------------------------BUGS
-(inProgress - Igor) unable to shoot and move together (tank stops shooting after a while)
+(done) unable to shoot and move together (tank stops shooting after a while)
 ...
 ------------------------------------------------FEATURES
 (todo) Make simple gui prototype (choose map and start new game) - make it as a separate module, so it can be switched to Android GUI easily

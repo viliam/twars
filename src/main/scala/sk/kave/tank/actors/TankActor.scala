@@ -22,6 +22,7 @@ import sk.kave.tank._
 import beans.GameContextImpl
 import akka.actor.Actor
 import utils.Logger
+import sk.kave.tank.events.CreateNewBullet
 
 /**
  * actor performing movement of tank.
@@ -46,8 +47,12 @@ class TankActor extends Actor with Logger {
       }
     case ContinueMovement => move(direction)
     case UnLockMoving => unlockMove()
-    case Shoot( KeyPressEvent.PRESSED) => shoot()
-    case Shoot( KeyPressEvent.RELEASED) => lockShoot = false
+    case Shoot( KeyPressEvent.PRESSED) => startShooting()
+    case Shoot( KeyPressEvent.RELEASED) => {
+      tank.lastCreatedBullet = None
+      lockShoot = false
+    }
+    case CreateNewBullet(callback) => if (lockShoot) tank.shoot(callback)
     case m@AnyRef => warn("TankActor : Unknow message = " + m, All)
   }
 
@@ -82,10 +87,10 @@ class TankActor extends Actor with Logger {
     }
   }
 
-  def shoot() {
+  def startShooting() {
    if (!lockShoot) {
-     lockShoot = false
-     tank.shoot  {  () => () } //todo: time locking between shoot events
+     lockShoot = true
+     tank.shoot  {  () => () }
    }
   }
 

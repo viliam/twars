@@ -18,7 +18,7 @@
 package sk.kave.tank.beans
 
 import sk.kave.tank._
-import sk.kave.tank.events.{BulletExplodedEvent, ShootEvent, MapChangeEvent}
+import sk.kave.tank.events.{CreateNewBullet, BulletExplodedEvent, ShootEvent, MapChangeEvent}
 import fx.{DOWN, UP, RIGHT, LEFT}
 import scala.Some
 
@@ -76,12 +76,12 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
       if (canBulletMove(xx, yy, e.bullet.direction)) {
         gContext.map.shoot(ShootEvent(xx, yy, e.bullet, e.callback))
       } else {
-        gContext.map.groundExplode(xx, yy, 2)
+        gContext.map.groundExplode(xx, yy, 1)
         fireEvent(BulletExplodedEvent(e.bullet))
       }
+
       e.callback()
     }
-
     fireEvent(ShootEvent(e.x, e.y, e.bullet, cb))
   }
 

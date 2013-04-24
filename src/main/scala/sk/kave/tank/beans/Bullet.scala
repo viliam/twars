@@ -17,12 +17,23 @@
 
 package sk.kave.tank.beans
 
-import sk.kave.tank.fx
-import sk.kave.tank.utils.Vector2D
+import sk.kave.tank.utils.{Logger, Vector2D}
 
 /**
  * User: vilo
  */
-class Bullet(val direction: Vector2D) {
+object Bullet {
+  val BULLET_DIFFERENCE = 5
+}
 
+class Bullet(val direction: Vector2D) extends Logger{
+
+  private var _distanceFromSource: Int = 0
+
+  def canCreateNewBullet: Boolean = {
+    _distanceFromSource = _distanceFromSource + 1
+    return (_distanceFromSource == Bullet.BULLET_DIFFERENCE)
+  }
+
+  def distanceFromSource = _distanceFromSource
 }

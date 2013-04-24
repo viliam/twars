@@ -79,4 +79,6 @@ trait Tank extends EventListener[TankEvent] {
   def canMove(direction: Vector2D) : Boolean
 
   def shoot(callback: () => Unit)
+
+  var lastCreatedBullet:Option[Bullet]
 }
