@@ -37,7 +37,7 @@ import scalafx.application.Platform
 
 object MapGroup {}
 
-class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
+class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
 
   import gContext._
   import gContext.config._
@@ -54,7 +54,7 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
     fitHeight = config.tankSize * config.itemSize
   }
 
-  var bullets : Map[Bullet, ImageView] = Map()
+  var bullets: Map[Bullet, ImageView] = Map()
 
 
   def init() {
@@ -108,33 +108,34 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
     event match {
       case e: MapChangeEvent => mapView.updateRec(e.col, e.row)
       case e: ShootEvent => shoot(e)
+      case e: BulletExplodedEvent => hideBullet(e.bullet)
     }
   }
 
   def eventOccured(event: TankEvent) {
     event match {
-      case e : TankMoveEvent => handleMovement(e)
-      case e : TankRotationEvent => rotateTank(e)
+      case e: TankMoveEvent => handleMovement(e)
+      case e: TankRotationEvent => rotateTank(e)
     }
   }
 
   private def rotateTank(e: TankRotationEvent) {
     timelineActor ! TimelineMessage[Number](
       tankRotationDuration,
-      List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldDirection , e.newDirection ))), ()=>{
+      List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldDirection, e.newDirection))), () => {
         e.callback()
-        if (tank.direction.isDefined){
+        if (tank.direction.isDefined) {
           tankActor ! ContinueMovement
         }
       }
     )
   }
 
-  private def shoot(e : ShootEvent) {
+  private def shoot(e: ShootEvent) {
     debug("Shoot: " + e, Vilo)
     //ak strela neexistuje- vytvor strelu
     val bullet = getBullet(e)
-    val (dH, dV) = e.bullet.direction.getShift( itemSize)
+    val (dH, dV) = e.bullet.direction.getShift(itemSize)
     timelineActor ! TimelineMessage[Number](
       bulletMovementDuration,
       List(
@@ -146,8 +147,23 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
     )
   }
 
-  private def getBullet(e : ShootEvent) : ImageView = {
-    if (bullets.contains( e.bullet) ) bullets(e.bullet)
+  private def hideBullet(b: Bullet) {
+    val bulletImage = bullets(b)
+    Platform.runLater {
+      new Runnable {
+        def run() {
+          MapGroup.this.children.remove(bulletImage)
+        }
+      }
+
+    }
+    bullets -= b
+  }
+
+  private def getBullet(e: ShootEvent): ImageView = {
+    if (bullets.contains(e.bullet)) {
+      bullets(e.bullet)
+    }
     else {
 
       val i = new ImageView {
@@ -155,9 +171,12 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
         x = e.x * itemSize
         y = e.y * itemSize
         fitWidth = config.itemSize
-        fitHeight =config.itemSize
+        fitHeight = config.itemSize
       }
-      Platform.runLater{ this.children.add( i); ()}
+      Platform.runLater {
+        this.children.add(i);
+        ()
+      }
       bullets = bullets + (e.bullet -> i)
       i
     }
@@ -218,7 +237,7 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
   private def moveTankAndMap(e: TankMoveEvent, posH: Boolean, posV: Boolean) {
 
     val (h, v) = e.direction
-    val (dH, dV) = e.direction.getShift( itemSize)
+    val (dH, dV) = e.direction.getShift(itemSize)
     timelineActor ! TimelineMessage[Number](
       tankMovementDuration,
       List(
@@ -243,7 +262,7 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
   }
 
   private def moveTank(e: TankMoveEvent) {
-    val (dH, dV) = e.direction.getShift( itemSize)
+    val (dH, dV) = e.direction.getShift(itemSize)
     timelineActor ! TimelineMessage[Number](
       tankMovementDuration,
       List(
@@ -258,7 +277,7 @@ class MapGroup (implicit gContext : IGameContext) extends Group with Logger {
 
   private def moveMap(e: TankMoveEvent) {
     val (h, v) = e.direction
-    val (dH, dV) = e.direction.getShift( itemSize)
+    val (dH, dV) = e.direction.getShift(itemSize)
     if (canMapMove(e.direction)) {
       timelineActor ! TimelineMessage[Number](
         tankMovementDuration,

@@ -4,8 +4,8 @@
 (todo) make header to map file, containing position of tanks, tank hangars,..
 (todo) tank hangar
 ------------------------------------------------SHOOTING
-(inProgress - Igor) event - bullet exploded
-(todo) clean ground and stone when bullet exploded
+(done) event - bullet exploded
+(done) clean ground and stone when bullet exploded
 (done) bullet should move on the grid - replace Double with Int
 (todo) delay between bullets
 ------------------------------------------------REFACTORING
@@ -19,6 +19,7 @@
 (todo) bullet - MapImpl.canBulletMove
 (plan) integration tests
 ------------------------------------------------BUGS
+(inProgress - Igor) unable to shoot and move together (tank stops shooting after a while)
 ...
 ------------------------------------------------FEATURES
 (todo) Make simple gui prototype (choose map and start new game) - make it as a separate module, so it can be switched to Android GUI easily

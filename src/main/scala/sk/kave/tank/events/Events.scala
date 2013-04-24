@@ -34,6 +34,7 @@ case class ShootEvent(x: Int, y: Int, bullet : Bullet, callback: () => Unit) ext
     "ShootEvent: x = " + x + ", y = " + y + ", direction = " + bullet.direction
   }
 }
+case class BulletExplodedEvent(bullet:Bullet) extends MapEvent
 
 case class TankRotationEvent(newDirection : Vector2D, oldDirection: Vector2D, callback: () => Unit) extends TankEvent
 

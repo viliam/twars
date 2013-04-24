@@ -18,7 +18,7 @@
 package sk.kave.tank.beans
 
 import sk.kave.tank._
-import events.{ShootEvent, MapChangeEvent}
+import sk.kave.tank.events.{BulletExplodedEvent, ShootEvent, MapChangeEvent}
 import fx.{DOWN, UP, RIGHT, LEFT}
 import scala.Some
 
@@ -77,6 +77,7 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
         gContext.map.shoot(ShootEvent(xx, yy, e.bullet, e.callback))
       } else {
         gContext.map.groundExplode(xx, yy, 2)
+        fireEvent(BulletExplodedEvent(e.bullet))
       }
       e.callback()
     }
@@ -87,7 +88,7 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
   /**
    * removes ground around point defined as (x,y)
    */
-  def groundExplode(x: Int, y: Int, radius:Int) {
+  def groundExplode(x: Int, y: Int, radius: Int) {
     for (row <- x - radius until x + radius + 1; col <- y - radius until y + radius + 1) {
       if (math.random > 0.7) {
         //with 30% probability the map will explode at this position
@@ -119,7 +120,7 @@ private[beans] class MapImpl(val items: COLUMNS) extends Map {
       return false
     }
 
-      //stone
+    //stone
     if (gContext.map(x, y) == Ground) {
       debug("bullet stops - ground ahead x =" + x + " y = " + y, Igor)
       return false
