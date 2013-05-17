@@ -10,7 +10,7 @@
 (done) delay between bullets
 ------------------------------------------------REFACTORING
 (todo) extract all logic of movement form MapGroup to another helper class or trait
-(todo) TimelineActor should not be Actor - then there can be tests made in MapGroup
+(done) TimelineActor should not be Actor - then there can be tests made in MapGroup
 ------------------------------------------------TEST
 (todo) mapGroup test
 (done) ? refactor logic around calculate bullet start position to tank and then test it

@@ -38,7 +38,6 @@ import sk.kave.tank.actors.Shoot
 import sk.kave.tank.events.BulletExplodedEvent
 import sk.kave.tank.events.MapChangeEvent
 import scala.Some
-import sk.kave.tank.actors.TimelineMessage
 import sk.kave.tank.events.TankMoveEvent
 import sk.kave.tank.events.ShootEvent
 import sk.kave.tank.utils.Vector2D
@@ -51,8 +50,6 @@ class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
 
   import gContext._
   import gContext.config._
-
-  private lazy val timelineActor = Main.system.actorOf(Props[TimelineActor])
 
   val mapView = new MapView[Rectangle](initRec)(gContext)
 
@@ -136,7 +133,7 @@ class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
   }
 
   private def rotateTank(e: TankRotationEvent) {
-    timelineActor ! TimelineMessage[Number](
+    TimelineFactory.createTimeline[Number](
       tankRotationDuration,
       List((tankNode.rotate, tankNode.rotate() + Tank.getAngle(e.oldDirection, e.newDirection))), () => {
         e.callback()
@@ -152,7 +149,7 @@ class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
     //ak strela neexistuje- vytvor strelu
     val bullet = getBullet(e)
     val (dH, dV) = e.bullet.direction.getShift(itemSize)
-    timelineActor ! TimelineMessage[Number](
+    TimelineFactory.createTimeline[Number](
       bulletMovementDuration,
       List(
         (bullet.translateX, bullet.translateX() - dH),
@@ -258,7 +255,7 @@ class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
 
     val (h, v) = e.direction
     val (dH, dV) = e.direction.getShift(itemSize)
-    timelineActor ! TimelineMessage[Number](
+    TimelineFactory.createTimeline[Number](
       tankMovementDuration,
       List(
         if (posH) (translateX, translateX() + dH) else (translateY, translateY() + dV),
@@ -283,7 +280,7 @@ class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
 
   private def moveTank(e: TankMoveEvent) {
     val (dH, dV) = e.direction.getShift(itemSize)
-    timelineActor ! TimelineMessage[Number](
+    TimelineFactory.createTimeline[Number](
       tankMovementDuration,
       List(
         (tankNode.translateX, tankNode.translateX() - dH),
@@ -299,7 +296,7 @@ class MapGroup(implicit gContext: IGameContext) extends Group with Logger {
     val (h, v) = e.direction
     val (dH, dV) = e.direction.getShift(itemSize)
     if (canMapMove(e.direction)) {
-      timelineActor ! TimelineMessage[Number](
+      TimelineFactory.createTimeline[Number](
         tankMovementDuration,
         List((translateX, translateX() + dH),
           (translateY, translateY() + dV),

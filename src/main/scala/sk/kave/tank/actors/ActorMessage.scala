@@ -29,10 +29,6 @@ object KeyPressEvent extends Enumeration {
 
 sealed abstract class ActorMessage
 
-case class TimelineMessage[T]( duration : Duration,
-                               trf : List[ (WritableValue[T], T) ],
-                               callback : () => Unit ) extends ActorMessage
-
 case class ChangeMovement( direction : Direction, keyPress : KeyPressEvent.Value) extends ActorMessage
 case class UnLockMoving() extends ActorMessage
 case class ContinueMovement() extends ActorMessage

@@ -17,7 +17,7 @@
 
 package sk.kave.tank.utils
 
-import org.apache.log4j.Logger
+import org.apache.log4j.{Logger=>Log4jLogger}
 import collection.mutable.ListBuffer
 
 object LoggerObj {
@@ -28,7 +28,7 @@ trait Logger {
 
   val mf = implicitly[Manifest[this.type]]
   private val prefix = "-DloggUser="
-  private val logg = Logger.getLogger(mf.runtimeClass)
+  private val logg = Log4jLogger.getLogger(mf.runtimeClass)
 
   def debug(message: String, user: UserEnum, users: UserEnum*) {
     logg(user, users)(() => logg.debug(message))
