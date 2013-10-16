@@ -44,7 +44,7 @@
         <profile>
             <id>vilo2</id>
             <properties>
-                <jfx-rt>C:\Program Files\Java\jdk1.7.0_11\jre\lib\jfxrt.jar</jfx-rt>
+                <jfx-rt>C:\Program Files\Java\jdk1.7.0_21\jre\lib\jfxrt.jar</jfx-rt>
             </properties>
         </profile>
     </profiles>

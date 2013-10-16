@@ -40,7 +40,7 @@ object GameStage extends PrimaryStage {
   import gContext._
   import gContext.config._
 
-  title = "ScalaFX Tetris"
+  title = "tWars Tetris"
 
   val mapGroup = new MapGroup
   mapGroup.init()
