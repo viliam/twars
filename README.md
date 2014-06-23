@@ -8,3 +8,4 @@ technologies used:
 use MAVEN for building the project
 
 
+![alt tag](https://raw.github.com/viliam/twars/master/twars.png)
