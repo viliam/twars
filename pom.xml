@@ -38,7 +38,7 @@
         <profile>
             <id>vilo</id>
             <properties>
-                <jfx-rt>c:\Program Files\Oracle\JavaFX 2.2 SDK\rt\lib\jfxrt.jar</jfx-rt>
+                <jfx-rt>C:\Program Files\Java\jdk1.7.0_55\jre\lib\jfxrt.jar</jfx-rt>
             </properties>
         </profile>
         <profile>
@@ -90,8 +90,8 @@
 
         <dependency>
             <groupId>org.scalafx</groupId>
-            <artifactId>scalafx</artifactId>
-            <version>2.10-1.0.0-M1</version>
+            <artifactId>scalafx_2.10</artifactId>
+            <version>1.0.0-M1</version>
         </dependency>
 
         <dependency>
